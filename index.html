@@ -6,14 +6,13 @@
 <meta name="theme-color" content="#101018">
 <title>Смотрим вместе</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <style>
   :root {
     --bg: #101018; --surface: #191924; --surface-2: #21212e;
     --border: #2a2a38; --text: #ebeaf2; --text-2: #a8a8b8; --text-3: #6e6e82;
     --accent: #6f52e8; --accent-soft: rgba(111,82,232,0.15);
     --danger: #e05563; --success: #4a9e6e;
-    --bubble-bg: #ffffff;
-    --bubble-border: #000000;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   html, body { height: 100%; }
@@ -97,7 +96,6 @@
   position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
   width: 80px; height: 80px; border-radius: 50%;
   background: var(--accent); color: #fff;
-  border: none;
   font-size: 36px;
   display: flex; align-items: center; justify-content: center;
   box-shadow: 0 8px 24px rgba(111,82,232,0.4);
@@ -335,12 +333,13 @@ function openHelp() {
   openSheet(
     '<h2>📖 Как пользоваться</h2><div class="help-content">' +
     '<h3>🎬 Создать комнату</h3><p>Нажми <b>🎬 внизу</b>. Задай название, аватар, цвет.</p>' +
-    '<h3>📺 Видео</h3><p>Внутри комнаты вставь ссылку на <b>YouTube</b>, <b>VK Video</b>, <b>RuTube</b> или прямой <b>.mp4</b>.</p>' +
-    '<h3>🔄 Синхрон</h3><p><b>Play/pause/перемотка</b> — у всех одновременно (для YouTube).</p>' +
+    '<h3>📺 Видео</h3><p>Поддерживаются: <b>YouTube</b> (включая live), <b>RuTube</b>, <b>VK Video</b> (vk.com и vkvideo.ru), <b>Twitch</b> (каналы и клипы), <b>Dailymotion</b>, <b>Vimeo</b>, <b>Одноклассники</b>, <b>Telegram</b> (посты с видео), прямые <b>.mp4</b>, <b>.webm</b> и <b>.m3u8</b> (HLS-потоки).</p>' +
+    '<p>Если сайт не встраивается — появится кнопка <b>«Открыть видео»</b>.</p>' +
+    '<h3>🔄 Синхрон</h3><p><b>Play/pause/перемотка</b> — у всех одновременно (для YouTube и mp4).</p>' +
     '<h3>💬 Чат</h3><p>Под видео — чат. Без регистрации.</p>' +
     '<h3>👁🚫 Скрыть</h3><p>Скрывается у тебя. 3+ → у всех.</p>' +
     '<h3>🔗 Поделиться</h3><p>Скопируй ссылку и отправь другу.</p>' +
-    '<div class="tip">Синхрон для YouTube и mp4. VK/RuTube — только загрузка.</div></div>' +
+    '<div class="tip">Новостные каналы и телепередачи — ищи официальные каналы на YouTube — они точно встроятся.</div></div>' +
     '<button class="btn ghost" style="margin-top:16px;" onclick="closeSheet()">Закрыть</button>'
   );
 }
@@ -426,17 +425,56 @@ async function createRoom() {
   toast('Комната «' + finalName + '» создана');
   await loadRooms();
   setTimeout(() => enterRoom(roomId), 400);
-  }function parseVideoUrl(url) {
+  }
+  function parseVideoUrl(url) {
   if (!url) return null;
   url = url.trim();
-  const yt = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
-  if (yt) return { type: 'youtube', videoId: yt[1] };
-  const vk = url.match(/vk\.com\/video(-?\d+)_(\d+)/);
-  if (vk) return { type: 'vk', src: 'https://vk.com/video_ext.php?oid=' + vk[1] + '&id=' + vk[2] + '&autoplay=1' };
-  const rt = url.match(/rutube\.ru\/video\/([a-zA-Z0-9]+)/);
-  if (rt) return { type: 'rutube', src: 'https://rutube.ru/play/embed/' + rt[1] };
-  if (url.match(/\.(mp4|webm|ogg)(\?|$)/i)) return { type: 'html5', src: url };
-  return null;
+  if (!url.match(/^https?:\/\//i)) return null;
+
+  // YouTube — обычные, shorts, live, embed
+  const yt = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/|live\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+  if (yt) return { type: 'youtube', videoId: yt[1], embeddable: true };
+
+  // RuTube — обычные, live, shorts
+  const rt = url.match(/rutube\.ru\/(?:video|play\/embed|live)\/([a-zA-Z0-9]+)/);
+  if (rt) return { type: 'iframe', src: 'https://rutube.ru/play/embed/' + rt[1], embeddable: true };
+
+  // VK Video — vk.com и vkvideo.ru
+  const vk = url.match(/(?:vk\.com|vkvideo\.ru)\/video(-?\d+)_(\d+)/);
+  if (vk) return { type: 'iframe', src: 'https://vk.com/video_ext.php?oid=' + vk[1] + '&id=' + vk[2] + '&autoplay=1', embeddable: true };
+
+  // Dailymotion
+  const dm = url.match(/dailymotion\.com\/video\/([a-zA-Z0-9]+)/);
+  if (dm) return { type: 'iframe', src: 'https://www.dailymotion.com/embed/video/' + dm[1], embeddable: true };
+
+  // Vimeo
+  const vm = url.match(/vimeo\.com\/(\d+)/);
+  if (vm) return { type: 'iframe', src: 'https://player.vimeo.com/video/' + vm[1], embeddable: true };
+
+  // Twitch — каналы
+  const twCh = url.match(/twitch\.tv\/([a-zA-Z0-9_]+)$/);
+  if (twCh) return { type: 'iframe', src: 'https://player.twitch.tv/?channel=' + twCh[1] + '&parent=' + window.location.hostname, embeddable: true };
+
+  // Twitch — клипы
+  const twClip = url.match(/clips\.twitch\.tv\/([a-zA-Z0-9_-]+)/);
+  if (twClip) return { type: 'iframe', src: 'https://clips.twitch.tv/embed?clip=' + twClip[1] + '&parent=' + window.location.hostname, embeddable: true };
+
+  // Одноклассники
+  const ok = url.match(/ok\.ru\/video\/(\d+)/);
+  if (ok) return { type: 'iframe', src: 'https://ok.ru/videoembed/' + ok[1], embeddable: true };
+
+  // Telegram — посты с видео
+  const tg = url.match(/t\.me\/([a-zA-Z0-9_]+)\/(\d+)/);
+  if (tg) return { type: 'iframe', src: 'https://t.me/' + tg[1] + '/' + tg[2] + '?embed=1', embeddable: true };
+
+  // Прямые видео
+  if (url.match(/\.(mp4|webm|ogg|mov|m4v)(\?|$)/i)) return { type: 'html5', src: url, embeddable: true };
+
+  // HLS-потоки (.m3u8)
+  if (url.match(/\.m3u8(\?|$)/i)) return { type: 'hls', src: url, embeddable: true };
+
+  // Любой другой http-URL — попробуем iframe
+  return { type: 'iframe', src: url, embeddable: false };
 }
 
 async function enterRoom(roomId) {
@@ -465,13 +503,21 @@ function renderRoom() {
   const videoData = parseVideoUrl(r.video_url);
   let videoHtml = '';
   if (!videoData) {
-    videoHtml = '<div class="video-placeholder"><div class="big-icon">📺</div>Вставь ссылку на видео ниже<br>YouTube · VK Video · RuTube · .mp4</div>';
+    videoHtml = '<div class="video-placeholder"><div class="big-icon">📺</div>Вставь ссылку на видео<br>YouTube · RuTube · VK · Twitch · .mp4</div>';
   } else if (videoData.type === 'youtube') {
     videoHtml = '<div id="ytPlayer"></div>';
   } else if (videoData.type === 'html5') {
     videoHtml = '<video id="videoPlayer" src="' + esc(videoData.src) + '" controls autoplay></video>';
+  } else if (videoData.type === 'hls') {
+    videoHtml = '<video id="videoPlayer" controls autoplay></video>';
+  } else if (videoData.embeddable) {
+    videoHtml = '<iframe id="videoPlayer" src="' + esc(videoData.src) + '" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen></iframe>';
   } else {
-    videoHtml = '<iframe id="videoPlayer" src="' + esc(videoData.src) + '" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>';
+    videoHtml = '<div style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding:30px; color:#888; text-align:center; height:100%;">' +
+      '<div style="font-size:60px; margin-bottom:16px;">🔗</div>' +
+      '<div style="font-size:14px; margin-bottom:20px; line-height:1.5;">Этот сайт нельзя встроить.<br>Открой в новом окне.</div>' +
+      '<a href="' + esc(r.video_url) + '" target="_blank" rel="noopener" class="btn primary small" style="text-decoration:none; display:inline-flex; align-items:center; gap:6px; padding:12px 24px; font-size:15px;">▶ Открыть видео</a>' +
+      '</div>';
   }
   document.getElementById('roomContent').innerHTML =
     '<div class="room-header">' +
@@ -504,11 +550,25 @@ function renderRoom() {
   }, 100);
   if (videoData && videoData.type === 'youtube') initYouTube(videoData.videoId);
   if (videoData && videoData.type === 'html5') initHtml5Sync();
+  if (videoData && videoData.type === 'hls') initHls();
   renderMessages();
   startSyncLoop();
 }
 
-function initYouTube(videoId) {
+function initHls() {
+  const v = document.getElementById('videoPlayer');
+  if (!v || !currentRoom) return;
+  if (window.Hls && window.Hls.isSupported()) {
+    const hls = new window.Hls();
+    hls.loadSource(currentRoom.video_url);
+    hls.attachMedia(v);
+    hls.on(window.Hls.Events.MANIFEST_PARSED, () => v.play().catch(()=>{}));
+  } else if (v.canPlayType('application/vnd.apple.mpegurl')) {
+    v.src = currentRoom.video_url;
+    v.play().catch(()=>{});
+  }
+  }
+  function initYouTube(videoId) {
   const check = setInterval(() => {
     if (window.YT && window.YT.Player) {
       clearInterval(check);
@@ -599,8 +659,9 @@ function startSyncLoop() {
 async function saveVideoUrl() {
   const url = document.getElementById('videoUrl').value.trim();
   if (!url) return toast('Вставь ссылку', 'error');
+  if (!url.match(/^https?:\/\//i)) return toast('Ссылка должна начинаться с http:// или https://', 'error');
   const data = parseVideoUrl(url);
-  if (!data) return toast('Не поддерживается. YouTube, VK, RuTube или .mp4', 'error');
+  if (!data) return toast('Не получилось распознать ссылку', 'error');
   const syncState = { playing: true, time: 0, updated: Date.now() };
   const { error } = await sb.from('rooms').update({
     video_url: url, sync_state: syncState, host_id: myId
@@ -617,9 +678,7 @@ async function saveVideoUrl() {
 function copyShareLink() {
   const url = window.location.origin + window.location.pathname + '?room=' + currentRoom.id;
   if (navigator.clipboard) {
-    navigator.clipboard.writeText(url).then(() => toast('Ссылка скопирована', 'success')).catch(() => {
-      fallbackCopy(url);
-    });
+    navigator.clipboard.writeText(url).then(() => toast('Ссылка скопирована', 'success')).catch(() => fallbackCopy(url));
   } else {
     fallbackCopy(url);
   }
@@ -629,8 +688,9 @@ function fallbackCopy(text) {
   t.value = text; document.body.appendChild(t); t.select();
   try { document.execCommand('copy'); toast('Скопировано', 'success'); } catch(e) { toast('Не удалось', 'error'); }
   t.remove();
-  }
-  async function loadRoomMessages(roomId) {
+}
+
+async function loadRoomMessages(roomId) {
   try {
     const { data, error } = await sb.from('room_messages').select('*').eq('room_id', roomId).eq('hidden', false).order('created_at', { ascending: true }).limit(200);
     if (error) { console.error(error); return; }
@@ -718,4 +778,3 @@ window.onYouTubeIframeAPIReady = function() {};
 </script>
 </body>
 </html>
-  
