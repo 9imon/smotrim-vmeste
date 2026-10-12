@@ -46,6 +46,7 @@
 .room-bubble:active { transform: scale(0.95); }
 .bubble-circle { width: 130px; height: 130px; border-radius: 50%; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 56px; background: var(--surface); box-shadow: 0 4px 12px rgba(0,0,0,0.4); position: relative; }
 .bubble-warning { position: absolute; top: 5px; right: 5px; font-size: 24px; }
+.bubble-badge { position: absolute; bottom: 5px; right: 5px; font-size: 20px; background: rgba(0,0,0,0.6); border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; }
 .bubble-name { font-size: 13px; font-weight: 700; text-align: center; word-wrap: break-word; line-height: 1.3; max-width: 140px; }
 .rooms-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; padding: 20px 0 100px; }
 .room-tile { aspect-ratio: 1; border: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 12px; cursor: pointer; transition: transform 0.1s; overflow: hidden; color: #fff; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.3); position: relative; }
@@ -53,6 +54,7 @@
 .room-tile-avatar { font-size: 42px; }
 .room-tile-name { font-size: 13px; font-weight: 700; word-wrap: break-word; line-height: 1.3; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
 .room-tile-warning { position: absolute; top: 5px; right: 5px; font-size: 20px; }
+.room-tile-badge { position: absolute; bottom: 5px; right: 5px; font-size: 16px; background: rgba(0,0,0,0.6); border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; }
 .empty-state { text-align: center; padding: 80px 30px; color: var(--text-2); }
 .empty-state .big-icon { font-size: 80px; margin-bottom: 16px; opacity: 0.5; }
 .empty-state h2 { font-size: 18px; margin-bottom: 8px; font-weight: 700; }
@@ -65,37 +67,41 @@
 .sheet h2 { font-size: 20px; font-weight: 800; margin-bottom: 6px; }
 .sheet .sub { font-size: 13px; color: var(--text-2); margin-bottom: 16px; }
 .field-label { display: block; font-size: 11px; color: var(--text-3); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; margin-bottom: 6px; margin-top: 14px; }
-.input, .textarea { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 12px 14px; border-radius: 12px; font-size: 15px; margin-bottom: 8px; }
-.input:focus, .textarea:focus { outline: none; border-color: var(--accent); }
+.input, .textarea, .select { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 12px 14px; border-radius: 12px; font-size: 15px; margin-bottom: 8px; }
+.select { appearance: none; -webkit-appearance: none; }
+.input:focus, .textarea:focus, .select:focus { outline: none; border-color: var(--accent); }
 .avatar-picker, .color-picker { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
 .avatar-option { width: 48px; height: 48px; border-radius: 50%; border: 1px solid var(--border); background: var(--surface-2); font-size: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 .avatar-option.selected { border: 2px solid var(--accent); transform: scale(1.1); }
 .color-option { width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--border); cursor: pointer; }
 .color-option.selected { border: 3px solid var(--text); transform: scale(1.1); }
-    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 20px; border-radius: 12px; font-size: 15px; font-weight: 700; background: var(--surface-2); border: 1px solid var(--border); color: var(--text); min-height: 50px; width: 100%; margin-top: 8px; }
-  .btn:active { transform: scale(0.98); opacity: 0.9; }
-  .btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
-  .btn.ghost { background: transparent; }
-  .btn.danger { background: var(--danger); color: #fff; border-color: var(--danger); }
-  .btn.small { width: auto; padding: 8px 14px; min-height: 38px; font-size: 13px; margin: 0; }
-  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-  .room-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
-  .back-btn { width: 40px; height: 40px; border-radius: 50%; background: var(--surface); border: 1px solid var(--border); font-size: 18px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--text-2); }
-  .room-info { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; }
-  .room-info-avatar { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
-  .room-info-text { flex: 1; min-width: 0; }
-  .room-info-name { font-size: 16px; font-weight: 700; word-wrap: break-word; }
-  .room-info-meta { font-size: 11px; color: var(--text-2); }
-  .sync-status { font-size: 11px; color: var(--success); font-weight: 700; }
-  .room-buttons { display: flex; gap: 6px; flex-shrink: 0; align-items: center; }
-  .video-box { background: #000; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; aspect-ratio: 16/9; margin-bottom: 14px; display: flex; align-items: center; justify-content: center; position: relative; }
-  .video-box iframe, .video-box video { width: 100%; height: 100%; border: none; }
-  .video-placeholder { color: #666; text-align: center; padding: 20px; font-size: 14px; line-height: 1.6; }
-  .video-placeholder .big-icon { font-size: 60px; margin-bottom: 10px; }
-  .url-row { display: flex; gap: 8px; margin-bottom: 14px; }
-  .url-row input { margin-bottom: 0; flex: 1; }
-  .url-row .btn { width: auto; padding: 12px 16px; margin: 0; min-height: 46px; }
-  .share-box { background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 20px; border-radius: 12px; font-size: 15px; font-weight: 700; background: var(--surface-2); border: 1px solid var(--border); color: var(--text); min-height: 50px; width: 100%; margin-top: 8px; }
+.btn:active { transform: scale(0.98); opacity: 0.9; }
+.btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+.btn.ghost { background: transparent; }
+.btn.danger { background: var(--danger); color: #fff; border-color: var(--danger); }
+.btn.small { width: auto; padding: 8px 14px; min-height: 38px; font-size: 13px; margin: 0; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.room-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+.back-btn { width: 40px; height: 40px; border-radius: 50%; background: var(--surface); border: 1px solid var(--border); font-size: 18px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--text-2); }
+.room-info { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; }
+.room-info-avatar { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+.room-info-text { flex: 1; min-width: 0; }
+.room-info-name { font-size: 16px; font-weight: 700; word-wrap: break-word; }
+.room-info-meta { font-size: 11px; color: var(--text-2); }
+.sync-status { font-size: 11px; color: var(--success); font-weight: 700; }
+.host-time { font-size: 12px; color: var(--accent); margin-top: 4px; font-weight: 700; }
+.room-buttons { display: flex; gap: 6px; flex-shrink: 0; align-items: center; }
+.video-box { background: #000; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; aspect-ratio: 16/9; margin-bottom: 14px; display: flex; align-items: center; justify-content: center; position: relative; }
+.video-box iframe, .video-box video { width: 100%; height: 100%; border: none; }
+.video-placeholder { color: #666; text-align: center; padding: 20px; font-size: 14px; line-height: 1.6; }
+.video-placeholder .big-icon { font-size: 60px; margin-bottom: 10px; }
+.countdown-overlay { display: none; position: absolute; inset: 0; z-index: 20; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; font-size: 120px; font-weight: 900; color: #fff; text-shadow: 0 0 40px rgba(111,82,232,0.8); }
+.play-overlay { display: none; position: absolute; inset: 0; z-index: 20; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; flex-direction: column; gap: 16px; pointer-events: none; }
+.play-overlay .arrow { font-size: 80px; }
+.play-overlay .text { font-size: 24px; font-weight: 800; color: #fff; }
+.lock-overlay { display: none; position: absolute; inset: 0; z-index: 30; background: rgba(0,0,0,0.85); align-items: center; justify-content: center; flex-direction: column; gap: 16px; padding: 20px; text-align: center; }
+    .share-box { background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
   .share-box-text { flex: 1; min-width: 150px; font-size: 12px; color: var(--text-2); word-break: break-all; }
   .share-box-text b { color: var(--text); }
   .chat-block { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px; }
@@ -108,11 +114,19 @@
   .chat-msg-name { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
   .chat-msg-text { font-size: 14px; word-wrap: break-word; }
   .chat-msg-time { font-size: 10px; color: var(--text-3); margin-top: 3px; }
-  .chat-msg-hide { background: none; border: none; color: var(--text-3); font-size: 14px; padding: 4px; cursor: pointer; flex-shrink: 0; }
-  .chat-msg-hide:active { transform: scale(0.9); color: var(--danger); }
+  .chat-msg-actions { display: flex; flex-direction: column; gap: 4px; flex-shrink: 0; }
+  .chat-msg-btn { background: none; border: none; color: var(--text-3); font-size: 14px; padding: 4px; cursor: pointer; }
+  .chat-msg-btn:active { transform: scale(0.9); color: var(--danger); }
+  .chat-msg-btn.dm:active { color: var(--accent); }
   .chat-input-row { display: flex; gap: 8px; }
   .chat-input-row input { margin-bottom: 0; flex: 1; }
   .chat-input-row .btn { width: auto; padding: 12px 18px; margin: 0; min-height: 46px; }
+  .dm-box { display: flex; flex-direction: column; height: 50vh; min-height: 300px; }
+  .dm-messages { flex: 1; overflow-y: auto; padding: 8px; background: var(--bg); border-radius: 12px; margin-bottom: 10px; }
+  .dm-msg { max-width: 80%; padding: 8px 12px; border-radius: 14px; margin-bottom: 6px; font-size: 14px; word-wrap: break-word; }
+  .dm-msg.mine { background: var(--accent); color: #fff; margin-left: auto; border-bottom-right-radius: 4px; }
+  .dm-msg.their { background: var(--surface-2); color: var(--text); margin-right: auto; border-bottom-left-radius: 4px; }
+  .dm-time { font-size: 10px; opacity: 0.6; margin-top: 3px; }
   .toast-root { position: fixed; left: 0; right: 0; bottom: 130px; z-index: 200; display: flex; flex-direction: column; align-items: center; gap: 8px; pointer-events: none; }
   .toast { background: var(--surface-2); color: var(--text); padding: 12px 20px; border-radius: 24px; font-size: 14px; font-weight: 600; max-width: 90%; border: 1px solid var(--border); animation: toastIn 0.25s; }
   .toast.error { background: var(--danger); color: #fff; border-color: var(--danger); }
@@ -124,6 +138,7 @@
   .help-content p { margin-bottom: 8px; }
   .help-content .tip { background: var(--surface-2); border-left: 3px solid var(--accent); padding: 12px; border-radius: 6px; margin: 10px 0; font-size: 13px; }
   .hidden-note { font-size: 12px; color: var(--text-3); font-style: italic; padding: 8px; text-align: center; }
+  .hidden { display: none !important; }
 </style>
 </head>
 <body>
@@ -166,15 +181,30 @@
 const SUPABASE_URL = 'https://aritoekxhdmskwiejqve.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyaXRvZWt4aGRtc2t3aWVqcXZlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE1MDA3MjAsImV4cCI6MjEwNzA3NjcyMH0.smtTA67icGqn0vD9fbDzyc8bdKqz_O-b7D1M3bgSqm4';
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
 const LS_MY_ID = 'smotrim_my_id';
 const LS_MY_NAME = 'smotrim_my_name';
 const LS_MY_AVATAR = 'smotrim_my_avatar';
 const LS_VIEW = 'smotrim_view';
 const LS_LAST_CLEANUP = 'smotrim_last_cleanup';
+const LS_INVIDIOUS = 'smotrim_invidious';
+
+const INVIDIOUS_INSTANCES = [
+  'https://inv.nadeko.net',
+  'https://invidious.nerdvpn.de',
+  'https://invidious.tiekoetter.com',
+  'https://invidious.f5.si',
+  'https://yewtu.be'
+];
+
+let currentInvidious = localStorage.getItem(LS_INVIDIOUS) || INVIDIOUS_INSTANCES[0];
+
 let myId = localStorage.getItem(LS_MY_ID);
 if (!myId) { myId = 'u_' + Math.random().toString(36).slice(2, 10); localStorage.setItem(LS_MY_ID, myId); }
+
 const AVATARS = ['🎬','🍿','🎥','📺','🎭','🎨','🌟','🌙','☀️','🔥','💎','🎪','🎯','🎲','🎸','🎤','📷','🎮','🚀','🌈'];
 const COLORS = ['#ff6b9d','#ffa06b','#ffd93d','#6bcf7f','#6bc5ff','#a06bff','#ff6b6b','#5eead4','#f472b6','#93c5fd','#fcd34d','#86efac'];
+
 let rooms = [];
 let currentRoom = null;
 let currentRoomMessages = [];
@@ -182,11 +212,14 @@ let viewMode = localStorage.getItem(LS_VIEW) || 'bubbles';
 let selectedAvatar = AVATARS[0];
 let selectedColor = COLORS[0];
 let roomChannel = null;
+let dmChannel = null;
 let ytPlayer = null;
 let ytPlayerReady = false;
 let suppressSync = false;
 let syncInterval = null;
+let countdownInterval = null;
 let isHost = false;
+
 function esc(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function nowTime() { const d = new Date(); return d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0'); }
 function toast(msg, type) {
@@ -216,15 +249,24 @@ function getDaysLeft(expiresAt) {
   const diff = new Date(expiresAt) - new Date();
   return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
 }
+async function sha256(text) {
+  const buf = new TextEncoder().encode(text);
+  const hash = await crypto.subtle.digest('SHA-256', buf);
+  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+function generateInviteCode() {
+  return 'inv_' + Math.random().toString(36).slice(2, 12);
+}
   function openHelp() {
   openSheet(
     '<h2>📖 Как пользоваться</h2><div class="help-content">' +
-    '<h3>🎬 Создать комнату</h3><p>Нажми <b>🎬 внизу</b>. Задай название, аватар, цвет. Комната живёт <b>10 дней</b>.</p>' +
-    '<h3>📺 Видео</h3><p>YouTube (включая live), RuTube, VK Video, Twitch, Dailymotion, Vimeo, Одноклассники, Telegram, .mp4, .m3u8.</p>' +
-    '<h3>⏱ Продление</h3><p>Хост может продлить на <b>10 дней</b>. Кнопка активна <b>за 2 дня</b> до истечения.</p>' +
-    '<h3>💬 Чат</h3><p>Сообщения хранятся <b>30 дней</b>.</p>' +
-    '<h3>🗑 Удаление</h3><p>Хост может удалить комнату сейчас — со всей информацией.</p>' +
-    '<div class="tip">Комната = 10 дней. Хочешь дольше — продлевай.</div></div>' +
+    '<h3>🎬 Создать комнату</h3><p>Нажми <b>🎬 внизу</b>. Комната живёт <b>10 дней</b>.</p>' +
+    '<h3>🔒 Приватность</h3><p>Комната может быть: публичная, скрытая или с паролем.</p>' +
+    '<h3>📺 Видео</h3><p>Хост выбирает видео через <b>📺</b>. YouTube через Invidious, RuTube, VK, Twitch, .mp4, .m3u8.</p>' +
+    '<h3>🔢 Счётчик</h3><p>5 секунд перед стартом. YouTube/.mp4 — автостарт. VK/RuTube — «Нажми Play».</p>' +
+    '<h3>💬 Чат и ЛС</h3><p>Общий чат + личные сообщения — нажми <b>💬</b> рядом с сообщением.</p>' +
+    '<h3>👑 Хост</h3><p>Может менять видео, продлить ⏱, удалить 🗑.</p>' +
+    '<div class="tip">Гость может управлять плеером, но не может вставить своё видео.</div></div>' +
     '<button class="btn ghost" style="margin-top:16px;" onclick="closeSheet()">Закрыть</button>'
   );
 }
@@ -239,13 +281,16 @@ async function cleanupRooms() {
 }
 async function loadRooms() {
   try {
-    const { data, error } = await sb.from('rooms').select('*').order('created_at', { ascending: false });
+    const { data, error } = await sb.from('rooms')
+      .select('*')
+      .or('is_hidden.eq.false,host_id.eq.' + myId)
+      .order('created_at', { ascending: false });
     if (error) { console.error(error); toast('Ошибка: ' + error.message, 'error'); return; }
     rooms = data || [];
     renderRooms();
   } catch (e) { console.error(e); }
-}
-function renderRooms() {
+  }
+  function renderRooms() {
   const area = document.getElementById('roomsArea');
   const empty = document.getElementById('emptyState');
   if (rooms.length === 0) { area.innerHTML = ''; empty.style.display = 'block'; return; }
@@ -255,8 +300,9 @@ function renderRooms() {
     area.innerHTML = rooms.map(r => {
       const days = getDaysLeft(r.expires_at);
       const warning = (days !== null && days <= 3) ? '<div class="bubble-warning">⏱</div>' : '';
+      const badge = r.password_hash ? '<div class="bubble-badge">🔒</div>' : (r.is_hidden ? '<div class="bubble-badge">👁</div>' : '');
       return '<div class="room-bubble" onclick="enterRoom(\'' + esc(r.id) + '\')">' +
-        '<div class="bubble-circle" style="background:' + esc(r.color || '#6f52e8') + ';">' + (r.avatar || '🎬') + warning + '</div>' +
+        '<div class="bubble-circle" style="background:' + esc(r.color || '#6f52e8') + ';">' + (r.avatar || '🎬') + warning + badge + '</div>' +
         '<div class="bubble-name">' + esc(r.name) + '</div></div>';
     }).join('');
   } else {
@@ -264,14 +310,15 @@ function renderRooms() {
     area.innerHTML = rooms.map(r => {
       const days = getDaysLeft(r.expires_at);
       const warning = (days !== null && days <= 3) ? '<div class="room-tile-warning">⏱</div>' : '';
+      const badge = r.password_hash ? '<div class="room-tile-badge">🔒</div>' : (r.is_hidden ? '<div class="room-tile-badge">👁</div>' : '');
       return '<div class="room-tile" style="background:' + esc(r.color || '#6f52e8') + ';" onclick="enterRoom(\'' + esc(r.id) + '\')">' +
-        warning +
+        warning + badge +
         '<div class="room-tile-avatar">' + (r.avatar || '🎬') + '</div>' +
         '<div class="room-tile-name">' + esc(r.name) + '</div></div>';
     }).join('');
   }
-  }
-  function generateRoomName(baseName) {
+}
+function generateRoomName(baseName) {
   const base = baseName.trim();
   if (!base) return '';
   const existing = rooms.filter(r => r.name === base || r.name.startsWith(base + ' '));
@@ -285,8 +332,8 @@ function renderRooms() {
     }
   });
   return base + ' ' + (maxNum + 1);
-}
-function openCreateRoom() {
+  }
+  function openCreateRoom() {
   selectedAvatar = AVATARS[Math.floor(Math.random() * AVATARS.length)];
   selectedColor = COLORS[Math.floor(Math.random() * COLORS.length)];
   const avatarsHtml = AVATARS.map(a => '<button class="avatar-option ' + (a === selectedAvatar ? 'selected' : '') + '" data-av="' + a + '" onclick="selectAvatar(\'' + a + '\')">' + a + '</button>').join('');
@@ -297,10 +344,25 @@ function openCreateRoom() {
     '<input id="roomName" class="input" placeholder="Например: Кино" maxlength="20">' +
     '<label class="field-label">Аватар</label><div class="avatar-picker">' + avatarsHtml + '</div>' +
     '<label class="field-label">Цвет</label><div class="color-picker">' + colorsHtml + '</div>' +
+    '<label class="field-label">🔒 Приватность</label>' +
+    '<select id="roomPrivacy" class="select">' +
+      '<option value="public">🌐 Публичная — видна всем</option>' +
+      '<option value="hidden">👁 Скрытая — только по ссылке</option>' +
+      '<option value="password">🔒 С паролем</option>' +
+    '</select>' +
+    '<input id="roomPassword" class="input" placeholder="Пароль комнаты" type="password" style="display:none;">' +
     '<button class="btn primary" onclick="createRoom()">Создать комнату</button>' +
     '<button class="btn ghost" onclick="closeSheet()">Отмена</button>'
   );
-  setTimeout(() => { const i = document.getElementById('roomName'); if (i) i.focus(); }, 200);
+  setTimeout(() => {
+    const i = document.getElementById('roomName');
+    if (i) i.focus();
+    const sel = document.getElementById('roomPrivacy');
+    if (sel) sel.addEventListener('change', e => {
+      const passField = document.getElementById('roomPassword');
+      if (passField) passField.style.display = e.target.value === 'password' ? 'block' : 'none';
+    });
+  }, 200);
 }
 function selectAvatar(a) { selectedAvatar = a; document.querySelectorAll('.avatar-option').forEach(el => el.classList.toggle('selected', el.dataset.av === a)); }
 function selectColor(c) { selectedColor = c; document.querySelectorAll('.color-option').forEach(el => el.classList.toggle('selected', el.dataset.col === c)); }
@@ -308,52 +370,87 @@ async function createRoom() {
   const rawName = document.getElementById('roomName').value.trim();
   if (!rawName) return toast('Введи название', 'error');
   if (rawName.length > 20) return toast('Слишком длинное', 'error');
+  const privacy = document.getElementById('roomPrivacy').value;
+  const password = document.getElementById('roomPassword').value.trim();
+  if (privacy === 'password' && !password) return toast('Введи пароль', 'error');
   const finalName = generateRoomName(rawName);
   const roomId = 'room_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
   const expiresAt = new Date();
   expiresAt.setDate(expiresAt.getDate() + 10);
+  const isHidden = privacy === 'hidden' || privacy === 'password';
+  const passwordHash = password ? await sha256(password) : null;
+  const inviteCode = isHidden ? generateInviteCode() : null;
   const { error } = await sb.from('rooms').insert({
     id: roomId, name: finalName, avatar: selectedAvatar, color: selectedColor,
     host_id: myId, video_url: null, sync_state: {},
-    expires_at: expiresAt.toISOString()
+    expires_at: expiresAt.toISOString(),
+    password_hash: passwordHash,
+    invite_code: inviteCode,
+    is_hidden: isHidden,
+    is_private: isHidden
   });
   if (error) { toast('Ошибка: ' + error.message, 'error'); return; }
   closeSheet();
   toast('Комната «' + finalName + '» создана');
   await loadRooms();
-  setTimeout(() => enterRoom(roomId), 400);
+  setTimeout(() => enterRoom(roomId, inviteCode), 400);
   }
   function parseVideoUrl(url) {
   if (!url) return null;
   url = url.trim();
   if (!url.match(/^https?:\/\//i)) return null;
   const yt = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/|live\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
-  if (yt) return { type: 'youtube', videoId: yt[1], embeddable: true };
+  if (yt) return { type: 'invidious', videoId: yt[1], src: currentInvidious + '/embed/' + yt[1], embeddable: true };
   const rt = url.match(/rutube\.ru\/(?:video|play\/embed|live)\/([a-zA-Z0-9]+)/);
-  if (rt) return { type: 'iframe', src: 'https://rutube.ru/play/embed/' + rt[1], embeddable: true };
+  if (rt) return { type: 'iframe', src: 'https://rutube.ru/play/embed/' + rt[1], embeddable: true, nosync: true };
   const vk = url.match(/(?:vk\.com|vkvideo\.ru)\/video(-?\d+)_(\d+)/);
-  if (vk) return { type: 'iframe', src: 'https://vk.com/video_ext.php?oid=' + vk[1] + '&id=' + vk[2] + '&autoplay=1', embeddable: true };
+  if (vk) return { type: 'iframe', src: 'https://vk.com/video_ext.php?oid=' + vk[1] + '&id=' + vk[2] + '&autoplay=0', embeddable: true, nosync: true };
   const dm = url.match(/dailymotion\.com\/video\/([a-zA-Z0-9]+)/);
-  if (dm) return { type: 'iframe', src: 'https://www.dailymotion.com/embed/video/' + dm[1], embeddable: true };
+  if (dm) return { type: 'iframe', src: 'https://www.dailymotion.com/embed/video/' + dm[1], embeddable: true, nosync: true };
   const vm = url.match(/vimeo\.com\/(\d+)/);
-  if (vm) return { type: 'iframe', src: 'https://player.vimeo.com/video/' + vm[1], embeddable: true };
+  if (vm) return { type: 'iframe', src: 'https://player.vimeo.com/video/' + vm[1], embeddable: true, nosync: true };
   const twCh = url.match(/twitch\.tv\/([a-zA-Z0-9_]+)$/);
-  if (twCh) return { type: 'iframe', src: 'https://player.twitch.tv/?channel=' + twCh[1] + '&parent=' + window.location.hostname, embeddable: true };
-  const twClip = url.match(/clips\.twitch\.tv\/([a-zA-Z0-9_-]+)/);
-  if (twClip) return { type: 'iframe', src: 'https://clips.twitch.tv/embed?clip=' + twClip[1] + '&parent=' + window.location.hostname, embeddable: true };
+  if (twCh) return { type: 'iframe', src: 'https://player.twitch.tv/?channel=' + twCh[1] + '&parent=' + window.location.hostname, embeddable: true, nosync: true };
   const ok = url.match(/ok\.ru\/video\/(\d+)/);
-  if (ok) return { type: 'iframe', src: 'https://ok.ru/videoembed/' + ok[1], embeddable: true };
+  if (ok) return { type: 'iframe', src: 'https://ok.ru/videoembed/' + ok[1], embeddable: true, nosync: true };
   const tg = url.match(/t\.me\/([a-zA-Z0-9_]+)\/(\d+)/);
-  if (tg) return { type: 'iframe', src: 'https://t.me/' + tg[1] + '/' + tg[2] + '?embed=1', embeddable: true };
+  if (tg) return { type: 'iframe', src: 'https://t.me/' + tg[1] + '/' + tg[2] + '?embed=1', embeddable: true, nosync: true };
   if (url.match(/\.(mp4|webm|ogg|mov|m4v)(\?|$)/i)) return { type: 'html5', src: url, embeddable: true };
   if (url.match(/\.m3u8(\?|$)/i)) return { type: 'hls', src: url, embeddable: true };
-  return { type: 'iframe', src: url, embeddable: false };
-  }
-  async function enterRoom(roomId) {
+  return { type: 'iframe', src: url, embeddable: false, nosync: true };
+}
+async function enterRoom(roomId, inviteCode) {
   const room = rooms.find(r => r.id === roomId);
   if (!room) return toast('Комната не найдена', 'error');
+  
+  // Проверка пароля
+  if (room.password_hash) {
+    const savedPass = sessionStorage.getItem('room_pass_' + roomId);
+    if (!savedPass) {
+      const pass = prompt('🔒 Введите пароль комнаты:');
+      if (!pass) return;
+      const hash = await sha256(pass);
+      if (hash !== room.password_hash) {
+        return toast('Неверный пароль', 'error');
+      }
+      sessionStorage.setItem('room_pass_' + roomId, hash);
+    }
+  }
+  
+  // Проверка invite-кода
+  if (room.invite_code && room.host_id !== myId) {
+    const params = new URLSearchParams(window.location.search);
+    const urlInvite = params.get('invite');
+    const savedInvite = sessionStorage.getItem('room_invite_' + roomId);
+    if (urlInvite !== room.invite_code && savedInvite !== '1') {
+      const entered = prompt('🔗 Введите код приглашения:');
+      if (entered !== room.invite_code) return toast('Неверный код', 'error');
+    }
+    sessionStorage.setItem('room_invite_' + roomId, '1');
+  }
+  
   currentRoom = room;
-  isHost = (room.host_id === myId) || !room.host_id;
+  isHost = (room.host_id === myId);
   const days = getDaysLeft(room.expires_at);
   if (isHost && days !== null && days <= 3) {
     setTimeout(() => toast('⚠️ Комната удалится через ' + days + ' дн.', 'error'), 500);
@@ -367,57 +464,71 @@ async function createRoom() {
     .on('postgres_changes', { event: '*', schema: 'public', table: 'room_messages', filter: 'room_id=eq.' + roomId }, () => loadRoomMessages(roomId))
     .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'rooms', filter: 'id=eq.' + roomId }, payload => {
       if (currentRoom && currentRoom.id === roomId) {
+        const oldVideo = currentRoom.video_url;
         currentRoom = payload.new;
-        applySyncState();
-        renderRoom();
+        if (oldVideo !== payload.new.video_url) renderRoom();
+        else if (!isHost) {
+          const vd = parseVideoUrl(currentRoom.video_url);
+          if (vd && (vd.type === 'invidious' || vd.type === 'html5' || vd.type === 'hls')) applySyncState();
+        }
       }
     })
     .subscribe();
-}
-function renderRoom() {
+  if (room.countdown_start) {
+    const diff = Math.ceil((new Date(room.countdown_start).getTime() - Date.now()) / 1000);
+    if (diff > 0) startCountdown();
+    else if (diff > -10) {
+      const p = document.getElementById('playOverlay');
+      if (p) { p.style.display = 'flex'; setTimeout(() => p.style.display = 'none', 3000); }
+    }
+  }
+  }
+  function renderRoom() {
   const r = currentRoom;
   if (!r) return;
   const videoData = parseVideoUrl(r.video_url);
   let videoHtml = '';
   if (!videoData) {
     videoHtml = '<div class="video-placeholder"><div class="big-icon">📺</div>Вставь ссылку на видео<br>YouTube · RuTube · VK · Twitch · .mp4</div>';
-  } else if (videoData.type === 'youtube') {
-    videoHtml = '<div id="ytPlayer"></div>';
+  } else if (videoData.type === 'invidious') {
+    videoHtml = '<iframe id="videoPlayer" src="' + esc(videoData.src) + '" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>';
   } else if (videoData.type === 'html5') {
-    videoHtml = '<video id="videoPlayer" src="' + esc(videoData.src) + '" controls autoplay></video>';
+    videoHtml = '<video id="videoPlayer" src="' + esc(videoData.src) + '" controls></video>';
   } else if (videoData.type === 'hls') {
-    videoHtml = '<video id="videoPlayer" controls autoplay></video>';
+    videoHtml = '<video id="videoPlayer" controls></video>';
   } else if (videoData.embeddable) {
-    videoHtml = '<iframe id="videoPlayer" src="' + esc(videoData.src) + '" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen></iframe>';
+    videoHtml = '<iframe id="videoPlayer" src="' + esc(videoData.src) + '" allow="encrypted-media; fullscreen; picture-in-picture" allowfullscreen></iframe>';
   } else {
     videoHtml = '<div style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding:30px; color:#888; text-align:center; height:100%;">' +
       '<div style="font-size:60px; margin-bottom:16px;">🔗</div>' +
-      '<div style="font-size:14px; margin-bottom:20px; line-height:1.5;">Этот сайт нельзя встроить.<br>Открой в новом окне.</div>' +
-      '<a href="' + esc(r.video_url) + '" target="_blank" rel="noopener" class="btn primary small" style="text-decoration:none; display:inline-flex; align-items:center; gap:6px; padding:12px 24px; font-size:15px;">▶ Открыть видео</a>' +
+      '<div style="font-size:14px; margin-bottom:20px;">Этот сайт нельзя встроить.</div>' +
+      '<a href="' + esc(r.video_url) + '" target="_blank" rel="noopener" class="btn primary small" style="text-decoration:none;">▶ Открыть видео</a>' +
       '</div>';
   }
   const days = getDaysLeft(r.expires_at);
   const extendBtn = isHost ? getExtendButtonHtml(r) : '';
   const deleteBtn = isHost ? '<button class="btn small ghost" onclick="deleteRoom()" style="padding:8px 12px; min-height:36px; color:var(--danger); font-size:18px;">🗑</button>' : '';
+  const instanceBtn = (r.video_url && videoData && videoData.type === 'invidious') ? '<button class="btn small" onclick="openInvidiousPicker()" style="padding:8px 12px; min-height:36px; font-size:16px;">🌐</button>' : '';
   document.getElementById('roomContent').innerHTML =
     '<div class="room-header">' +
       '<button class="back-btn" onclick="leaveRoom()">←</button>' +
       '<div class="room-info">' +
         '<div class="room-info-avatar" style="background:' + esc(r.color || '#6f52e8') + ';">' + (r.avatar || '🎬') + '</div>' +
         '<div class="room-info-text">' +
-          '<div class="room-info-name">' + esc(r.name) + '</div>' +
+          '<div class="room-info-name">' + esc(r.name) + (r.password_hash ? ' 🔒' : (r.is_hidden ? ' 👁' : '')) + '</div>' +
           '<div class="room-info-meta">' + (isHost ? '👑 Хост' : '👤 Гость') + ' · <span class="sync-status">🔄 Синхрон</span>' + (days !== null ? ' · ⏱ ' + days + ' дн.' : '') + '</div>' +
+          (!isHost ? '<div class="host-time" id="hostTime"></div>' : '') +
         '</div>' +
       '</div>' +
-      '<div class="room-buttons">' + extendBtn + deleteBtn + '</div>' +
+      '<div class="room-buttons">' + instanceBtn + extendBtn + deleteBtn + '</div>' +
     '</div>' +
-    '<div class="video-box">' + videoHtml + '</div>' +
-    '<div class="url-row">' +
-      '<input id="videoUrl" class="input" placeholder="Ссылка на видео" value="' + esc(r.video_url || '') + '">' +
-      '<button class="btn primary small" onclick="saveVideoUrl()">▶</button>' +
+    '<div class="video-box">' + videoHtml +
+      '<div id="countdownOverlay" class="countdown-overlay"></div>' +
+      '<div id="playOverlay" class="play-overlay"><div class="arrow">▶</div><div class="text">Нажми Play!</div></div>' +
     '</div>' +
+    (isHost ? '<button class="btn primary block" onclick="openVideoModal()" style="margin-bottom:14px;">📺 ' + (r.video_url ? 'Заменить видео' : 'Выбрать видео') + '</button>' : '') +
     '<div class="share-box">' +
-      '<div class="share-box-text"><b>Ссылка:</b> ' + esc(window.location.origin + window.location.pathname + '?room=' + r.id) + '</div>' +
+      '<div class="share-box-text"><b>Ссылка:</b> ' + esc(window.location.origin + window.location.pathname + '?room=' + r.id + (r.invite_code ? '&invite=' + r.invite_code : '')) + '</div>' +
       '<button class="btn small" onclick="copyShareLink()">🔗</button>' +
     '</div>' +
     '<div class="chat-block">' +
@@ -431,34 +542,113 @@ function renderRoom() {
     const inp = document.getElementById('chatInput');
     if (inp) inp.addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
   }, 100);
-  if (videoData && videoData.type === 'youtube') initYouTube(videoData.videoId);
+  if (videoData && videoData.type === 'invidious') initInvidious(videoData.src);
   if (videoData && videoData.type === 'html5') initHtml5Sync();
   if (videoData && videoData.type === 'hls') initHls();
   renderMessages();
   startSyncLoop();
-  }
-  function initYouTube(videoId) {
-  const check = setInterval(() => {
-    if (window.YT && window.YT.Player) {
-      clearInterval(check);
-      ytPlayer = new window.YT.Player('ytPlayer', {
-        videoId: videoId,
-        playerVars: { autoplay: 1, controls: 1, enablejsapi: 1, origin: window.location.origin },
-        events: {
-          'onReady': () => { ytPlayerReady = true; applySyncState(); },
-          'onStateChange': onYtStateChange
-        }
-      });
+}
+function initInvidious(src) {
+  // Invidious — это iframe, синхрон через postMessage обычно не работает
+  // Просто показываем видео. Синхрон — только для YouTube через API, но Invidious его не даёт
+  // Поэтому Invidious работает как VK — «Нажми Play»
+}
+function startCountdown() {
+  if (countdownInterval) clearInterval(countdownInterval);
+  const overlay = document.getElementById('countdownOverlay');
+  if (!overlay) return;
+  countdownInterval = setInterval(() => {
+    const startTime = new Date(currentRoom.countdown_start).getTime();
+    const diff = Math.ceil((startTime - Date.now()) / 1000);
+    if (diff > 0) {
+      overlay.textContent = diff;
+      overlay.style.display = 'flex';
+    } else {
+      overlay.style.display = 'none';
+      clearInterval(countdownInterval);
+      countdownInterval = null;
+      handleStart();
     }
   }, 100);
 }
-function onYtStateChange(event) {
-  if (suppressSync || !ytPlayer || !currentRoom) return;
-  const state = event.data;
-  const time = ytPlayer.getCurrentTime ? ytPlayer.getCurrentTime() : 0;
-  if (state === 1) updateSync({ playing: true, time: time });
-  else if (state === 2) updateSync({ playing: false, time: time });
-  else if (state === 0) updateSync({ playing: false, time: 0, ended: true });
+function handleStart() {
+  const vd = parseVideoUrl(currentRoom.video_url);
+  if (!vd) return;
+  if (vd.type === 'html5' || vd.type === 'hls') {
+    const v = document.getElementById('videoPlayer');
+    if (v && v.tagName === 'VIDEO') {
+      v.currentTime = 0;
+      v.play().catch(() => showPlayOverlay());
+    }
+    return;
+  }
+  showPlayOverlay();
+}
+function showPlayOverlay() {
+  const p = document.getElementById('playOverlay');
+  if (p) { p.style.display = 'flex'; setTimeout(() => p.style.display = 'none', 3000); }
+  }
+  function openVideoModal() {
+  openSheet(
+    '<h2>📺 Выбрать видео</h2>' +
+    '<p class="sub">Вставь ссылку. Все увидят это видео.</p>' +
+    '<label class="field-label">Ссылка на видео</label>' +
+    '<input id="videoUrlInput" class="input" placeholder="https://..." value="' + esc(currentRoom.video_url || '') + '">' +
+    '<div class="hint" style="font-size:12px; color:var(--text-3); margin-bottom:12px;">YouTube (через Invidious) · RuTube · VK · Twitch · .mp4 · .m3u8</div>' +
+    '<button class="btn primary block" onclick="saveVideoFromModal()">▶ Старт (5 сек)</button>' +
+    '<button class="btn ghost block" onclick="closeSheet()">Отмена</button>'
+  );
+  setTimeout(() => { const i = document.getElementById('videoUrlInput'); if (i) i.focus(); }, 200);
+}
+async function saveVideoFromModal() {
+  const url = document.getElementById('videoUrlInput').value.trim();
+  if (!url) return toast('Вставь ссылку', 'error');
+  if (!url.match(/^https?:\/\//i)) return toast('Ссылка должна начинаться с http:// или https://', 'error');
+  const data = parseVideoUrl(url);
+  if (!data) return toast('Не получилось распознать ссылку', 'error');
+  const { data: updated, error } = await sb.rpc('start_video_countdown', {
+    room_id_param: currentRoom.id,
+    video_url_param: url,
+    host_id_param: myId
+  });
+  if (error) { toast('Ошибка: ' + error.message, 'error'); return; }
+  currentRoom.video_url = url;
+  currentRoom.countdown_start = updated.countdown_start;
+  isHost = true;
+  closeSheet();
+  await logActivity('video');
+  renderRoom();
+  startCountdown();
+  toast('Старт через 5 секунд', 'success');
+}
+async function openInvidiousPicker() {
+  toast('Проверяю сервера...');
+  const working = [];
+  const checking = INVIDIOUS_INSTANCES.map(async (url) => {
+    try {
+      const res = await fetch(url + '/api/v1/stats', { signal: AbortSignal.timeout(3000), method: 'HEAD' });
+      if (res.ok) working.push(url);
+    } catch(e) {}
+  });
+  await Promise.all(checking);
+  if (working.length === 0) return toast('Все сервера недоступны. Попробуй RuTube/VK.', 'error');
+  const listHtml = working.map(url => {
+    const active = url === currentInvidious ? '✅ ' : '';
+    return '<button class="btn ghost block" style="text-align:left; justify-content:flex-start; margin-bottom:6px;" onclick="switchInvidious(\'' + url + '\')">' + active + new URL(url).hostname + '</button>';
+  }).join('');
+  openSheet(
+    '<h2>🌐 Выбрать сервер</h2>' +
+    '<p class="sub">Работает в РФ. Если не грузится — попробуй другой.</p>' +
+    listHtml +
+    '<button class="btn ghost block" onclick="closeSheet()">Отмена</button>'
+  );
+}
+function switchInvidious(url) {
+  currentInvidious = url;
+  localStorage.setItem(LS_INVIDIOUS, url);
+  toast('Сервер: ' + new URL(url).hostname);
+  closeSheet();
+  if (currentRoom && currentRoom.video_url) renderRoom();
 }
 function initHtml5Sync() {
   const v = document.getElementById('videoPlayer');
@@ -474,10 +664,9 @@ function initHls() {
     const hls = new window.Hls();
     hls.loadSource(currentRoom.video_url);
     hls.attachMedia(v);
-    hls.on(window.Hls.Events.MANIFEST_PARSED, () => v.play().catch(()=>{}));
+    hls.on(window.Hls.Events.MANIFEST_PARSED, () => {});
   } else if (v.canPlayType('application/vnd.apple.mpegurl')) {
     v.src = currentRoom.video_url;
-    v.play().catch(()=>{});
   }
 }
 async function updateSync(data) {
@@ -491,14 +680,14 @@ function applySyncState() {
   const s = currentRoom.sync_state;
   if (!s.updated) return;
   if (Date.now() - s.updated > 15000) return;
-  suppressSync = true;
-  if (ytPlayer && ytPlayerReady && ytPlayer.getPlayerState) {
-    const targetTime = (s.time || 0) + ((Date.now() - s.updated) / 1000);
-    const currentTime = ytPlayer.getCurrentTime ? ytPlayer.getCurrentTime() : 0;
-    if (Math.abs(currentTime - targetTime) > 3) ytPlayer.seekTo(targetTime, true);
-    if (s.playing && ytPlayer.getPlayerState() !== 1) ytPlayer.playVideo();
-    if (!s.playing && ytPlayer.getPlayerState() === 1) ytPlayer.pauseVideo();
+  const hostTimeEl = document.getElementById('hostTime');
+  if (hostTimeEl && !isHost && s.time !== undefined) {
+    const total = Math.floor(s.time);
+    const m = Math.floor(total / 60);
+    const sec = total % 60;
+    hostTimeEl.innerHTML = '🎬 Хост: ' + m + ':' + sec.toString().padStart(2, '0') + (s.playing ? ' ▶' : ' ⏸');
   }
+  suppressSync = true;
   const v = document.getElementById('videoPlayer');
   if (v && v.tagName === 'VIDEO') {
     const targetTime = (s.time || 0) + ((Date.now() - s.updated) / 1000);
@@ -513,61 +702,33 @@ function startSyncLoop() {
   syncInterval = setInterval(() => {
     if (!currentRoom) return;
     if (isHost) {
-      if (ytPlayer && ytPlayerReady && ytPlayer.getPlayerState) {
-        const st = ytPlayer.getPlayerState();
-        const t = ytPlayer.getCurrentTime ? ytPlayer.getCurrentTime() : 0;
-        updateSync({ playing: st === 1, time: t });
-      }
       const v = document.getElementById('videoPlayer');
       if (v && v.tagName === 'VIDEO') updateSync({ playing: !v.paused, time: v.currentTime });
     }
-  }, 3000);
-  }
-  function leaveRoom() {
+  }, 2000);
+}
+function leaveRoom() {
   if (roomChannel) { sb.removeChannel(roomChannel); roomChannel = null; }
+  if (dmChannel) { sb.removeChannel(dmChannel); dmChannel = null; }
   if (syncInterval) { clearInterval(syncInterval); syncInterval = null; }
+  if (countdownInterval) { clearInterval(countdownInterval); countdownInterval = null; }
   if (ytPlayer && ytPlayer.destroy) try { ytPlayer.destroy(); } catch(e){}
   ytPlayer = null; ytPlayerReady = false;
   currentRoom = null;
   currentRoomMessages = [];
   showScreen('home');
-}
-async function logActivity(action) {
+  }
+  async function logActivity(action) {
   try {
-    await sb.from('user_activity').insert({
-      user_id: myId,
-      room_id: currentRoom ? currentRoom.id : null,
-      action: action
-    });
+    await sb.from('user_activity').insert({ user_id: myId, room_id: currentRoom ? currentRoom.id : null, action: action });
   } catch(e) {}
-}
-async function saveVideoUrl() {
-  const url = document.getElementById('videoUrl').value.trim();
-  if (!url) return toast('Вставь ссылку', 'error');
-  if (!url.match(/^https?:\/\//i)) return toast('Ссылка должна начинаться с http:// или https://', 'error');
-  const data = parseVideoUrl(url);
-  if (!data) return toast('Не получилось распознать ссылку', 'error');
-  const syncState = { playing: true, time: 0, updated: Date.now() };
-  const { error } = await sb.from('rooms').update({
-    video_url: url, sync_state: syncState, host_id: myId
-  }).eq('id', currentRoom.id);
-  if (error) { toast('Ошибка: ' + error.message, 'error'); return; }
-  currentRoom.video_url = url;
-  currentRoom.sync_state = syncState;
-  currentRoom.host_id = myId;
-  isHost = true;
-  await logActivity('video');
-  renderRoom();
-  toast('Видео загружено', 'success');
 }
 async function extendRoom() {
   if (!currentRoom) return;
   try {
     const newExpires = new Date();
     newExpires.setDate(newExpires.getDate() + 10);
-    const { error } = await sb.from('rooms').update({
-      expires_at: newExpires.toISOString()
-    }).eq('id', currentRoom.id);
+    const { error } = await sb.from('rooms').update({ expires_at: newExpires.toISOString() }).eq('id', currentRoom.id);
     if (error) { toast('Ошибка: ' + error.message, 'error'); return; }
     currentRoom.expires_at = newExpires.toISOString();
     await logActivity('extend');
@@ -578,16 +739,15 @@ async function extendRoom() {
 }
 async function deleteRoom() {
   if (!currentRoom) return;
-  if (!confirm('Удалить комнату «' + currentRoom.name + '»?\n\nВся история, сообщения и информация удалятся навсегда.')) return;
+  if (!confirm('Удалить комнату «' + currentRoom.name + '»?\n\nВся история удалится навсегда.')) return;
   try {
     await sb.from('user_activity').delete().eq('room_id', currentRoom.id);
+    await sb.from('direct_messages').delete().eq('room_id', currentRoom.id);
     await sb.from('room_messages').delete().eq('room_id', currentRoom.id);
     await sb.from('rooms').delete().eq('id', currentRoom.id);
     toast('Комната удалена', 'success');
     if (roomChannel) { sb.removeChannel(roomChannel); roomChannel = null; }
     if (syncInterval) { clearInterval(syncInterval); syncInterval = null; }
-    if (ytPlayer && ytPlayer.destroy) try { ytPlayer.destroy(); } catch(e){}
-    ytPlayer = null; ytPlayerReady = false;
     currentRoom = null;
     currentRoomMessages = [];
     await loadRooms();
@@ -596,21 +756,17 @@ async function deleteRoom() {
 }
 function getExtendButtonHtml(r) {
   if (!r.expires_at) return '';
-  const expires = new Date(r.expires_at);
-  const now = new Date();
-  const daysLeft = Math.ceil((expires - now) / (1000 * 60 * 60 * 24));
+  const daysLeft = Math.ceil((new Date(r.expires_at) - new Date()) / (1000 * 60 * 60 * 24));
   if (daysLeft <= 2) {
     return '<button class="btn small primary" onclick="extendRoom()" style="padding:6px 10px; min-height:34px; font-size:12px; margin:0;">⏱ Продлить! ' + daysLeft + ' дн.</button>';
   }
-  return '<button class="btn small ghost" disabled style="padding:6px 10px; min-height:34px; font-size:12px; margin:0; opacity:0.5; cursor:not-allowed;">⏱ ' + daysLeft + ' дн.</button>';
+  return '<button class="btn small ghost" disabled style="padding:6px 10px; min-height:34px; font-size:12px; margin:0; opacity:0.5;">⏱ ' + daysLeft + ' дн.</button>';
 }
 function copyShareLink() {
-  const url = window.location.origin + window.location.pathname + '?room=' + currentRoom.id;
+  const url = window.location.origin + window.location.pathname + '?room=' + currentRoom.id + (currentRoom.invite_code ? '&invite=' + currentRoom.invite_code : '');
   if (navigator.clipboard) {
-    navigator.clipboard.writeText(url).then(() => toast('Ссылка скопирована', 'success')).catch(() => fallbackCopy(url));
-  } else {
-    fallbackCopy(url);
-  }
+    navigator.clipboard.writeText(url).then(() => toast('Скопировано', 'success')).catch(() => fallbackCopy(url));
+  } else fallbackCopy(url);
 }
 function fallbackCopy(text) {
   const t = document.createElement('textarea');
@@ -629,21 +785,21 @@ async function loadRoomMessages(roomId) {
 function renderMessages() {
   const box = document.getElementById('chatMessages');
   if (!box) return;
-  if (currentRoomMessages.length === 0) {
-    box.innerHTML = '<div class="hidden-note">Пока тихо. Напиши первым 👋</div>';
-    return;
-  }
+  if (currentRoomMessages.length === 0) { box.innerHTML = '<div class="hidden-note">Пока тихо. Напиши первым 👋</div>'; return; }
   box.innerHTML = currentRoomMessages.map(m => {
     const time = new Date(m.created_at).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
     const isMine = m.user_id === myId;
-    const hideBtn = isMine ? '' : '<button class="chat-msg-hide" onclick="hideMessage(' + m.id + ')" title="Скрыть">👁🚫</button>';
+    const actions = '<div class="chat-msg-actions">' +
+      (isMine ? '' : '<button class="chat-msg-btn dm" onclick="openDM(\'' + m.user_id + '\', \'' + esc(m.name) + '\')" title="ЛС">💬</button>') +
+      (isMine ? '' : '<button class="chat-msg-btn" onclick="hideMessage(' + m.id + ')" title="Скрыть">👁🚫</button>') +
+      '</div>';
     return '<div class="chat-msg">' +
       '<div class="chat-msg-avatar">' + (m.avatar || '👤') + '</div>' +
       '<div class="chat-msg-body">' +
         '<div class="chat-msg-name">' + esc(m.name) + '</div>' +
         '<div class="chat-msg-text">' + esc(m.text) + '</div>' +
         '<div class="chat-msg-time">' + time + '</div>' +
-      '</div>' + hideBtn + '</div>';
+      '</div>' + actions + '</div>';
   }).join('');
   box.scrollTop = box.scrollHeight;
 }
@@ -664,8 +820,7 @@ async function sendMessage() {
   }
   inp.value = '';
   const { error } = await sb.from('room_messages').insert({
-    room_id: currentRoom.id, name: name, avatar: avatar, text: text,
-    user_id: myId, hidden: false
+    room_id: currentRoom.id, name: name, avatar: avatar, text: text, user_id: myId, hidden: false
   });
   if (error) { toast('Ошибка: ' + error.message, 'error'); return; }
   await logActivity('message');
@@ -679,24 +834,63 @@ async function hideMessage(msgId) {
     if (count >= 3) {
       await sb.from('room_messages').update({ hidden: true }).eq('id', msgId);
       toast('Скрыто у всех (3+ жалоб)', 'success');
-    } else {
-      toast('Скрыто у тебя (' + count + '/3)');
-    }
+    } else toast('Скрыто у тебя (' + count + '/3)');
     await loadRoomMessages(currentRoom.id);
   } catch (e) { toast('Ошибка: ' + e.message, 'error'); }
+}
+async function openDM(userId, userName) {
+  if (userId === myId) return toast('Это ты');
+  const { data } = await sb.from('direct_messages').select('*')
+    .eq('room_id', currentRoom.id)
+    .or('and(from_user_id.eq.' + myId + ',to_user_id.eq.' + userId + '),and(from_user_id.eq.' + userId + ',to_user_id.eq.' + myId + ')')
+    .order('created_at', { ascending: true });
+  const messagesHtml = (data || []).map(m => {
+    const mine = m.from_user_id === myId;
+    return '<div class="dm-msg ' + (mine ? 'mine' : 'their') + '">' + esc(m.text) + '<div class="dm-time">' + new Date(m.created_at).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }) + '</div></div>';
+  }).join('');
+  openSheet(
+    '<h2>💬 ' + esc(userName) + '</h2>' +
+    '<div class="dm-box">' +
+      '<div class="dm-messages" id="dmMessages">' + (messagesHtml || '<div class="hidden-note">Начни переписку 👋</div>') + '</div>' +
+      '<div class="chat-input-row">' +
+        '<input id="dmInput" class="input" placeholder="Сообщение...">' +
+        '<button class="btn primary small" onclick="sendDM(\'' + userId + '\', \'' + esc(userName) + '\')">➤</button>' +
+      '</div>' +
+    '</div>' +
+    '<button class="btn ghost block" onclick="closeSheet()">Закрыть</button>'
+  );
+  setTimeout(() => {
+    const box = document.getElementById('dmMessages');
+    if (box) box.scrollTop = box.scrollHeight;
+    const inp = document.getElementById('dmInput');
+    if (inp) inp.addEventListener('keydown', e => { if (e.key === 'Enter') sendDM(userId, userName); });
+  }, 100);
+}
+async function sendDM(userId, userName) {
+  const inp = document.getElementById('dmInput');
+  const text = inp.value.trim();
+  if (!text) return;
+  inp.value = '';
+  const name = localStorage.getItem(LS_MY_NAME) || 'Гость';
+  await sb.from('direct_messages').insert({
+    room_id: currentRoom.id, from_user_id: myId, to_user_id: userId,
+    from_name: name, to_name: userName, text: text
+  });
+  openDM(userId, userName);
   }
   sb.channel('rooms-list')
   .on('postgres_changes', { event: '*', schema: 'public', table: 'rooms' }, () => loadRooms())
   .subscribe();
-window.onYouTubeIframeAPIReady = function() {};
+
 (async function init() {
   document.querySelectorAll('#viewToggle button').forEach(b => b.classList.toggle('active', b.dataset.view === viewMode));
   await cleanupRooms();
   await loadRooms();
   const params = new URLSearchParams(window.location.search);
   const roomParam = params.get('room');
+  const inviteParam = params.get('invite');
   if (roomParam) {
-    if (rooms.find(r => r.id === roomParam)) enterRoom(roomParam);
+    if (rooms.find(r => r.id === roomParam)) enterRoom(roomParam, inviteParam);
     else toast('Комната не найдена', 'error');
   }
 })();
