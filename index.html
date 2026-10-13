@@ -33,42 +33,50 @@
   display:flex; align-items:center; justify-content:space-between;
   gap:8px; padding:10px 12px;
 }
-.logo { font-size:16px; font-weight:800; cursor:pointer; flex-shrink:0; }
+.logo { font-size:15px; font-weight:800; cursor:pointer; flex-shrink:0; white-space:nowrap; }
 .header-actions { display:flex; align-items:center; gap:5px; flex-shrink:0; }
 .view-toggle { display:flex; gap:3px; padding:3px; border:1px solid var(--border); border-radius:10px; background:var(--surface); }
-.view-toggle button { padding:6px 10px; font-size:12px; font-weight:700; border-radius:6px; color:var(--text-2); }
+.view-toggle button { padding:6px 9px; font-size:11px; font-weight:700; border-radius:6px; color:var(--text-2); }
 .view-toggle button.active { background:var(--accent); color:#fff; }
-.help-btn { width:34px; height:34px; border-radius:50%; background:var(--surface); border:1px solid var(--border); font-size:15px; font-weight:700; color:var(--text-2); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.help-btn { width:32px; height:32px; border-radius:50%; background:var(--surface); border:1px solid var(--border); font-size:14px; font-weight:700; color:var(--text-2); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
 
 .screen { display:none; padding:12px 0 100px; }
 .screen.active { display:block; }
-.title-block { text-align:center; padding:20px 12px 12px; }
-.title-block h1 { font-size:22px; font-weight:800; letter-spacing:-0.5px; margin-bottom:4px; }
-.title-block p { font-size:13px; color:var(--text-2); }
+.title-block { text-align:center; padding:16px 12px 12px; }
+.title-block h1 { font-size:20px; font-weight:800; letter-spacing:-0.4px; margin-bottom:4px; }
+.title-block p { font-size:12px; color:var(--text-2); }
 
-.rooms-bubbles { display:flex; flex-wrap:wrap; gap:16px; justify-content:center; padding:12px 0; }
-.room-bubble { display:flex; flex-direction:column; align-items:center; gap:6px; cursor:pointer; width:110px; }
+.invite-block {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:10px; padding:12px; margin-bottom:10px;
+}
+.invite-block .block-title { font-size:11px; font-weight:700; color:var(--text-2); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; }
+
+.rooms-bubbles { display:flex; flex-wrap:wrap; gap:14px; justify-content:center; padding:12px 0; }
+.room-bubble { display:flex; flex-direction:column; align-items:center; gap:6px; cursor:pointer; width:100px; }
 .room-bubble:active { transform:scale(0.95); }
-.bubble-circle { width:100px; height:100px; border-radius:50%; border:2px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:42px; background:var(--surface); position:relative; }
-.bubble-badge { position:absolute; bottom:2px; right:2px; font-size:12px; font-weight:700; background:rgba(0,0,0,0.7); border-radius:12px; padding:3px 7px; color:#fff; }
-.bubble-name { font-size:12px; font-weight:700; text-align:center; line-height:1.2; max-width:110px; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
+.bubble-circle { width:92px; height:92px; border-radius:50%; border:2px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:38px; background:var(--surface); position:relative; }
+.bubble-badge { position:absolute; bottom:2px; right:2px; font-size:11px; font-weight:700; background:rgba(0,0,0,0.75); border-radius:10px; padding:2px 6px; color:#fff; }
+.bubble-badge.top { top:2px; right:2px; bottom:auto; background:var(--accent); }
+.bubble-name { font-size:11px; font-weight:700; text-align:center; line-height:1.2; max-width:100px; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
 
-.rooms-tiles { display:grid; grid-template-columns:repeat(auto-fill,minmax(110px,1fr)); gap:8px; padding:12px 0; }
+.rooms-tiles { display:grid; grid-template-columns:repeat(auto-fill,minmax(100px,1fr)); gap:8px; padding:12px 0; }
 .room-tile { aspect-ratio:1; border:1px solid var(--border); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; padding:8px; cursor:pointer; overflow:hidden; color:#fff; text-align:center; border-radius:14px; position:relative; }
 .room-tile:active { transform:scale(0.96); }
-.room-tile-avatar { font-size:32px; }
+.room-tile-avatar { font-size:28px; }
 .room-tile-name { font-size:11px; font-weight:700; line-height:1.2; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
-.room-tile-badge { position:absolute; bottom:4px; right:4px; font-size:11px; font-weight:700; background:rgba(0,0,0,0.7); border-radius:10px; padding:2px 6px; color:#fff; }
+.room-tile-badge { position:absolute; bottom:4px; right:4px; font-size:10px; font-weight:700; background:rgba(0,0,0,0.75); border-radius:8px; padding:2px 5px; color:#fff; }
+.room-tile-badge.top { top:4px; right:4px; bottom:auto; background:var(--accent); }
 
-.empty-state { text-align:center; padding:50px 20px; color:var(--text-2); }
-.empty-state .big-icon { font-size:52px; margin-bottom:10px; opacity:0.5; }
-.empty-state h2 { font-size:16px; margin-bottom:6px; font-weight:700; }
-.empty-state p { font-size:13px; }
+.empty-state { text-align:center; padding:40px 20px; color:var(--text-2); }
+.empty-state .big-icon { font-size:44px; margin-bottom:10px; opacity:0.5; }
+.empty-state h2 { font-size:15px; margin-bottom:6px; font-weight:700; }
+.empty-state p { font-size:12px; }
 
 .fab-center {
   position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
-  padding:0 22px; height:52px; border-radius:26px;
-  background:var(--accent); color:#fff; font-size:14px; font-weight:800;
+  padding:0 20px; height:50px; border-radius:25px;
+  background:var(--accent); color:#fff; font-size:13px; font-weight:800;
   display:flex; align-items:center; justify-content:center;
   box-shadow:0 8px 24px rgba(111,82,232,0.4); z-index:60;
   white-space:nowrap;
@@ -111,10 +119,7 @@
   .room-info-text { flex:1; min-width:0; overflow:hidden; }
   .room-info-name { font-size:14px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .room-info-meta { font-size:11px; color:var(--text-2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .room-buttons {
-    display:flex; gap:6px; flex-wrap:wrap;
-    justify-content:stretch;
-  }
+  .room-buttons { display:flex; gap:6px; flex-wrap:wrap; }
   .room-buttons .btn { flex:1; min-width:0; }
 
   /* ===== ВИДЕО ===== */
@@ -129,7 +134,7 @@
   .play-overlay .text { font-size:20px; font-weight:800; color:#fff; }
   .play-overlay .hint { font-size:12px; color:#ccc; }
 
-  /* ===== БЛОКИ — ВСЁ В СТОЛБИК ===== */
+  /* ===== БЛОКИ ===== */
   .block {
     background:var(--surface); border:1px solid var(--border);
     border-radius:10px; padding:12px; margin-bottom:10px;
@@ -137,7 +142,8 @@
   .block-title { font-size:11px; font-weight:700; color:var(--text-2); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; }
   .share-text { font-size:13px; color:var(--text-2); line-height:1.4; margin-bottom:10px; word-break:break-word; }
   .share-text b { color:var(--text); }
-  .share-code { color:var(--accent); font-size:15px; font-weight:800; letter-spacing:1px; }
+  .share-code { color:var(--accent); font-size:15px; font-weight:800; letter-spacing:1px; text-align:center; margin-bottom:10px; }
+  .share-pass { color:var(--accent); font-size:15px; font-weight:800; letter-spacing:1px; text-align:center; margin-bottom:10px; }
 
   .chat-block { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:12px; }
   .chat-messages { max-height:340px; overflow-y:auto; margin-bottom:8px; }
@@ -200,6 +206,15 @@
       <h1>Смотрим вместе</h1>
       <p>Создай комнату и смотри видео с друзьями одновременно</p>
     </div>
+
+    <div class="invite-block">
+      <div class="block-title">Есть код приглашения?</div>
+      <div class="chat-input-row">
+        <input id="inviteInput" class="input" placeholder="inv_..." maxlength="30">
+        <button class="btn primary small" onclick="enterByInvite()">Войти</button>
+      </div>
+    </div>
+
     <div id="roomsArea"></div>
     <div id="emptyState" class="empty-state" style="display:none;">
       <div class="big-icon">пусто</div>
@@ -216,7 +231,7 @@
 <button class="fab-center" id="fabCreate" onclick="openCreateRoom()">Создать комнату</button>
 <div id="modalRoot"></div>
 <div class="toast-root" id="toastRoot"></div>
-  <script>
+<script>
 const SUPABASE_URL = 'https://aritoekxhdmskwiejqve.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyaXRvZWt4aGRtc2t3aWVqcXZlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE1MDA3MjAsImV4cCI6MjEwNzA3NjcyMH0.smtTA67icGqn0vD9fbDzyc8bdKqz_O-b7D1M3bgSqm4';
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -224,7 +239,6 @@ const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const LS_MY_ID='smotrim_my_id', LS_MY_NAME='smotrim_my_name', LS_MY_AVATAR='smotrim_my_avatar';
 const LS_VIEW='smotrim_view', LS_LAST_CLEANUP='smotrim_last_cleanup', LS_INVIDIOUS='smotrim_invidious';
 
-/* ===== АВТО-ОБХОД БЛОКИРОВОК ===== */
 const INVIDIOUS_INSTANCES = [
   'https://inv.nadeko.net',
   'https://invidious.nerdvpn.de',
@@ -272,10 +286,11 @@ function setView(v){
   renderRooms();
 }
 function getDaysLeft(exp){if(!exp)return null;const d=new Date(exp)-new Date();return Math.max(0,Math.ceil(d/86400000));}
-    function openHelp(){
+function encodePass(p){return btoa(unescape(encodeURIComponent(p)));}
+  function openHelp(){
   openSheet('<h2>Как пользоваться</h2><div class="help-content">'+
     '<h3>Создать комнату</h3><p>Нажми кнопку «Создать комнату» внизу. Комната живёт <b>10 дней</b>, потом исчезает сама.</p>'+
-    '<h3>Публичная или скрытая</h3><p>При создании выбери: <b>публичная</b> — видна всем, <b>скрытая</b> — только по коду приглашения.</p>'+
+    '<h3>Три типа комнат</h3><p><b>Публичная</b> — видна всем. <b>Скрытая</b> — только по ссылке. <b>С паролем</b> — видна в списке, но нужен пароль.</p>'+
     '<h3>Видео</h3><p>Вставить ссылку может любой. У всех будет одно видео. Счётчик 15 секунд — потом все нажимают «Нажми Play».</p>'+
     '<h3>Чат и личные сообщения</h3><p>Общий чат внизу. Кнопка <b>«Личные»</b> в шапке — открыть переписки с участниками.</p>'+
     '<div class="tip">Комната удалится сама через 10 дней. Сообщения старше 3 дней удаляются автоматически.</div></div>'+
@@ -285,6 +300,19 @@ async function cleanupRooms(){
   const last=localStorage.getItem(LS_LAST_CLEANUP), now=Date.now();
   if(last && now-parseInt(last)<3600000) return;
   try{await sb.rpc('cleanup_rooms_fn');localStorage.setItem(LS_LAST_CLEANUP,now.toString());}catch(e){}
+}
+async function enterByInvite(){
+  const inp=document.getElementById('inviteInput');
+  const code=(inp.value||'').trim();
+  if(!code) return toast('Введи код','error');
+  const {data,error}=await sb.from('rooms').select('*').eq('invite_code',code).limit(1);
+  if(error){toast('Ошибка: '+error.message,'error');return;}
+  if(!data||data.length===0) return toast('Комната не найдена','error');
+  const room=data[0];
+  if(room.expires_at && new Date(room.expires_at)<new Date()) return toast('Комната удалена','error');
+  sessionStorage.setItem('room_invite_'+room.id, room.invite_code);
+  inp.value='';
+  enterRoom(room.id);
 }
 async function loadRooms(){
   try{
@@ -305,8 +333,9 @@ function renderRooms(){
     area.innerHTML=rooms.map(r=>{
       const days=getDaysLeft(r.expires_at);
       const warn=(days!==null&&days<=2)?'<div class="bubble-badge">'+days+'д</div>':'';
+      const lock=r.password_hash?'<div class="bubble-badge top">пароль</div>':'';
       return '<div class="room-bubble" onclick="enterRoom(\''+esc(r.id)+'\')">'+
-        '<div class="bubble-circle" style="background:'+esc(r.color||'#6f52e8')+';">'+(r.avatar||'🎬')+warn+'</div>'+
+        '<div class="bubble-circle" style="background:'+esc(r.color||'#6f52e8')+';">'+(r.avatar||'🎬')+warn+lock+'</div>'+
         '<div class="bubble-name">'+esc(r.name)+'</div></div>';
     }).join('');
   }else{
@@ -314,7 +343,8 @@ function renderRooms(){
     area.innerHTML=rooms.map(r=>{
       const days=getDaysLeft(r.expires_at);
       const warn=(days!==null&&days<=2)?'<div class="room-tile-badge">'+days+'д</div>':'';
-      return '<div class="room-tile" style="background:'+esc(r.color||'#6f52e8')+';" onclick="enterRoom(\''+esc(r.id)+'\')">'+warn+
+      const lock=r.password_hash?'<div class="room-tile-badge top">пароль</div>':'';
+      return '<div class="room-tile" style="background:'+esc(r.color||'#6f52e8')+';" onclick="enterRoom(\''+esc(r.id)+'\')">'+warn+lock+
         '<div class="room-tile-avatar">'+(r.avatar||'🎬')+'</div>'+
         '<div class="room-tile-name">'+esc(r.name)+'</div></div>';
     }).join('');
@@ -329,7 +359,7 @@ function generateRoomName(base){
   return b+' '+(max+1);
 }
 
-/* ===== СОЗДАНИЕ КОМНАТЫ ===== */
+/* ===== СОЗДАНИЕ ===== */
 function openCreateRoom(){
   selectedAvatar=AVATARS[Math.floor(Math.random()*AVATARS.length)];
   selectedColor=COLORS[Math.floor(Math.random()*COLORS.length)];
@@ -341,13 +371,20 @@ function openCreateRoom(){
     '<label class="field-label">Аватар</label><div class="avatar-picker">'+av+'</div>'+
     '<label class="field-label">Цвет</label><div class="color-picker">'+co+'</div>'+
     '<label class="field-label">Тип комнаты</label>'+
-    '<select id="roomType" class="select">'+
+    '<select id="roomType" class="select" onchange="onRoomTypeChange()">'+
       '<option value="public">Публичная — видна всем</option>'+
-      '<option value="hidden">Скрытая — только по коду приглашения</option>'+
+      '<option value="hidden">Скрытая — только по ссылке</option>'+
+      '<option value="password">С паролем — видна в списке</option>'+
     '</select>'+
+    '<input id="roomPassword" class="input" placeholder="Пароль" type="password" style="display:none; margin-top:8px;">'+
     '<button class="btn primary" onclick="createRoom()">Создать</button>'+
     '<button class="btn ghost" onclick="closeSheet()">Отмена</button>');
   setTimeout(()=>{const i=document.getElementById('roomName');if(i)i.focus();},150);
+}
+function onRoomTypeChange(){
+  const type=document.getElementById('roomType').value;
+  const passField=document.getElementById('roomPassword');
+  if(passField) passField.style.display=type==='password'?'block':'none';
 }
 function selectAvatar(a){selectedAvatar=a;document.querySelectorAll('.avatar-option').forEach(el=>el.classList.toggle('selected',el.dataset.av===a));}
 function selectColor(c){selectedColor=c;document.querySelectorAll('.color-option').forEach(el=>el.classList.toggle('selected',el.dataset.col===c));}
@@ -357,22 +394,31 @@ async function createRoom(){
   if(name.length>20) return toast('Слишком длинное','error');
   const type=document.getElementById('roomType').value;
   const isHidden = type === 'hidden';
+  const isPassword = type === 'password';
   const inviteCode = isHidden ? ('inv_' + Math.random().toString(36).slice(2,12)) : null;
+  let passwordHash = null;
+  if(isPassword){
+    const pass=(document.getElementById('roomPassword').value||'').trim();
+    if(!pass) return toast('Введи пароль','error');
+    if(pass.length<3) return toast('Пароль слишком короткий','error');
+    passwordHash = encodePass(pass);
+  }
   const finalName=generateRoomName(name);
   const roomId='room_'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
   const exp=new Date(); exp.setDate(exp.getDate()+10);
   const {error}=await sb.from('rooms').insert({
     id:roomId, name:finalName, avatar:selectedAvatar, color:selectedColor,
     host_id:myId, video_url:null, sync_state:{}, expires_at:exp.toISOString(),
-    is_hidden: isHidden, invite_code: inviteCode
+    is_hidden: isHidden, invite_code: inviteCode,
+    password_hash: passwordHash
   });
   if(error){toast('Ошибка: '+error.message,'error');return;}
   closeSheet();
   toast('Комната «'+finalName+'» создана');
   await loadRooms();
   setTimeout(()=>enterRoom(roomId),300);
-    }
-    function parseVideoUrl(url){
+  }
+  function parseVideoUrl(url){
   if(!url) return null;
   url=url.trim();
   if(!url.match(/^https?:\/\//i)) return null;
@@ -406,19 +452,30 @@ async function enterRoom(roomId){
     if(!rooms.find(r=>r.id===roomId)) rooms.push(room);
   }
   if(room.expires_at && new Date(room.expires_at)<new Date()) return toast('Комната удалена (срок истёк)','error');
+
+  /* Скрытая — только по ссылке с invite */
   if(room.is_hidden && room.host_id !== myId){
-    const params = new URLSearchParams(window.location.search);
-    const urlInvite = params.get('invite');
-    const savedInvite = sessionStorage.getItem('room_invite_' + roomId);
-    const savedOk = (urlInvite === room.invite_code) || (savedInvite === room.invite_code);
-    if(!savedOk){
-      const entered = prompt('Это скрытая комната. Введи код приглашения:');
-      if(entered !== room.invite_code) return toast('Неверный код','error');
-      sessionStorage.setItem('room_invite_' + roomId, room.invite_code);
-    } else if(urlInvite === room.invite_code){
-      sessionStorage.setItem('room_invite_' + roomId, room.invite_code);
+    const params=new URLSearchParams(window.location.search);
+    const urlInvite=params.get('invite');
+    const savedInvite=sessionStorage.getItem('room_invite_'+roomId);
+    const savedOk=(urlInvite===room.invite_code)||(savedInvite===room.invite_code);
+    if(!savedOk) return toast('Скрытая комната. Открой по ссылке от хоста.','error');
+    sessionStorage.setItem('room_invite_'+roomId, room.invite_code);
+  }
+
+  /* С паролем — спрашиваем */
+  if(room.password_hash && room.host_id !== myId){
+    const savedPass=sessionStorage.getItem('room_pass_'+roomId);
+    const okPass = savedPass === room.password_hash;
+    if(!okPass){
+      const entered = prompt('Комната с паролем. Введи пароль:');
+      if(!entered) return;
+      const hash = encodePass(entered);
+      if(hash !== room.password_hash) return toast('Неверный пароль','error');
+      sessionStorage.setItem('room_pass_'+roomId, hash);
     }
   }
+
   currentRoom=room;
   isHost=(room.host_id===myId);
   showScreen('room');
@@ -428,6 +485,7 @@ async function enterRoom(roomId){
   await upsertPresence();
   await logActivity('enter');
   updateDMBadge();
+
   if(roomChannel) sb.removeChannel(roomChannel);
   if(dmChannel) sb.removeChannel(dmChannel);
   if(presenceChannel) sb.removeChannel(presenceChannel);
@@ -458,9 +516,8 @@ async function enterRoom(roomId){
     const d=Math.ceil((new Date(room.countdown_start).getTime()-Date.now())/1000);
     if(d>0) startCountdown();
   }
-}
-
-function renderRoom(){
+  }
+  function renderRoom(){
   const r=currentRoom; if(!r) return;
   const vd=parseVideoUrl(r.video_url);
   let vh='';
@@ -474,11 +531,18 @@ function renderRoom(){
   const days=getDaysLeft(r.expires_at);
   const extendBtn=isHost?getExtendButtonHtml(r):'';
   const deleteBtn=isHost?'<button class="btn small ghost" onclick="deleteRoom()" style="color:var(--danger);">Удалить</button>':'';
+  const refreshBtn=(isHost && r.is_hidden)?'<button class="btn small ghost" onclick="refreshInviteCode()">Обновить код</button>':'';
 
-  const shareHtml = r.is_hidden
-    ? '<div class="share-text">Комната <b>скрытая</b>. Отправь другу код:</div>'+
-      '<div class="share-code" style="text-align:center; margin-bottom:10px;">'+esc(r.invite_code||'')+'</div>'
-    : '<div class="share-text">Отправь ссылку другу — он попадёт в комнату.</div>';
+  let shareHtml;
+  if(r.is_hidden){
+    shareHtml = '<div class="share-text">Комната <b>скрытая</b>. Отправь другу ссылку — по ней он попадёт в комнату.</div>';
+  } else if(r.password_hash){
+    shareHtml = '<div class="share-text">Комната <b>с паролем</b>. Отправь другу ссылку и пароль отдельно.</div>';
+  } else {
+    shareHtml = '<div class="share-text">Отправь ссылку другу — он попадёт в комнату.</div>';
+  }
+
+  const metaExtra = (r.password_hash?' · пароль':'') + (r.is_hidden?' · скрытая':'');
 
   document.getElementById('roomContent').innerHTML=
     '<div class="room-header">'+
@@ -488,12 +552,13 @@ function renderRoom(){
           '<div class="room-info-avatar" style="background:'+esc(r.color||'#6f52e8')+';">'+(r.avatar||'🎬')+'</div>'+
           '<div class="room-info-text">'+
             '<div class="room-info-name">'+esc(r.name)+'</div>'+
-            '<div class="room-info-meta">'+(isHost?'Хост':'Гость')+(days!==null?' · '+days+' дн.':'')+'</div>'+
+            '<div class="room-info-meta">'+(isHost?'Хост':'Гость')+(days!==null?' · '+days+' дн.':'')+metaExtra+'</div>'+
           '</div>'+
         '</div>'+
       '</div>'+
       '<div class="room-buttons">'+
         '<button class="btn small" id="dmBtn" onclick="openDMList()">Личные <span id="dmBadge"></span></button>'+
+        refreshBtn+
         extendBtn+
         deleteBtn+
       '</div>'+
@@ -508,9 +573,7 @@ function renderRoom(){
 
     '<div class="block">'+
       shareHtml+
-      '<button class="btn primary small" style="width:100%; min-height:44px; font-size:14px;" onclick="copyShareLink()">'+
-        (r.is_hidden?'Скопировать код приглашения':'Скопировать ссылку')+
-      '</button>'+
+      '<button class="btn primary small" style="width:100%; min-height:44px; font-size:14px;" onclick="copyShareLink()">Скопировать ссылку</button>'+
     '</div>'+
 
     '<div class="chat-block">'+
@@ -530,7 +593,7 @@ function renderRoom(){
   updateDMBadge();
 }
 
-/* ===== СЧЁТЧИК, ВИДЕО, СИНХРОН ===== */
+/* ===== СЧЁТЧИК И ВИДЕО ===== */
 function startCountdown(){
   if(countdownInterval) clearInterval(countdownInterval);
   const o=document.getElementById('countdownOverlay');
@@ -656,8 +719,8 @@ async function hideMessage(id){
     } else toast('Скрыто у тебя ('+(data||[]).length+'/3)');
     await loadRoomMessages(currentRoom.id);
   }catch(e){toast('Ошибка: '+e.message,'error');}
-    }
-    async function openDM(userId,userName){
+  }
+  async function openDM(userId,userName){
   if(userId===myId) return toast('Это ты');
   await sb.from('dm_reads').upsert({
     room_id:currentRoom.id, user_id:myId, peer_id:userId,
@@ -686,6 +749,7 @@ async function hideMessage(id){
   },100);
   updateDMBadge();
 }
+
 async function sendDM(userId,userName){
   const inp=document.getElementById('dmInput'); if(!inp) return;
   const text=inp.value.trim(); if(!text) return;
@@ -697,10 +761,12 @@ async function sendDM(userId,userName){
   });
   openDM(userId,userName);
 }
+
 async function loadPresence(){
   const {data}=await sb.from('room_presence').select('*').eq('room_id',currentRoom.id);
   currentPresence=data||[];
 }
+
 async function upsertPresence(){
   await sb.from('room_presence').upsert({
     room_id:currentRoom.id, user_id:myId,
@@ -708,6 +774,7 @@ async function upsertPresence(){
     status:myStatus, updated_at:new Date().toISOString()
   });
 }
+
 async function updateDMBadge(){
   if(!currentRoom) return;
   const {data}=await sb.from('direct_messages')
@@ -725,12 +792,14 @@ async function updateDMBadge(){
   });
   setBadge(unread);
 }
+
 function setBadge(n){
   const b=document.getElementById('dmBadge');
   if(!b) return;
   b.textContent = n>0 ? '('+n+')' : '';
   b.style.color = n>0 ? '#fff' : '';
 }
+
 async function openDMList(){
   if(!currentRoom) return;
   const {data}=await sb.from('direct_messages').select('*').eq('room_id', currentRoom.id)
@@ -759,9 +828,8 @@ async function openDMList(){
   openSheet('<h2>Личные сообщения</h2>'+
     '<div style="max-height:60vh; overflow-y:auto; margin-bottom:12px;">'+html+'</div>'+
     '<button class="btn ghost" onclick="closeSheet()">Закрыть</button>');
-}
-
-/* ===== УПРАВЛЕНИЕ ===== */
+  }
+  /* ===== УПРАВЛЕНИЕ ===== */
 async function extendRoom(){
   if(!currentRoom) return;
   const ne=new Date(); ne.setDate(ne.getDate()+10);
@@ -772,6 +840,7 @@ async function extendRoom(){
   toast('Продлено на 10 дней','success');
   renderRoom(); loadRooms();
 }
+
 async function deleteRoom(){
   if(!currentRoom) return;
   if(!confirm('Удалить комнату «'+currentRoom.name+'»? Всё удалится.')) return;
@@ -779,27 +848,40 @@ async function deleteRoom(){
   toast('Комната удалена','success');
   leaveRoom();
 }
+
+async function refreshInviteCode(){
+  if(!currentRoom || !isHost) return;
+  if(!confirm('Обновить код приглашения? Старые ссылки перестанут работать.')) return;
+  const newCode = 'inv_' + Math.random().toString(36).slice(2,12);
+  const {error}=await sb.from('rooms').update({invite_code: newCode}).eq('id', currentRoom.id);
+  if(error){toast('Ошибка: '+error.message,'error');return;}
+  currentRoom.invite_code = newCode;
+  toast('Новый код создан','success');
+  renderRoom();
+}
+
 function getExtendButtonHtml(r){
   if(!r.expires_at) return '';
   const d=Math.ceil((new Date(r.expires_at)-new Date())/86400000);
   if(d<=2) return '<button class="btn small primary" onclick="extendRoom()">Продлить ('+d+' дн.)</button>';
   return '';
 }
+
 function copyShareLink(){
   const r=currentRoom;
-  const text = r.is_hidden ? (r.invite_code || '') : (window.location.origin+window.location.pathname+'?room='+r.id);
+  const url = window.location.origin+window.location.pathname+'?room='+r.id+(r.invite_code?'&invite='+r.invite_code:'');
   if(navigator.clipboard && window.isSecureContext){
-    navigator.clipboard.writeText(text).then(()=>{
-      toast(r.is_hidden ? 'Код приглашения скопирован' : 'Ссылка скопирована','success');
-    }).catch(()=>fallbackCopy(text));
-  } else fallbackCopy(text);
+    navigator.clipboard.writeText(url).then(()=>toast('Ссылка скопирована','success')).catch(()=>fallbackCopy(url));
+  } else fallbackCopy(url);
 }
+
 function fallbackCopy(t){
   const a=document.createElement('textarea'); a.value=t; a.style.position='fixed'; a.style.opacity='0';
   document.body.appendChild(a); a.focus(); a.select();
   try{document.execCommand('copy');toast('Скопировано','success');}catch(e){toast('Скопируй вручную: '+t,'error');}
   a.remove();
 }
+
 function leaveRoom(){
   if(roomChannel){sb.removeChannel(roomChannel);roomChannel=null;}
   if(dmChannel){sb.removeChannel(dmChannel);dmChannel=null;}
@@ -812,21 +894,24 @@ function leaveRoom(){
   myStatus='общее';
   showScreen('home');
 }
+
 async function logActivity(action){
   try{await sb.from('user_activity').insert({user_id:myId,room_id:currentRoom?currentRoom.id:null,action:action});}catch(e){}
 }
 
-/* ===== АВТО-ОБХОД БЛОКИРОВОК YOUTUBE ===== */
+/* ===== АВТО-ОБХОД YOUTUBE ===== */
 async function findWorkingInvidious(){
   for(const url of INVIDIOUS_INSTANCES){
     try{
-      const r=await fetch(url+'/api/v1/stats',{signal:AbortSignal.timeout(2500),method:'HEAD',mode:'no-cors'});
-      // no-cors всегда вернёт opaque — но если сервер вообще ответил, значит живой
-      if(r){currentInvidious=url;localStorage.setItem(LS_INVIDIOUS,url);console.log('Invidious OK:',url);return url;}
+      await fetch(url+'/api/v1/stats',{signal:AbortSignal.timeout(2500),method:'HEAD',mode:'no-cors'});
+      currentInvidious=url; localStorage.setItem(LS_INVIDIOUS,url);
+      console.log('Invidious OK:',url);
+      return url;
     }catch(e){}
   }
   return null;
 }
+
 async function heartbeat(){
   if(!currentRoom) return;
   try{await upsertPresence();}catch(e){}
