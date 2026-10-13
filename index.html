@@ -118,23 +118,21 @@
 .room-info-meta { font-size:11px; color:var(--text-2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .room-buttons { display:flex; gap:6px; flex-wrap:wrap; }
 .room-buttons .btn { flex:1; min-width:0; }
-    .video-box { background:#000; border:1px solid var(--border); border-radius:10px; overflow:hidden; aspect-ratio:16/9; margin-bottom:12px; display:flex; align-items:center; justify-content:center; position:relative; }
-  .video-box iframe, .video-box video { width:100%; height:100%; border:none; }
-  .video-placeholder { color:#888; text-align:center; padding:20px; font-size:13px; line-height:1.5; }
-  .video-placeholder .big { font-size:15px; font-weight:700; margin-bottom:6px; color:#bbb; }
-  .countdown-overlay { display:none; position:absolute; inset:0; z-index:20; background:rgba(0,0,0,0.75); align-items:center; justify-content:center; flex-direction:column; gap:8px; }
-  .countdown-num { font-size:80px; font-weight:900; color:#fff; line-height:1; }
-  .countdown-hint { font-size:13px; color:#ccc; }
-  .play-overlay { display:none; position:absolute; inset:0; z-index:20; background:rgba(0,0,0,0.6); align-items:center; justify-content:center; flex-direction:column; gap:8px; pointer-events:none; }
-  .play-overlay .text { font-size:20px; font-weight:800; color:#fff; }
-  .play-overlay .hint { font-size:12px; color:#ccc; }
 
-  .block { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:12px; margin-bottom:10px; }
+.video-box { background:#000; border:1px solid var(--border); border-radius:10px; overflow:hidden; aspect-ratio:16/9; margin-bottom:12px; display:flex; align-items:center; justify-content:center; position:relative; }
+.video-box iframe, .video-box video { width:100%; height:100%; border:none; }
+.video-placeholder { color:#888; text-align:center; padding:20px; font-size:13px; line-height:1.5; }
+.video-placeholder .big { font-size:15px; font-weight:700; margin-bottom:6px; color:#bbb; }
+.countdown-overlay { display:none; position:absolute; inset:0; z-index:20; background:rgba(0,0,0,0.75); align-items:center; justify-content:center; flex-direction:column; gap:8px; }
+.countdown-num { font-size:80px; font-weight:900; color:#fff; line-height:1; }
+.countdown-hint { font-size:13px; color:#ccc; }
+.play-overlay { display:none; position:absolute; inset:0; z-index:20; background:rgba(0,0,0,0.6); align-items:center; justify-content:center; flex-direction:column; gap:8px; pointer-events:none; }
+.play-overlay .text { font-size:20px; font-weight:800; color:#fff; }
+.play-overlay .hint { font-size:12px; color:#ccc; }
+    .block { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:12px; margin-bottom:10px; }
   .block-title { font-size:11px; font-weight:700; color:var(--text-2); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; }
   .share-text { font-size:13px; color:var(--text-2); line-height:1.4; margin-bottom:10px; word-break:break-word; }
   .share-text b { color:var(--text); }
-  .share-code { color:var(--accent); font-size:15px; font-weight:800; letter-spacing:1px; text-align:center; margin-bottom:10px; }
-  .share-pass { color:var(--accent); font-size:15px; font-weight:800; letter-spacing:1px; text-align:center; margin-bottom:10px; }
 
   .chat-block { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:12px; }
   .chat-messages { max-height:340px; overflow-y:auto; margin-bottom:8px; }
@@ -200,10 +198,7 @@
 
     <div class="invite-block">
       <div class="block-title">Есть код приглашения?</div>
-      <div class="chat-input-row">
-        <input id="inviteInput" class="input" placeholder="inv_..." maxlength="30">
-        <button class="btn primary small" onclick="enterByInvite()">Войти</button>
-      </div>
+      <div style="font-size:13px; color:var(--text-2); line-height:1.4;">Вставь его в строку браузера: <b style="color:var(--text); word-break:break-all;">?invite=твой_код</b></div>
     </div>
 
     <div id="roomsArea"></div>
@@ -253,6 +248,7 @@ let selectedAvatar = AVATARS[0], selectedColor = COLORS[0];
 let roomChannel=null, dmChannel=null, presenceChannel=null;
 let suppressSync=false, syncInterval=null, countdownInterval=null;
 let isHost=false, myStatus='общее';
+let sortOrder = localStorage.getItem('smotrim_sort') || 'desc';
 
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function toast(msg,type){
@@ -292,19 +288,6 @@ async function cleanupRooms(){
   const last=localStorage.getItem(LS_LAST_CLEANUP), now=Date.now();
   if(last && now-parseInt(last)<3600000) return;
   try{await sb.rpc('cleanup_rooms_fn');localStorage.setItem(LS_LAST_CLEANUP,now.toString());}catch(e){}
-}
-async function enterByInvite(){
-  const inp=document.getElementById('inviteInput');
-  const code=(inp.value||'').trim();
-  if(!code) return toast('Введи код','error');
-  const {data,error}=await sb.from('rooms').select('*').eq('invite_code',code).limit(1);
-  if(error){toast('Ошибка: '+error.message,'error');return;}
-  if(!data||data.length===0) return toast('Комната не найдена','error');
-  const room=data[0];
-  if(room.expires_at && new Date(room.expires_at)<new Date()) return toast('Комната удалена','error');
-  sessionStorage.setItem('room_invite_'+room.id, room.invite_code);
-  inp.value='';
-  enterRoom(room.id);
 }
 async function loadRooms(){
   try{
@@ -450,7 +433,6 @@ async function enterRoom(roomId){
   }
   if(room.expires_at && new Date(room.expires_at)<new Date()) return toast('Комната удалена (срок истёк)','error');
 
-  /* Скрытая — только по ссылке с invite */
   if(room.is_hidden && room.host_id !== myId){
     const params=new URLSearchParams(window.location.search);
     const urlInvite=params.get('invite');
@@ -460,7 +442,6 @@ async function enterRoom(roomId){
     sessionStorage.setItem('room_invite_'+roomId, room.invite_code);
   }
 
-  /* С паролем — спрашиваем */
   if(room.password_hash && room.host_id !== myId){
     const savedPass=sessionStorage.getItem('room_pass_'+roomId);
     const okPass = savedPass === room.password_hash;
@@ -487,7 +468,9 @@ async function enterRoom(roomId){
   if(dmChannel) sb.removeChannel(dmChannel);
   if(presenceChannel) sb.removeChannel(presenceChannel);
   roomChannel=sb.channel('room-'+roomId)
-    .on('postgres_changes',{event:'*',schema:'public',table:'room_messages',filter:'room_id=eq.'+roomId},()=>loadRoomMessages(roomId))
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'room_messages'},payload=>{
+      if(payload.new.room_id===roomId) loadRoomMessages(roomId);
+    })
     .on('postgres_changes',{event:'UPDATE',schema:'public',table:'rooms',filter:'id=eq.'+roomId},p=>{
       if(currentRoom&&currentRoom.id===roomId){
         const oldV=currentRoom.video_url;
@@ -529,6 +512,8 @@ async function enterRoom(roomId){
   const extendBtn=isHost?getExtendButtonHtml(r):'';
   const deleteBtn=isHost?'<button class="btn small ghost" onclick="deleteRoom()" style="color:var(--danger);">Удалить</button>':'';
   const refreshBtn=(isHost && r.is_hidden)?'<button class="btn small ghost" onclick="refreshInviteCode()">Обновить код</button>':'';
+  const serverBtn = (vd && vd.type==='invidious') ? '<button class="btn small ghost" onclick="switchServer()">Сменить сервер</button>' : '';
+  const sortBtn = '<button class="btn small ghost" onclick="toggleSort()">' + (sortOrder === 'desc' ? 'Новые вверху' : 'Новые внизу') + '</button>';
 
   let shareHtml;
   if(r.is_hidden){
@@ -555,6 +540,8 @@ async function enterRoom(roomId){
       '</div>'+
       '<div class="room-buttons">'+
         '<button class="btn small" id="dmBtn" onclick="openDMList()">Личные <span id="dmBadge"></span></button>'+
+        sortBtn+
+        serverBtn+
         refreshBtn+
         extendBtn+
         deleteBtn+
@@ -585,9 +572,36 @@ async function enterRoom(roomId){
   setTimeout(()=>{const i=document.getElementById('chatInput');if(i)i.addEventListener('keydown',e=>{if(e.key==='Enter')sendMessage();});},100);
   if(vd&&vd.type==='html5') initHtml5Sync();
   if(vd&&vd.type==='hls') initHls();
+  if(vd&&vd.type==='invidious') checkInvidiousEmbed();
   renderMessages();
   startSyncLoop();
   updateDMBadge();
+  startMessagesPolling();
+}
+
+function startMessagesPolling(){
+  if(window._msgPoll) clearInterval(window._msgPoll);
+  window._msgPoll = setInterval(()=>{
+    if(currentRoom) loadRoomMessages(currentRoom.id);
+  }, 3000);
+}
+
+function checkInvidiousEmbed(){
+  setTimeout(async ()=>{
+    if(!currentRoom) return;
+    const frame = document.getElementById('videoPlayer');
+    if(!frame || frame.tagName !== 'IFRAME') return;
+    const idx = INVIDIOUS_INSTANCES.indexOf(currentInvidious);
+    const next = INVIDIOUS_INSTANCES[(idx+1) % INVIDIOUS_INSTANCES.length];
+    if(next === currentInvidious) return;
+    const ok = await checkInvidious(next);
+    if(ok){
+      currentInvidious = next;
+      localStorage.setItem(LS_INVIDIOUS, next);
+      toast('Переключаю сервер: ' + new URL(next).hostname);
+      renderRoom();
+    }
+  }, 8000);
 }
 
 function startCountdown(){
@@ -657,11 +671,27 @@ function startSyncLoop(){
 }
 async function loadRoomMessages(roomId){
   try{
-    const {data,error}=await sb.from('room_messages').select('*').eq('room_id',roomId).eq('hidden',false).order('created_at',{ascending:true}).limit(200);
+    const asc = sortOrder === 'asc';
+    const {data,error}=await sb.from('room_messages')
+      .select('*').eq('room_id',roomId).eq('hidden',false)
+      .order('created_at',{ascending: asc})
+      .limit(200);
     if(error){console.error(error);return;}
     currentRoomMessages=data||[];
     renderMessages();
   }catch(e){}
+}
+function toggleSort(){
+  sortOrder = (sortOrder === 'asc') ? 'desc' : 'asc';
+  localStorage.setItem('smotrim_sort', sortOrder);
+  toast(sortOrder === 'asc' ? 'Новые внизу' : 'Новые вверху');
+  const buttons = document.querySelectorAll('.room-buttons .btn');
+  buttons.forEach(b => {
+    if(b.textContent.includes('Новые')) {
+      b.textContent = (sortOrder === 'desc' ? 'Новые вверху' : 'Новые внизу');
+    }
+  });
+  if(currentRoom) loadRoomMessages(currentRoom.id);
 }
 function renderMessages(){
   const box=document.getElementById('chatMessages'); if(!box) return;
@@ -683,7 +713,11 @@ function renderMessages(){
         '<div class="chat-msg-time">'+time+'</div>'+
       '</div>'+actions+'</div>';
   }).join('');
-  box.scrollTop=box.scrollHeight;
+  if(sortOrder === 'asc'){
+    box.scrollTop = box.scrollHeight;
+  } else {
+    box.scrollTop = 0;
+  }
 }
 async function sendMessage(){
   const inp=document.getElementById('chatInput'); if(!inp) return;
@@ -743,7 +777,6 @@ async function hideMessage(id){
   },100);
   updateDMBadge();
 }
-
 async function sendDM(userId,userName){
   const inp=document.getElementById('dmInput'); if(!inp) return;
   const text=inp.value.trim(); if(!text) return;
@@ -755,12 +788,10 @@ async function sendDM(userId,userName){
   });
   openDM(userId,userName);
 }
-
 async function loadPresence(){
   const {data}=await sb.from('room_presence').select('*').eq('room_id',currentRoom.id);
   currentPresence=data||[];
 }
-
 async function upsertPresence(){
   await sb.from('room_presence').upsert({
     room_id:currentRoom.id, user_id:myId,
@@ -768,7 +799,6 @@ async function upsertPresence(){
     status:myStatus, updated_at:new Date().toISOString()
   });
 }
-
 async function updateDMBadge(){
   if(!currentRoom) return;
   const {data}=await sb.from('direct_messages')
@@ -786,14 +816,12 @@ async function updateDMBadge(){
   });
   setBadge(unread);
 }
-
 function setBadge(n){
   const b=document.getElementById('dmBadge');
   if(!b) return;
   b.textContent = n>0 ? '('+n+')' : '';
   b.style.color = n>0 ? '#fff' : '';
 }
-
 async function openDMList(){
   if(!currentRoom) return;
   const {data}=await sb.from('direct_messages').select('*').eq('room_id', currentRoom.id)
@@ -822,8 +850,8 @@ async function openDMList(){
   openSheet('<h2>Личные сообщения</h2>'+
     '<div style="max-height:60vh; overflow-y:auto; margin-bottom:12px;">'+html+'</div>'+
     '<button class="btn ghost" onclick="closeSheet()">Закрыть</button>');
-  }
-  async function extendRoom(){
+}
+async function extendRoom(){
   if(!currentRoom) return;
   const ne=new Date(); ne.setDate(ne.getDate()+10);
   const {error}=await sb.from('rooms').update({expires_at:ne.toISOString()}).eq('id',currentRoom.id);
@@ -833,7 +861,6 @@ async function openDMList(){
   toast('Продлено на 10 дней','success');
   renderRoom(); loadRooms();
 }
-
 async function deleteRoom(){
   if(!currentRoom) return;
   if(!confirm('Удалить комнату «'+currentRoom.name+'»? Всё удалится.')) return;
@@ -841,7 +868,6 @@ async function deleteRoom(){
   toast('Комната удалена','success');
   leaveRoom();
 }
-
 async function refreshInviteCode(){
   if(!currentRoom || !isHost) return;
   if(!confirm('Обновить код приглашения? Старые ссылки перестанут работать.')) return;
@@ -852,14 +878,12 @@ async function refreshInviteCode(){
   toast('Новый код создан','success');
   renderRoom();
 }
-
 function getExtendButtonHtml(r){
   if(!r.expires_at) return '';
   const d=Math.ceil((new Date(r.expires_at)-new Date())/86400000);
   if(d<=2) return '<button class="btn small primary" onclick="extendRoom()">Продлить ('+d+' дн.)</button>';
   return '';
 }
-
 function copyShareLink(){
   const r=currentRoom;
   const url = window.location.origin+window.location.pathname+'?room='+r.id+(r.invite_code?'&invite='+r.invite_code:'');
@@ -867,15 +891,14 @@ function copyShareLink(){
     navigator.clipboard.writeText(url).then(()=>toast('Ссылка скопирована','success')).catch(()=>fallbackCopy(url));
   } else fallbackCopy(url);
 }
-
 function fallbackCopy(t){
   const a=document.createElement('textarea'); a.value=t; a.style.position='fixed'; a.style.opacity='0';
   document.body.appendChild(a); a.focus(); a.select();
   try{document.execCommand('copy');toast('Скопировано','success');}catch(e){toast('Скопируй вручную: '+t,'error');}
   a.remove();
 }
-
 function leaveRoom(){
+  if(window._msgPoll){clearInterval(window._msgPoll); window._msgPoll=null;}
   if(roomChannel){sb.removeChannel(roomChannel);roomChannel=null;}
   if(dmChannel){sb.removeChannel(dmChannel);dmChannel=null;}
   if(presenceChannel){sb.removeChannel(presenceChannel);presenceChannel=null;}
@@ -887,23 +910,46 @@ function leaveRoom(){
   myStatus='общее';
   showScreen('home');
 }
-
 async function logActivity(action){
   try{await sb.from('user_activity').insert({user_id:myId,room_id:currentRoom?currentRoom.id:null,action:action});}catch(e){}
+  }
+  async function checkInvidious(url){
+  try{
+    const r = await fetch(url+'/api/v1/stats', {
+      signal: AbortSignal.timeout(2500)
+    });
+    if(!r.ok) return false;
+    const data = await r.json();
+    return data && (data.version || data.software);
+  }catch(e){
+    return false;
+  }
 }
-
 async function findWorkingInvidious(){
+  const saved = localStorage.getItem(LS_INVIDIOUS);
+  if(saved && await checkInvidious(saved)){
+    currentInvidious = saved;
+    console.log('Invidious OK (saved):', saved);
+    return saved;
+  }
   for(const url of INVIDIOUS_INSTANCES){
-    try{
-      await fetch(url+'/api/v1/stats',{signal:AbortSignal.timeout(2500),method:'HEAD',mode:'no-cors'});
-      currentInvidious=url; localStorage.setItem(LS_INVIDIOUS,url);
-      console.log('Invidious OK:',url);
+    if(await checkInvidious(url)){
+      currentInvidious = url;
+      localStorage.setItem(LS_INVIDIOUS, url);
+      console.log('Invidious OK:', url);
       return url;
-    }catch(e){}
+    }
   }
   return null;
 }
-
+function switchServer(){
+  const idx = INVIDIOUS_INSTANCES.indexOf(currentInvidious);
+  const next = INVIDIOUS_INSTANCES[(idx+1) % INVIDIOUS_INSTANCES.length];
+  currentInvidious = next;
+  localStorage.setItem(LS_INVIDIOUS, next);
+  toast('Сервер: ' + new URL(next).hostname);
+  if(currentRoom) renderRoom();
+}
 async function heartbeat(){
   if(!currentRoom) return;
   try{await upsertPresence();}catch(e){}
