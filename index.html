@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
 <meta name="theme-color" content="#101018">
 <title>Смотрим вместе</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -127,10 +127,14 @@ input,textarea,select{font-family:inherit;font-size:16px}
 
 .chat-block{
   background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
-  padding:10px;display:flex;flex-direction:column;min-height:0;overflow:hidden;
+  padding:10px;display:flex;flex-direction:column;
+  flex:1 1 0;min-height:0;overflow:hidden;
 }
 .chat-title{font-size:11px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;flex-shrink:0}
-.chat-messages{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding-right:2px}
+.chat-messages{
+  flex:1 1 0;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;padding-right:2px;
+}
 .chat-input-row{
   display:flex;gap:6px;flex-shrink:0;padding-top:8px;
   border-top:1px solid var(--border);background:transparent;
@@ -160,6 +164,8 @@ input,textarea,select{font-family:inherit;font-size:16px}
 .people-row-status{font-size:11px;color:var(--text-3)}
 
 .video-section{display:flex;flex-direction:column;gap:4px;flex-shrink:0}
+.video-section-common{flex-shrink:0}
+.video-section-personal{display:none}
 .video-label{
   font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;
   padding:4px 10px;border-radius:8px;display:inline-flex;align-items:center;gap:6px;
@@ -170,8 +176,9 @@ input,textarea,select{font-family:inherit;font-size:16px}
 .video-box{
   position:relative;background:#000;border:1px solid var(--border);border-radius:var(--radius);
   overflow:hidden;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;
+  width:100%;
 }
-.video-box iframe,.video-box video{width:100%;height:100%;border:none}
+.video-box iframe,.video-box video{width:100%;height:100%;border:none;display:block}
 .video-box-personal{border-color:var(--accent);border-width:2px}
 
 .countdown-overlay{
@@ -227,13 +234,16 @@ input,textarea,select{font-family:inherit;font-size:16px}
   .bottom-panel .btn{min-width:280px}
 }
 
+/* ===== ROOM LAYOUT (FIXED) ===== */
 body.in-room #screen-room{
   position:fixed;
-  top:var(--header-h);left:0;right:0;
-  bottom:calc(var(--dock-h) + var(--safe-bottom));
-  display:flex;flex-direction:column;
+  top:var(--header-h);
+  left:0;right:0;
+  bottom:0;
+  display:flex;
+  flex-direction:column;
   overflow:hidden;
-  padding:0 12px;
+  padding:0 12px calc(var(--dock-h) + var(--safe-bottom) + 8px);
   background:var(--bg);
   z-index:1;
   max-width:520px;
@@ -259,20 +269,21 @@ body.in-room #screen-room{
   display:flex;flex-direction:column;
   flex:1;min-height:0;
   gap:8px;
+  overflow:hidden;
 }
 .room-left{
   display:flex;flex-direction:column;gap:8px;
-  min-width:0;
+  min-width:0;min-height:0;
+  flex-shrink:0;
 }
 .room-right{
-  flex:1;min-height:0;
+  flex:1 1 0;
+  min-height:0;
   display:flex;flex-direction:column;
+  overflow:hidden;
 }
 
-.video-section-common{flex-shrink:0;margin-bottom:0}
-.video-section-personal{display:none}
-.chat-block{flex:1;min-height:0;margin-bottom:8px;overflow:hidden}
-
+/* ===== BOTTOM DOCK ===== */
 .room-bottom-panel{
   position:fixed;left:0;right:0;bottom:0;z-index:60;
   max-width:520px;margin:0 auto;
@@ -297,10 +308,11 @@ body.in-room #screen-room{
   display:flex;align-items:center;justify-content:center;padding:0 4px;
 }
 
+/* ===== LANDSCAPE ===== */
 @media (orientation: landscape) and (min-width: 700px){
   body.in-room #screen-room{
     max-width:1400px;
-    padding:0 16px;
+    padding:0 16px calc(var(--dock-h) + var(--safe-bottom) + 8px);
   }
   .room-layout{
     display:grid;
@@ -309,18 +321,17 @@ body.in-room #screen-room{
     flex:1;
     min-height:0;
     height:100%;
+    overflow:hidden;
   }
   .room-left{
     display:flex;flex-direction:column;gap:8px;
-    min-height:0;
-    min-width:0;
+    min-height:0;min-width:0;
     overflow-y:auto;
     padding-right:4px;
   }
   .room-right{
     display:flex;flex-direction:column;
-    min-height:0;
-    overflow:hidden;
+    min-height:0;overflow:hidden;
   }
   .video-section-personal{display:flex}
   .chat-block{flex:1;min-height:0;margin-bottom:0;overflow:hidden}
@@ -371,10 +382,11 @@ body.in-room #screen-room{
   }
 }
 
+/* ===== DESKTOP ===== */
 @media (min-width: 1024px) and (hover: hover) and (pointer: fine){
   body.in-room #screen-room{
     max-width:1400px;
-    padding:0 24px;
+    padding:0 24px calc(var(--dock-h) + var(--safe-bottom) + 12px);
   }
   .room-layout{
     grid-template-columns:1.5fr 1fr;
@@ -447,14 +459,8 @@ const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const LS = {
   myId:'smotrim_my_id', myName:'smotrim_my_name', myAvatar:'smotrim_my_avatar',
-  lastRoom:'smotrim_last_room', cleanup:'smotrim_last_cleanup', invidious:'smotrim_invidious'
+  lastRoom:'smotrim_last_room', cleanup:'smotrim_last_cleanup'
 };
-
-const INVIDIOUS_INSTANCES = [
-  'https://inv.nadeko.net','https://invidious.nerdvpn.de','https://invidious.tiekoetter.com',
-  'https://invidious.f5.si','https://yewtu.be','https://invidious.privacyredirect.com','https://iv.melmac.space'
-];
-let currentInvidious = localStorage.getItem(LS.invidious) || INVIDIOUS_INSTANCES[0];
 
 let myId = localStorage.getItem(LS.myId);
 if(!myId){ myId = 'u_' + Math.random().toString(36).slice(2,10); localStorage.setItem(LS.myId, myId); }
@@ -471,11 +477,11 @@ let selectedColor = COLORS[0];
 let roomChannel = null, dmChannel = null, presenceChannel = null;
 let countdownInterval = null, heartbeatInterval = null, presenceTimer = null, roomsRefreshTimer = null;
 let isHost = false;
-let autoSwitchAttempts = 0, autoSwitchDone = false, manualServerChoice = false;
 let askAvatar = '👤';
+let syncApplying = false;
 
 function esc(s){
-  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 function toast(msg, type){
   const r = document.getElementById('toastRoot');
@@ -672,7 +678,6 @@ async function enterRoom(roomId){
     const d = Math.ceil((new Date(room.countdown_start).getTime() - Date.now()) / 1000);
     if(d > 0) startCountdown();
   }
-  maybeStartAutoSwitch();
 }
 async function teardownChannels(){
   try {
@@ -724,7 +729,7 @@ function parseVideoUrl(url){
   url = url.trim();
   if(!url.match(/^https?:\/\//i)) return null;
   const yt = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/|live\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
-  if(yt) return {type:'invidious', videoId:yt[1], src:currentInvidious + '/embed/' + yt[1], embeddable:true};
+  if(yt) return {type:'iframe', src:'https://www.youtube.com/embed/' + yt[1] + '?rel=0', embeddable:true};
   const rt = url.match(/rutube\.ru\/(?:video|play\/embed|live)\/([a-zA-Z0-9]+)/);
   if(rt) return {type:'iframe', src:'https://rutube.ru/play/embed/' + rt[1], embeddable:true};
   const vk = url.match(/(?:vk\.com|vkvideo\.ru)\/video(-?\d+)_(\d+)/);
@@ -751,10 +756,9 @@ function renderVideoOnly(){
   const vd = parseVideoUrl(r.video_url);
   let vh = '';
   if(!vd){ vh = '<div class="video-placeholder"><div class="big">Тут будет видео</div>Нажми «📎» внизу</div>'; }
-  else if(vd.type === 'invidious') vh = '<iframe id="videoPlayer" src="' + esc(vd.src) + '" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>';
-  else if(vd.type === 'html5') vh = '<video id="videoPlayer" src="' + esc(vd.src) + '" controls></video>';
-  else if(vd.type === 'hls') vh = '<video id="videoPlayer" controls></video>';
-  else if(vd.embeddable) vh = '<iframe id="videoPlayer" src="' + esc(vd.src) + '" allow="encrypted-media; fullscreen" allowfullscreen></iframe>';
+  else if(vd.type === 'html5') vh = '<video id="videoPlayer" src="' + esc(vd.src) + '" controls playsinline></video>';
+  else if(vd.type === 'hls') vh = '<video id="videoPlayer" controls playsinline></video>';
+  else if(vd.embeddable) vh = '<iframe id="videoPlayer" src="' + esc(vd.src) + '" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen></iframe>';
   else vh = '<div style="padding:20px;color:#888;text-align:center"><div style="font-size:13px;margin-bottom:12px">Этот сайт нельзя встроить</div><a href="' + esc(r.video_url) + '" target="_blank" rel="noopener" class="btn primary" style="text-decoration:none">Открыть видео</a></div>';
   const cdHtml = '<div id="countdownOverlay" class="countdown-overlay"><div class="countdown-num" id="countdownNum"></div><div class="countdown-hint">Приготовься смотреть</div></div>';
   const playHtml = '<div id="playOverlay" class="play-overlay"><div class="text">Нажми Play</div><div class="hint">Видео начнётся у всех</div></div>';
@@ -786,32 +790,51 @@ async function saveVideo(){
   currentRoom.video_url = url;
   currentRoom.countdown_start = cs.toISOString();
   closeSheet();
-  autoSwitchDone = false; manualServerChoice = false; autoSwitchAttempts = 0;
   renderVideoOnly(); startCountdown();
   toast('Старт через 15 секунд', 'success');
-  maybeStartAutoSwitch();
 }
 function initHtml5Sync(){
   const v = document.getElementById('videoPlayer'); if(!v) return;
-  v.addEventListener('play', () => { if(!manualServerChoice) updateSync({playing:true, time:v.currentTime}); });
-  v.addEventListener('pause', () => updateSync({playing:false, time:v.currentTime}));
-  v.addEventListener('seeked', () => updateSync({playing:!v.paused, time:v.currentTime, seek:true}));
+  v.addEventListener('play', () => { if(!syncApplying) updateSync({playing:true, time:v.currentTime}); });
+  v.addEventListener('pause', () => { if(!syncApplying) updateSync({playing:false, time:v.currentTime}); });
+  v.addEventListener('seeked', () => { if(!syncApplying) updateSync({playing:!v.paused, time:v.currentTime, seek:true}); });
+  applySync();
 }
 function initHls(){
   const v = document.getElementById('videoPlayer'); if(!v || !currentRoom) return;
-  if(window.Hls && window.Hls.isSupported()){ const h = new window.Hls(); h.loadSource(currentRoom.video_url); h.attachMedia(v); }
-  else if(v.canPlayType('application/vnd.apple.mpegurl')) v.src = currentRoom.video_url;
+  if(window.Hls && window.Hls.isSupported()){ const h = new window.Hls(); h.loadSource(currentRoom.video_url); h.attachMedia(v); h.on(window.Hls.Events.MANIFEST_PARSED, () => initHtml5Sync()); }
+  else if(v.canPlayType('application/vnd.apple.mpegurl')){ v.src = currentRoom.video_url; initHtml5Sync(); }
 }
 async function updateSync(d){
   if(!currentRoom) return;
   const s = Object.assign({}, currentRoom.sync_state || {}, d); s.updated = Date.now();
+  currentRoom.sync_state = s;
   await sb.from('rooms').update({sync_state:s}).eq('id', currentRoom.id);
+}
+function applySync(){
+  if(!currentRoom || !currentRoom.sync_state) return;
+  const s = currentRoom.sync_state;
+  const v = document.getElementById('videoPlayer');
+  if(!v || !s.updated) return;
+  if(Date.now() - s.updated > 60000) return;
+  syncApplying = true;
+  try {
+    if(typeof s.time === 'number' && isFinite(s.time)){
+      const delta = (Date.now() - s.updated) / 1000;
+      const target = s.time + (s.playing ? delta : 0);
+      if(Math.abs((v.currentTime || 0) - target) > 1.5) v.currentTime = target;
+    }
+    if(s.playing && v.paused) v.play().catch(()=>{});
+    else if(!s.playing && !v.paused) v.pause();
+  } catch(e){}
+  setTimeout(() => { syncApplying = false; }, 500);
 }
 function startCountdown(){
   if(countdownInterval) clearInterval(countdownInterval);
   const o = document.getElementById('countdownOverlay'), n = document.getElementById('countdownNum');
   if(!o || !n) return;
   countdownInterval = setInterval(() => {
+    if(!currentRoom || !currentRoom.countdown_start){ clearInterval(countdownInterval); countdownInterval = null; return; }
     const d = Math.ceil((new Date(currentRoom.countdown_start).getTime() - Date.now()) / 1000);
     if(d > 0){ n.textContent = d; o.style.display = 'flex'; }
     else { o.style.display = 'none'; clearInterval(countdownInterval); countdownInterval = null; showPlayOverlay(); }
@@ -821,52 +844,7 @@ function showPlayOverlay(){
   const p = document.getElementById('playOverlay');
   if(p){ p.style.display = 'flex'; setTimeout(() => p.style.display = 'none', 5000); }
 }
-async function checkInvidious(url){
-  try {
-    const ctrl = new AbortController(); const t = setTimeout(() => ctrl.abort(), 2500);
-    const r = await fetch(url + '/api/v1/stats', {signal: ctrl.signal}); clearTimeout(t);
-    if(!r.ok) return false; const data = await r.json();
-    return data && (data.version || data.software);
-  } catch(e){ return false; }
-}
-async function findWorkingInvidious(){
-  const saved = localStorage.getItem(LS.invidious);
-  if(saved && await checkInvidious(saved)){ currentInvidious = saved; return saved; }
-  for(const url of INVIDIOUS_INSTANCES){ if(await checkInvidious(url)){ currentInvidious = url; localStorage.setItem(LS.invidious, url); return url; } }
-  return null;
-}
-function maybeStartAutoSwitch(){
-  if(autoSwitchDone || manualServerChoice) return;
-  if(!currentRoom || !currentRoom.video_url) return;
-  const vd = parseVideoUrl(currentRoom.video_url);
-  if(!vd || vd.type !== 'invidious') return;
-  setTimeout(async () => {
-    if(!currentRoom || manualServerChoice || autoSwitchDone) return;
-    const frame = document.getElementById('videoPlayer');
-    if(!frame || frame.tagName !== 'IFRAME') return;
-    if(autoSwitchAttempts >= 3){ autoSwitchDone = true; switchToYouTubeFallback(); return; }
-    autoSwitchAttempts++;
-    const idx = INVIDIOUS_INSTANCES.indexOf(currentInvidious);
-    const next = INVIDIOUS_INSTANCES[(idx + 1) % INVIDIOUS_INSTANCES.length];
-    if(await checkInvidious(next)){
-      currentInvidious = next; localStorage.setItem(LS.invidious, next);
-      toast('Переключаю сервер: ' + new URL(next).hostname);
-      renderVideoOnly(); maybeStartAutoSwitch();
-    } else { maybeStartAutoSwitch(); }
-  }, 10000);
-}
-function switchToYouTubeFallback(){
-  if(!currentRoom || !currentRoom.video_url) return;
-  const yt = currentRoom.video_url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/|live\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
-  if(!yt) return;
-  const box = document.getElementById('videoBox');
-  if(box){
-    box.innerHTML = '<iframe id="videoPlayer" src="https://www.youtube.com/embed/' + yt[1] + '?autoplay=0" allow="encrypted-media; fullscreen" allowfullscreen></iframe>' +
-      '<div id="countdownOverlay" class="countdown-overlay"><div class="countdown-num" id="countdownNum"></div><div class="countdown-hint">Приготовься смотреть</div></div>' +
-      '<div id="playOverlay" class="play-overlay"><div class="text">Нажми Play</div><div class="hint">Видео начнётся у всех</div></div>';
-    toast('Invidious недоступен — включён YouTube');
-  }
-}
+
 function personalVideoKey(){ return currentRoom ? 'smotrim_personal_video_' + currentRoom.id : null; }
 function getPersonalVideo(){ const k = personalVideoKey(); return k ? localStorage.getItem(k) : null; }
 function setPersonalVideo(url){ const k = personalVideoKey(); if(!k) return; if(url) localStorage.setItem(k, url); else localStorage.removeItem(k); }
@@ -886,31 +864,31 @@ function savePersonalVideo(){
   const url = document.getElementById('personalVideoUrl').value.trim();
   if(!url) return toast('Вставь ссылку', 'error');
   if(!parseVideoUrl(url)) return toast('Не получилось распознать', 'error');
-  setPersonalVideo(url); closeSheet(); renderPersonalVideo();
+  setPersonalVideo(url); closeSheet(); renderPersonalVideo(); refreshDock();
   toast('Своё видео сохранено', 'success');
 }
 function removePersonalVideo(){
-  setPersonalVideo(null); closeSheet(); renderPersonalVideo();
+  setPersonalVideo(null); closeSheet(); renderPersonalVideo(); refreshDock();
   toast('Своё видео убрано');
 }
 function renderPersonalVideo(){
-  const box = document.getElementById('personalVideoBox'); if(!box) return;
+  const box = document.getElementById('personalVideoBox');
+  if(!box) return;
   const url = getPersonalVideo();
   if(!url){ box.innerHTML = '<div class="video-placeholder" style="padding:16px;font-size:12px">Нажми «Своё» внизу, чтобы добавить видео для себя</div>'; return; }
   const vd = parseVideoUrl(url);
   if(!vd){ box.innerHTML = '<div class="video-placeholder">Не удалось распознать</div>'; return; }
   let vh = '';
-  if(vd.type === 'invidious') vh = '<iframe src="' + esc(vd.src) + '" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>';
-  else if(vd.type === 'html5') vh = '<video src="' + esc(vd.src) + '" controls></video>';
+  if(vd.type === 'html5') vh = '<video src="' + esc(vd.src) + '" controls playsinline></video>';
   else if(vd.type === 'hls'){
-    vh = '<video id="personalHlsPlayer" controls></video>';
+    vh = '<video id="personalHlsPlayer" controls playsinline></video>';
     requestAnimationFrame(() => {
       const v = document.getElementById('personalHlsPlayer'); if(!v) return;
       if(window.Hls && window.Hls.isSupported()){ const h = new window.Hls(); h.loadSource(url); h.attachMedia(v); }
       else if(v.canPlayType('application/vnd.apple.mpegurl')) v.src = url;
     });
   }
-  else if(vd.embeddable) vh = '<iframe src="' + esc(vd.src) + '" allow="encrypted-media; fullscreen" allowfullscreen></iframe>';
+  else if(vd.embeddable) vh = '<iframe src="' + esc(vd.src) + '" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen></iframe>';
   else vh = '<a href="' + esc(url) + '" target="_blank" rel="noopener" class="btn primary" style="text-decoration:none">Открыть</a>';
   box.innerHTML = vh;
 }
@@ -968,6 +946,12 @@ function renderRoomShell(){
   renderMessages();
   bindChatInput();
 }
+function refreshDock(){
+  const panel = document.getElementById('roomBottomPanel');
+  if(!panel || !currentRoom) return;
+  panel.innerHTML = buildDock();
+  bindChatInput();
+}
 function buildDock(){
   const hasPersonal = !!getPersonalVideo();
   const landscape = isLandscape();
@@ -980,7 +964,8 @@ function buildDock(){
       '<button class="tab-btn" onclick="openActionsSheet()">⋯ Ещё</button>';
   }
   return '' +
-    '<button class="icon-btn" onclick="openVideoSheet()" title="Видео">📎</button>' +
+    '<button class="icon-btn" onclick="openVideoSheet()" title="Общее видео">📎</button>' +
+    '<button class="icon-btn" onclick="openPersonalVideoSheet()" title="Своё видео" style="' + (hasPersonal ? 'border-color:var(--accent)' : '') + '">🫈</button>' +
     '<button class="icon-btn" onclick="openPeopleSheet()" title="Люди">👥<span id="dmBadge"></span></button>' +
     '<button class="icon-btn" onclick="openActionsSheet()" title="Ещё">⋯</button>';
 }
@@ -1006,13 +991,12 @@ function subscribeToRoom(roomId){
     .on('postgres_changes', {event:'UPDATE', schema:'public', table:'rooms', filter:'id=eq.' + roomId}, p => {
       if(!currentRoom || currentRoom.id !== roomId) return;
       const oldVideo = currentRoom.video_url, oldCountdown = currentRoom.countdown_start;
-      currentRoom = p.new;
+      currentRoom = Object.assign({}, currentRoom, p.new);
       if(oldVideo !== p.new.video_url){
         renderVideoOnly(); renderRoomHeaderMeta();
-        autoSwitchDone = false; manualServerChoice = false; autoSwitchAttempts = 0;
-        maybeStartAutoSwitch();
       }
       if(oldCountdown !== p.new.countdown_start && p.new.countdown_start) startCountdown();
+      if(p.new.sync_state) applySync();
     })
     .on('postgres_changes', {event:'DELETE', schema:'public', table:'rooms', filter:'id=eq.' + roomId}, () => { toast('Комната удалена', 'error'); leaveRoom(); })
     .subscribe();
@@ -1045,7 +1029,7 @@ function renderMessages(){
   const box = document.getElementById('chatMessages'); if(!box) return;
   if(currentRoomMessages.length === 0){ box.innerHTML = '<div class="hidden-note">Пока тихо. Напиши первым</div>'; return; }
   box.innerHTML = currentRoomMessages.map(messageHtml).join('');
-  box.scrollTop = box.scrollHeight;
+  requestAnimationFrame(() => { box.scrollTop = box.scrollHeight; });
 }
 function messageHtml(m){
   const time = new Date(m.created_at).toLocaleTimeString('ru-RU', {hour:'2-digit', minute:'2-digit'});
@@ -1064,7 +1048,7 @@ function appendMessage(m){
   currentRoomMessages.push(m);
   if(currentRoomMessages.length === 1) box.innerHTML = '';
   box.insertAdjacentHTML('beforeend', messageHtml(m));
-  if(wasAtBottom) box.scrollTop = box.scrollHeight;
+  if(wasAtBottom) requestAnimationFrame(() => { box.scrollTop = box.scrollHeight; });
 }
 async function sendMessage(){
   const inp = document.getElementById('chatInput'); if(!inp) return;
@@ -1252,7 +1236,6 @@ function startHeartbeat(){
   if(g) g.textContent = getGreeting();
 
   cleanupRooms();
-  findWorkingInvidious();
   await loadRooms();
 
   sb.channel('rooms-list')
@@ -1273,8 +1256,12 @@ function startHeartbeat(){
 
   const params = new URLSearchParams(location.search);
   const roomParam = params.get('room');
-  if(roomParam) enterRoom(roomParam);
-  else restoreLastRoom();
+  if(roomParam){
+    enterRoom(roomParam);
+  } else {
+    const restored = await restoreLastRoom();
+    if(!restored) showScreen('home');
+  }
 })();
 </script>
 </body>
