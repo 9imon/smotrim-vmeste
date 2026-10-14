@@ -8,7 +8,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest" defer></script>
 <style>
-  :root {
+:root {
   --bg:#101018; --surface:#191924; --surface-2:#21212e;
   --border:#2a2a38; --text:#ebeaf2; --text-2:#a8a8b8; --text-3:#6e6e82;
   --accent:#6f52e8; --accent-2:#8b72f0;
@@ -27,8 +27,7 @@ body {
 button { font-family:inherit; cursor:pointer; border:none; background:none; color:inherit; font-size:inherit; }
 input, textarea, select { font-family:inherit; font-size:16px; }
 .wrap { max-width:520px; margin:0 auto; padding:0 12px; }
-
-.btn {
+  .btn {
   display:inline-flex; align-items:center; justify-content:center; gap:6px;
   padding:12px 16px; border-radius:var(--radius); font-size:14px; font-weight:700;
   background:var(--surface-2); border:1px solid var(--border); color:var(--text);
@@ -53,9 +52,8 @@ input, textarea, select { font-family:inherit; font-size:16px; }
 .field-label {
   display:block; font-size:11px; color:var(--text-3); text-transform:uppercase;
   letter-spacing:1px; font-weight:700; margin-bottom:5px; margin-top:12px;
-}
-
-.toast-root {
+    }
+  .toast-root {
   position:fixed; left:0; right:0; bottom:calc(120px + var(--safe-bottom));
   z-index:200; display:flex; flex-direction:column; align-items:center;
   gap:6px; pointer-events:none; padding:0 12px;
@@ -88,468 +86,25 @@ input, textarea, select { font-family:inherit; font-size:16px; }
 }
 .sheet h2 { font-size:17px; font-weight:800; margin-bottom:4px; }
 .sheet .sub { font-size:13px; color:var(--text-2); margin-bottom:14px; }
-
-.hidden-note {
-  font-size:12px; color:var(--text-3); font-style:italic; padding:12px; text-align:center;
-}
+  .hidden-note { font-size:12px; color:var(--text-3); font-style:italic; padding:12px; text-align:center; }
 .empty-state { text-align:center; padding:40px 20px; color:var(--text-2); }
 .empty-state .big-icon { font-size:44px; margin-bottom:10px; opacity:0.5; }
 .empty-state h2 { font-size:15px; margin-bottom:6px; font-weight:700; }
 .empty-state p { font-size:12px; }
-  body[data-theme="phone"] .app-header {
+
+.screen { display:none; padding:0; }
+.screen.active { display:block; }
+
+.app-header {
   position:sticky; top:0; z-index:50;
   background:rgba(16,16,24,0.95);
   backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
   border-bottom:1px solid var(--border);
 }
-body[data-theme="phone"] .app-header .wrap {
+.app-header .wrap {
   display:flex; align-items:center; justify-content:space-between; padding:12px;
 }
-body[data-theme="phone"] .logo { font-size:16px; font-weight:800; cursor:pointer; }
-
-body[data-theme="phone"] #screen-home { padding:12px 0 200px; }
-body[data-theme="phone"] .greeting {
-  padding:16px 12px 4px; font-size:22px; font-weight:800; letter-spacing:-0.4px;
-}
-body[data-theme="phone"] .greeting-sub {
-  padding:0 12px 12px; font-size:13px; color:var(--text-2);
-}
-body[data-theme="phone"] .rooms-grid {
-  display:grid; grid-template-columns:repeat(2,1fr); gap:10px; padding:0 12px;
-}
-body[data-theme="phone"] .bottom-panel {
-  position:fixed; left:0; right:0; bottom:0; z-index:60;
-  max-width:520px; margin:0 auto;
-  padding:10px 12px calc(10px + var(--safe-bottom));
-  background:rgba(16,16,24,0.96);
-  backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
-  border-top:1px solid var(--border);
-  display:flex; flex-direction:column; gap:8px;
-}
-body[data-theme="phone"] .room-header {
-  position:sticky; top:0; z-index:40; background:var(--bg);
-  padding:10px 0 8px; margin-bottom:6px;
-  display:flex; flex-direction:column; gap:8px;
-}
-body[data-theme="phone"] .room-header-top { display:flex; align-items:center; gap:8px; }
-body[data-theme="phone"] .back-btn {
-  width:40px; height:40px; border-radius:50%;
-  background:var(--surface); border:1px solid var(--border);
-  font-size:18px; display:flex; align-items:center; justify-content:center;
-  flex-shrink:0; color:var(--text-2);
-}
-body[data-theme="phone"] .room-info { flex:1; min-width:0; display:flex; align-items:center; gap:10px; }
-body[data-theme="phone"] .room-info-avatar {
-  width:40px; height:40px; border-radius:50%; border:1px solid var(--border);
-  display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0;
-}
-body[data-theme="phone"] .room-info-text { flex:1; min-width:0; overflow:hidden; }
-body[data-theme="phone"] .room-info-name {
-  font-size:15px; font-weight:700;
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-}
-body[data-theme="phone"] .room-info-meta {
-  font-size:11px; color:var(--text-2);
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-}
-body[data-theme="phone"] .video-box {
-  position:sticky; top:88px; z-index:30;
-  background:#000; border:1px solid var(--border);
-  border-radius:var(--radius); overflow:hidden; aspect-ratio:16/9;
-  margin-bottom:8px; display:flex; align-items:center; justify-content:center;
-}
-body[data-theme="phone"] .video-box iframe,
-body[data-theme="phone"] .video-box video { width:100%; height:100%; border:none; }
-body[data-theme="phone"] .video-actions {
-  display:flex; gap:6px; margin-bottom:10px;
-  overflow-x:auto; -webkit-overflow-scrolling:touch;
-  scrollbar-width:none; padding-bottom:2px;
-}
-body[data-theme="phone"] .video-actions::-webkit-scrollbar { display:none; }
-body[data-theme="phone"] .video-actions .btn {
-  flex:0 0 auto; padding:8px 14px; min-height:38px; font-size:12px; white-space:nowrap;
-}
-body[data-theme="phone"] .chat-block {
-  background:var(--surface); border:1px solid var(--border);
-  border-radius:var(--radius); padding:10px;
-  display:flex; flex-direction:column; height:55vh; margin-bottom:12px;
-}
-body[data-theme="phone"] .chat-title {
-  font-size:11px; font-weight:700; color:var(--text-2);
-  text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; flex-shrink:0;
-}
-body[data-theme="phone"] .chat-messages {
-  flex:1; overflow-y:auto; overscroll-behavior:contain;
-  -webkit-overflow-scrolling:touch; margin-bottom:8px; padding-right:2px;
-}
-body[data-theme="phone"] .chat-input-row {
-  display:flex; gap:6px; flex-shrink:0;
-  padding-top:8px; border-top:1px solid var(--border); margin:0 -10px -10px;
-  padding-left:10px; padding-right:10px;
-  padding-bottom:max(10px, var(--safe-bottom));
-  background:var(--surface);
-}
-body[data-theme="phone"] .chat-input-row input { margin-bottom:0; flex:1; }
-body[data-theme="phone"] .chat-input-row .btn {
-  width:auto; padding:11px 14px; margin:0; min-height:44px; font-size:13px;
-}
-body[data-theme="phone"] .room-bottom-panel {
-  position:fixed; left:0; right:0; bottom:0; z-index:60;
-  max-width:520px; margin:0 auto;
-  padding:8px 12px calc(8px + var(--safe-bottom));
-  background:rgba(16,16,24,0.96);
-  backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
-  border-top:1px solid var(--border);
-  display:flex; gap:6px; align-items:center;
-}
-body[data-theme="phone"] .room-bottom-panel .input { margin-bottom:0; flex:1; min-width:0; }
-body[data-theme="phone"] .icon-btn {
-  width:44px; height:44px; border-radius:12px;
-  background:var(--surface-2); border:1px solid var(--border);
-  display:flex; align-items:center; justify-content:center;
-  font-size:18px; flex-shrink:0; position:relative;
-}
-body[data-theme="phone"] .icon-btn:active { transform:scale(0.94); }
-body[data-theme="phone"] .icon-btn .badge {
-  position:absolute; top:-4px; right:-4px;
-  background:var(--danger); color:#fff; font-size:10px; font-weight:800;
-  min-width:18px; height:18px; border-radius:9px;
-  display:flex; align-items:center; justify-content:center; padding:0 4px;
-  }
-  body[data-theme="phone"] .app-header {
-  position:sticky; top:0; z-index:50;
-  background:rgba(16,16,24,0.95);
-  backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
-  border-bottom:1px solid var(--border);
-}
-body[data-theme="phone"] .app-header .wrap {
-  display:flex; align-items:center; justify-content:space-between; padding:12px;
-}
-body[data-theme="phone"] .logo { font-size:16px; font-weight:800; cursor:pointer; }
-
-body[data-theme="phone"] #screen-home { padding:12px 0 200px; }
-body[data-theme="phone"] .greeting {
-  padding:16px 12px 4px; font-size:22px; font-weight:800; letter-spacing:-0.4px;
-}
-body[data-theme="phone"] .greeting-sub {
-  padding:0 12px 12px; font-size:13px; color:var(--text-2);
-}
-body[data-theme="phone"] .rooms-grid {
-  display:grid; grid-template-columns:repeat(2,1fr); gap:10px; padding:0 12px;
-}
-body[data-theme="phone"] .bottom-panel {
-  position:fixed; left:0; right:0; bottom:0; z-index:60;
-  max-width:520px; margin:0 auto;
-  padding:10px 12px calc(10px + var(--safe-bottom));
-  background:rgba(16,16,24,0.96);
-  backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
-  border-top:1px solid var(--border);
-  display:flex; flex-direction:column; gap:8px;
-}
-body[data-theme="phone"] .room-header {
-  position:sticky; top:0; z-index:40; background:var(--bg);
-  padding:10px 0 8px; margin-bottom:6px;
-  display:flex; flex-direction:column; gap:8px;
-}
-body[data-theme="phone"] .room-header-top { display:flex; align-items:center; gap:8px; }
-body[data-theme="phone"] .back-btn {
-  width:40px; height:40px; border-radius:50%;
-  background:var(--surface); border:1px solid var(--border);
-  font-size:18px; display:flex; align-items:center; justify-content:center;
-  flex-shrink:0; color:var(--text-2);
-}
-body[data-theme="phone"] .room-info { flex:1; min-width:0; display:flex; align-items:center; gap:10px; }
-body[data-theme="phone"] .room-info-avatar {
-  width:40px; height:40px; border-radius:50%; border:1px solid var(--border);
-  display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0;
-}
-body[data-theme="phone"] .room-info-text { flex:1; min-width:0; overflow:hidden; }
-body[data-theme="phone"] .room-info-name {
-  font-size:15px; font-weight:700;
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-}
-body[data-theme="phone"] .room-info-meta {
-  font-size:11px; color:var(--text-2);
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-}
-body[data-theme="phone"] .video-box {
-  position:sticky; top:88px; z-index:30;
-  background:#000; border:1px solid var(--border);
-  border-radius:var(--radius); overflow:hidden; aspect-ratio:16/9;
-  margin-bottom:8px; display:flex; align-items:center; justify-content:center;
-}
-body[data-theme="phone"] .video-box iframe,
-body[data-theme="phone"] .video-box video { width:100%; height:100%; border:none; }
-body[data-theme="phone"] .video-actions {
-  display:flex; gap:6px; margin-bottom:10px;
-  overflow-x:auto; -webkit-overflow-scrolling:touch;
-  scrollbar-width:none; padding-bottom:2px;
-}
-body[data-theme="phone"] .video-actions::-webkit-scrollbar { display:none; }
-body[data-theme="phone"] .video-actions .btn {
-  flex:0 0 auto; padding:8px 14px; min-height:38px; font-size:12px; white-space:nowrap;
-}
-body[data-theme="phone"] .chat-block {
-  background:var(--surface); border:1px solid var(--border);
-  border-radius:var(--radius); padding:10px;
-  display:flex; flex-direction:column; height:55vh; margin-bottom:12px;
-}
-body[data-theme="phone"] .chat-title {
-  font-size:11px; font-weight:700; color:var(--text-2);
-  text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; flex-shrink:0;
-}
-body[data-theme="phone"] .chat-messages {
-  flex:1; overflow-y:auto; overscroll-behavior:contain;
-  -webkit-overflow-scrolling:touch; margin-bottom:8px; padding-right:2px;
-}
-body[data-theme="phone"] .chat-input-row {
-  display:flex; gap:6px; flex-shrink:0;
-  padding-top:8px; border-top:1px solid var(--border); margin:0 -10px -10px;
-  padding-left:10px; padding-right:10px;
-  padding-bottom:max(10px, var(--safe-bottom));
-  background:var(--surface);
-}
-body[data-theme="phone"] .chat-input-row input { margin-bottom:0; flex:1; }
-body[data-theme="phone"] .chat-input-row .btn {
-  width:auto; padding:11px 14px; margin:0; min-height:44px; font-size:13px;
-}
-body[data-theme="phone"] .room-bottom-panel {
-  position:fixed; left:0; right:0; bottom:0; z-index:60;
-  max-width:520px; margin:0 auto;
-  padding:8px 12px calc(8px + var(--safe-bottom));
-  background:rgba(16,16,24,0.96);
-  backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
-  border-top:1px solid var(--border);
-  display:flex; gap:6px; align-items:center;
-}
-body[data-theme="phone"] .room-bottom-panel .input { margin-bottom:0; flex:1; min-width:0; }
-body[data-theme="phone"] .icon-btn {
-  width:44px; height:44px; border-radius:12px;
-  background:var(--surface-2); border:1px solid var(--border);
-  display:flex; align-items:center; justify-content:center;
-  font-size:18px; flex-shrink:0; position:relative;
-}
-body[data-theme="phone"] .icon-btn:active { transform:scale(0.94); }
-body[data-theme="phone"] .icon-btn .badge {
-  position:absolute; top:-4px; right:-4px;
-  background:var(--danger); color:#fff; font-size:10px; font-weight:800;
-  min-width:18px; height:18px; border-radius:9px;
-  display:flex; align-items:center; justify-content:center; padding:0 4px;
-}
-  body[data-theme="tablet"] .app-header {
-  position:sticky; top:0; z-index:50;
-  background:rgba(16,16,24,0.95);
-  backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
-  border-bottom:1px solid var(--border);
-}
-body[data-theme="tablet"] .app-header .wrap {
-  max-width:1100px; display:flex; align-items:center; justify-content:space-between;
-  padding:14px 20px;
-}
-body[data-theme="tablet"] .logo { font-size:18px; font-weight:800; cursor:pointer; }
-body[data-theme="tablet"] .wrap { max-width:1100px; padding:0 20px; }
-body[data-theme="tablet"] #screen-home { padding:20px 0 40px; }
-body[data-theme="tablet"] .greeting {
-  padding:24px 20px 6px; font-size:28px; font-weight:800; letter-spacing:-0.6px;
-}
-body[data-theme="tablet"] .greeting-sub {
-  padding:0 20px 20px; font-size:15px; color:var(--text-2);
-}
-body[data-theme="tablet"] .rooms-grid {
-  display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
-  gap:16px; padding:0 20px;
-}
-body[data-theme="tablet"] .bottom-panel {
-  position:sticky; bottom:0;
-  padding:16px 20px; margin-top:20px;
-  background:rgba(16,16,24,0.96);
-  backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
-  border-top:1px solid var(--border);
-  display:flex; gap:12px; justify-content:center;
-}
-body[data-theme="tablet"] .bottom-panel .btn { min-width:280px; }
-body[data-theme="tablet"] #screen-room { padding:20px 0 40px; }
-body[data-theme="tablet"] .room-layout {
-  display:grid; grid-template-columns:1.5fr 1fr; gap:20px;
-  max-width:1400px; margin:0 auto; padding:0 20px;
-}
-body[data-theme="tablet"] .room-left {
-  display:flex; flex-direction:column; gap:12px;
-}
-body[data-theme="tablet"] .room-right {
-  display:flex; flex-direction:column; gap:12px;
-}
-body[data-theme="tablet"] .room-header {
-  display:flex; flex-direction:column; gap:10px; flex-shrink:0;
-}
-body[data-theme="tablet"] .room-header-top { display:flex; align-items:center; gap:12px; }
-body[data-theme="tablet"] .back-btn {
-  width:44px; height:44px; border-radius:50%;
-  background:var(--surface); border:1px solid var(--border);
-  font-size:20px; display:flex; align-items:center; justify-content:center;
-  flex-shrink:0; color:var(--text-2);
-}
-body[data-theme="tablet"] .room-info { flex:1; min-width:0; display:flex; align-items:center; gap:12px; }
-body[data-theme="tablet"] .room-info-avatar {
-  width:48px; height:48px; border-radius:50%; border:1px solid var(--border);
-  display:flex; align-items:center; justify-content:center; font-size:24px; flex-shrink:0;
-}
-body[data-theme="tablet"] .room-info-name { font-size:17px; font-weight:700; }
-body[data-theme="tablet"] .room-info-meta { font-size:12px; color:var(--text-2); }
-body[data-theme="tablet"] .video-box {
-  background:#000; border:1px solid var(--border);
-  border-radius:var(--radius-lg); overflow:hidden; aspect-ratio:16/9;
-  display:flex; align-items:center; justify-content:center;
-}
-body[data-theme="tablet"] .video-box iframe,
-body[data-theme="tablet"] .video-box video { width:100%; height:100%; border:none; }
-body[data-theme="tablet"] .video-actions { display:flex; gap:8px; }
-body[data-theme="tablet"] .chat-block {
-  background:var(--surface); border:1px solid var(--border);
-  border-radius:var(--radius-lg); padding:14px;
-  display:flex; flex-direction:column; flex:1; overflow:hidden;
-  min-height:400px;
-}
-body[data-theme="tablet"] .chat-title {
-  font-size:12px; font-weight:700; color:var(--text-2);
-  text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; flex-shrink:0;
-}
-body[data-theme="tablet"] .chat-messages {
-  flex:1; overflow-y:auto; overscroll-behavior:contain;
-  margin-bottom:10px; padding-right:4px;
-}
-body[data-theme="tablet"] .chat-input-row {
-  display:flex; gap:8px; flex-shrink:0;
-  padding-top:10px; border-top:1px solid var(--border);
-}
-body[data-theme="tablet"] .chat-input-row input { margin-bottom:0; flex:1; }
-body[data-theme="tablet"] .chat-input-row .btn {
-  width:auto; padding:12px 18px; margin:0; min-height:46px;
-}
-body[data-theme="tablet"] .room-bottom-panel {
-  display:flex; gap:8px; padding:12px 0; flex-shrink:0;
-}
-body[data-theme="tablet"] .icon-btn {
-  width:48px; height:48px; border-radius:12px;
-  background:var(--surface-2); border:1px solid var(--border);
-  display:flex; align-items:center; justify-content:center;
-  font-size:20px; flex-shrink:0; position:relative;
-}
-body[data-theme="tablet"] .icon-btn .badge {
-  position:absolute; top:-4px; right:-4px;
-  background:var(--danger); color:#fff; font-size:10px; font-weight:800;
-  min-width:18px; height:18px; border-radius:9px;
-  display:flex; align-items:center; justify-content:center; padding:0 4px;
-}
-
-/* ПРОСТАЯ ТЕМА */
-body[data-theme="simple"] { font-size:17px; }
-body[data-theme="simple"] .app-header {
-  position:sticky; top:0; z-index:50;
-  background:var(--bg); border-bottom:2px solid var(--border);
-}
-body[data-theme="simple"] .app-header .wrap {
-  padding:16px; display:flex; align-items:center; justify-content:space-between;
-}
-body[data-theme="simple"] .logo { font-size:20px; font-weight:800; }
-body[data-theme="simple"] .wrap { max-width:560px; padding:0 16px; }
-body[data-theme="simple"] #screen-home { padding:16px 0 40px; }
-body[data-theme="simple"] .greeting {
-  padding:20px 16px 6px; font-size:26px; font-weight:800; line-height:1.3;
-}
-body[data-theme="simple"] .greeting-sub {
-  padding:0 16px 16px; font-size:15px; color:var(--text-2); line-height:1.4;
-}
-body[data-theme="simple"] .rooms-grid {
-  display:flex; flex-direction:column; gap:12px; padding:0 16px;
-}
-body[data-theme="simple"] .room-card {
-  padding:20px; display:flex; align-items:center; gap:16px;
-  font-size:17px; min-height:80px; flex-direction:row;
-}
-body[data-theme="simple"] .room-card-avatar { font-size:36px; width:56px; height:56px; }
-body[data-theme="simple"] .room-card-name { font-size:18px; font-weight:800; }
-body[data-theme="simple"] .room-card-meta { font-size:14px; color:var(--text-2); margin-top:4px; }
-body[data-theme="simple"] .bottom-panel {
-  padding:16px; display:flex; flex-direction:column; gap:12px;
-  background:var(--bg); border-top:2px solid var(--border);
-  position:sticky; bottom:0;
-}
-body[data-theme="simple"] #screen-room { padding:16px 0 40px; }
-body[data-theme="simple"] .room-header {
-  display:flex; flex-direction:column; gap:14px; margin-bottom:16px;
-}
-body[data-theme="simple"] .room-header-top { display:flex; align-items:center; gap:12px; }
-body[data-theme="simple"] .back-btn {
-  width:52px; height:52px; border-radius:50%;
-  background:var(--surface); border:2px solid var(--border);
-  font-size:24px; display:flex; align-items:center; justify-content:center;
-  flex-shrink:0; color:var(--text);
-}
-body[data-theme="simple"] .room-info { flex:1; min-width:0; display:flex; align-items:center; gap:14px; }
-body[data-theme="simple"] .room-info-avatar {
-  width:56px; height:56px; border-radius:50%; border:2px solid var(--border);
-  display:flex; align-items:center; justify-content:center; font-size:28px; flex-shrink:0;
-}
-body[data-theme="simple"] .room-info-name { font-size:19px; font-weight:800; }
-body[data-theme="simple"] .room-info-meta { font-size:14px; color:var(--text-2); margin-top:3px; }
-body[data-theme="simple"] .video-box {
-  background:#000; border:2px solid var(--border);
-  border-radius:16px; overflow:hidden; aspect-ratio:16/9;
-  margin-bottom:16px; display:flex; align-items:center; justify-content:center;
-}
-body[data-theme="simple"] .video-box iframe,
-body[data-theme="simple"] .video-box video { width:100%; height:100%; border:none; }
-body[data-theme="simple"] .video-actions {
-  display:flex; flex-direction:column; gap:10px; margin-bottom:16px;
-}
-body[data-theme="simple"] .video-actions .btn {
-  min-height:60px; font-size:17px; font-weight:800;
-  justify-content:flex-start; padding:16px 20px; gap:14px;
-}
-body[data-theme="simple"] .chat-block {
-  background:var(--surface); border:2px solid var(--border);
-  border-radius:16px; padding:16px;
-  display:flex; flex-direction:column; height:60vh; margin-bottom:16px;
-}
-body[data-theme="simple"] .chat-title {
-  font-size:16px; font-weight:800; margin-bottom:12px; flex-shrink:0;
-}
-body[data-theme="simple"] .chat-messages { flex:1; overflow-y:auto; margin-bottom:12px; }
-body[data-theme="simple"] .chat-input-row {
-  display:flex; flex-direction:column; gap:10px; flex-shrink:0;
-  padding-top:12px; border-top:2px solid var(--border);
-}
-body[data-theme="simple"] .chat-input-row input {
-  margin-bottom:0; min-height:52px; font-size:17px;
-}
-body[data-theme="simple"] .chat-input-row .btn {
-  width:100%; min-height:56px; font-size:17px; margin:0;
-}
-body[data-theme="simple"] .room-bottom-panel {
-  position:fixed; left:0; right:0; bottom:0; z-index:60;
-  max-width:560px; margin:0 auto;
-  padding:12px 16px calc(12px + var(--safe-bottom));
-  background:var(--bg); border-top:2px solid var(--border);
-  display:flex; flex-direction:column; gap:10px;
-}
-body[data-theme="simple"] .room-bottom-panel .row {
-  display:flex; gap:10px;
-}
-body[data-theme="simple"] .room-bottom-panel .input { margin-bottom:0; flex:1; min-height:52px; }
-body[data-theme="simple"] .icon-btn {
-  width:100%; height:52px; border-radius:12px;
-  background:var(--surface-2); border:2px solid var(--border);
-  display:flex; align-items:center; justify-content:flex-start;
-  gap:10px; padding:0 16px; font-size:16px; font-weight:700;
-  position:relative;
-}
-body[data-theme="simple"] .icon-btn .badge {
-  margin-left:auto; background:var(--danger); color:#fff;
-  font-size:12px; font-weight:800; min-width:24px; height:24px;
-  border-radius:12px; display:flex; align-items:center; justify-content:center;
-  padding:0 8px;
-  }
+.logo { font-size:16px; font-weight:800; cursor:pointer; }
   .room-card {
   background:var(--surface); border:1px solid var(--border);
   border-radius:var(--radius-lg); padding:14px; cursor:pointer;
@@ -567,24 +122,11 @@ body[data-theme="simple"] .icon-btn .badge {
   overflow:hidden; display:-webkit-box; -webkit-line-clamp:2;
   -webkit-box-orient:vertical;
 }
-.room-card-meta {
-  font-size:11px; color:var(--text-2);
-  display:flex; align-items:center; gap:6px; flex-wrap:wrap;
-}
 .room-card-badge {
   position:absolute; top:10px; right:10px;
   font-size:10px; font-weight:700; background:var(--accent);
   border-radius:8px; padding:2px 7px; color:#fff;
 }
-.room-card-online {
-  display:inline-flex; align-items:center; gap:4px;
-  font-size:11px; color:var(--success); font-weight:700;
-}
-.room-card-online::before {
-  content:''; width:6px; height:6px; border-radius:50%;
-  background:var(--success); animation:pulse 2s infinite;
-}
-@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
 
 .chat-msg {
   padding:8px 0; border-bottom:1px solid var(--border);
@@ -600,14 +142,7 @@ body[data-theme="simple"] .icon-btn .badge {
 .chat-msg-name { font-size:12px; font-weight:700; margin-bottom:2px; }
 .chat-msg-text { font-size:14px; word-wrap:break-word; }
 .chat-msg-time { font-size:10px; color:var(--text-3); margin-top:3px; }
-
-body[data-theme="simple"] .chat-msg { padding:12px 0; }
-body[data-theme="simple"] .chat-msg-avatar { width:44px; height:44px; font-size:22px; }
-body[data-theme="simple"] .chat-msg-name { font-size:15px; }
-body[data-theme="simple"] .chat-msg-text { font-size:17px; }
-body[data-theme="simple"] .chat-msg-time { font-size:12px; }
-
-.sheet-list { display:flex; flex-direction:column; gap:4px; margin:8px 0; }
+  .sheet-list { display:flex; flex-direction:column; gap:4px; margin:8px 0; }
 .sheet-list .sheet-item {
   display:flex; align-items:center; gap:14px;
   padding:14px 12px; border-radius:12px; cursor:pointer;
@@ -629,22 +164,12 @@ body[data-theme="simple"] .chat-msg-time { font-size:12px; }
   display:flex; align-items:center; justify-content:center; gap:6px;
 }
 .theme-switch button.active { background:var(--accent); color:#fff; }
-body[data-theme="simple"] .theme-switch {
-  flex-direction:column; gap:8px; padding:0; border:none; background:none;
-}
-body[data-theme="simple"] .theme-switch button {
-  background:var(--surface); border:2px solid var(--border);
-  padding:16px; font-size:16px; justify-content:flex-start; min-height:56px;
-}
-body[data-theme="simple"] .theme-switch button.active {
-  background:var(--accent); border-color:var(--accent); color:#fff;
-}
 
 .video-placeholder {
   color:#888; text-align:center; padding:20px; font-size:13px; line-height:1.5;
 }
 .video-placeholder .big { font-size:15px; font-weight:700; margin-bottom:6px; color:#bbb; }
-.countdown-overlay {
+  .countdown-overlay {
   display:none; position:absolute; inset:0; z-index:20;
   background:rgba(0,0,0,0.75);
   align-items:center; justify-content:center; flex-direction:column; gap:8px;
@@ -683,14 +208,8 @@ body[data-theme="simple"] .theme-switch button.active {
   max-width:80%; padding:10px 14px; border-radius:16px;
   margin-bottom:8px; font-size:15px; word-wrap:break-word;
 }
-.dm-msg.mine {
-  background:var(--accent); color:#fff; margin-left:auto;
-  border-bottom-right-radius:4px;
-}
-.dm-msg.their {
-  background:var(--surface-2); color:var(--text); margin-right:auto;
-  border-bottom-left-radius:4px;
-}
+.dm-msg.mine { background:var(--accent); color:#fff; margin-left:auto; border-bottom-right-radius:4px; }
+.dm-msg.their { background:var(--surface-2); color:var(--text); margin-right:auto; border-bottom-left-radius:4px; }
 .dm-time { font-size:10px; opacity:0.6; margin-top:4px; }
 
 .avatar-option {
@@ -705,8 +224,250 @@ body[data-theme="simple"] .theme-switch button.active {
   border:2px solid var(--border); cursor:pointer;
 }
 .color-option.selected { border-color:var(--text); transform:scale(1.08); }
-  .screen { display:none; padding:0; }
-.screen.active { display:block; }
+
+.video-section { display:flex; flex-direction:column; gap:4px; flex-shrink:0; }
+.video-label {
+  font-size:10px; font-weight:800; letter-spacing:1px; text-transform:uppercase;
+  padding:4px 10px; border-radius:8px;
+  display:inline-flex; align-items:center; gap:6px;
+  align-self:flex-start;
+}
+.video-label-common { color:var(--text-3); background:var(--surface-2); }
+.video-label-personal { color:#fff; background:var(--accent); }
+  body[data-theme="phone"] #screen-home { padding:12px 0 200px; }
+body[data-theme="phone"] .greeting {
+  padding:16px 12px 4px; font-size:22px; font-weight:800; letter-spacing:-0.4px;
+}
+body[data-theme="phone"] .greeting-sub {
+  padding:0 12px 12px; font-size:13px; color:var(--text-2);
+}
+body[data-theme="phone"] .rooms-grid {
+  display:grid; grid-template-columns:repeat(2,1fr); gap:10px; padding:0 12px;
+}
+body[data-theme="phone"] .bottom-panel {
+  position:fixed; left:0; right:0; bottom:0; z-index:60;
+  max-width:520px; margin:0 auto;
+  padding:10px 12px calc(10px + var(--safe-bottom));
+  background:rgba(16,16,24,0.96);
+  backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+  border-top:1px solid var(--border);
+  display:flex; flex-direction:column; gap:8px;
+}
+body[data-theme="phone"] .room-header {
+  position:sticky; top:0; z-index:40; background:var(--bg);
+  padding:10px 0 8px; margin-bottom:6px;
+  display:flex; flex-direction:column; gap:8px;
+}
+body[data-theme="phone"] .room-header-top { display:flex; align-items:center; gap:8px; }
+body[data-theme="phone"] .back-btn {
+  width:40px; height:40px; border-radius:50%;
+  background:var(--surface); border:1px solid var(--border);
+  font-size:18px; display:flex; align-items:center; justify-content:center;
+  flex-shrink:0; color:var(--text-2);
+}
+body[data-theme="phone"] .room-info { flex:1; min-width:0; display:flex; align-items:center; gap:10px; }
+body[data-theme="phone"] .room-info-avatar {
+  width:40px; height:40px; border-radius:50%; border:1px solid var(--border);
+  display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0;
+}
+body[data-theme="phone"] .room-info-text { flex:1; min-width:0; overflow:hidden; }
+body[data-theme="phone"] .room-info-name {
+  font-size:15px; font-weight:700;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+body[data-theme="phone"] .room-info-meta {
+  font-size:11px; color:var(--text-2);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  body[data-theme="phone"] .video-box {
+  position:sticky; top:88px; z-index:30;
+  background:#000; border:1px solid var(--border);
+  border-radius:var(--radius); overflow:hidden; aspect-ratio:16/9;
+  margin-bottom:8px; display:flex; align-items:center; justify-content:center;
+  position:relative;
+}
+body[data-theme="phone"] .video-box iframe,
+body[data-theme="phone"] .video-box video { width:100%; height:100%; border:none; }
+body[data-theme="phone"] .chat-block {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius); padding:10px;
+  display:flex; flex-direction:column; height:55vh; margin-bottom:12px;
+}
+body[data-theme="phone"] .chat-title {
+  font-size:11px; font-weight:700; color:var(--text-2);
+  text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; flex-shrink:0;
+}
+body[data-theme="phone"] .chat-messages {
+  flex:1; overflow-y:auto; overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch; margin-bottom:8px; padding-right:2px;
+}
+body[data-theme="phone"] .room-bottom-panel {
+  position:fixed; left:0; right:0; bottom:0; z-index:60;
+  max-width:520px; margin:0 auto;
+  padding:8px 12px calc(8px + var(--safe-bottom));
+  background:rgba(16,16,24,0.96);
+  backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+  border-top:1px solid var(--border);
+  display:flex; gap:6px; align-items:center;
+}
+body[data-theme="phone"] .room-bottom-panel .input { margin-bottom:0; flex:1; min-width:0; }
+body[data-theme="phone"] .icon-btn {
+  width:44px; height:44px; border-radius:12px;
+  background:var(--surface-2); border:1px solid var(--border);
+  display:flex; align-items:center; justify-content:center;
+  font-size:18px; flex-shrink:0; position:relative;
+}
+body[data-theme="phone"] .icon-btn:active { transform:scale(0.94); }
+body[data-theme="phone"] .icon-btn .badge {
+  position:absolute; top:-4px; right:-4px;
+  background:var(--danger); color:#fff; font-size:10px; font-weight:800;
+  min-width:18px; height:18px; border-radius:9px;
+  display:flex; align-items:center; justify-content:center; padding:0 4px;
+                                     }
+  body[data-theme="tablet"] { overflow:hidden; height:100vh; }
+
+body[data-theme="tablet"] .app-header {
+  position:fixed; top:0; left:0; right:0; z-index:50;
+  background:rgba(16,16,24,0.95);
+  backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+}
+body[data-theme="tablet"] .app-header .wrap {
+  max-width:1400px; display:flex; align-items:center; justify-content:space-between;
+  padding:12px 20px;
+}
+body[data-theme="tablet"] .logo { font-size:18px; font-weight:800; }
+
+body[data-theme="tablet"] #screen-home {
+  padding:80px 20px 100px;
+  max-width:1400px;
+  margin:0 auto;
+}
+body[data-theme="tablet"] .greeting {
+  padding:12px 0 6px; font-size:28px; font-weight:800; letter-spacing:-0.6px;
+}
+body[data-theme="tablet"] .greeting-sub {
+  padding:0 0 20px; font-size:15px; color:var(--text-2);
+}
+body[data-theme="tablet"] .rooms-grid {
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+  gap:16px; padding:0;
+}
+body[data-theme="tablet"] .bottom-panel {
+  position:fixed; bottom:0; left:0; right:0; z-index:60;
+  padding:12px 20px calc(12px + var(--safe-bottom));
+  background:rgba(16,16,24,0.96);
+  backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+  border-top:1px solid var(--border);
+  display:flex; gap:12px; justify-content:center;
+}
+body[data-theme="tablet"] .bottom-panel .btn { min-width:280px; }
+  body[data-theme="tablet"] #screen-room {
+  position:fixed;
+  top:58px; left:0; right:0;
+  bottom:calc(64px + var(--safe-bottom));
+  overflow:hidden;
+}
+body[data-theme="tablet"] .room-layout {
+  display:grid; grid-template-columns:1.5fr 1fr; gap:16px;
+  max-width:1400px; margin:0 auto; padding:8px 20px 0;
+  height:100%; box-sizing:border-box;
+}
+body[data-theme="tablet"] .room-left {
+  display:flex; flex-direction:column; gap:8px;
+  overflow-y:auto; min-height:0; padding-right:4px;
+  scrollbar-width:thin;
+}
+body[data-theme="tablet"] .room-right {
+  display:flex; flex-direction:column; gap:10px;
+  min-height:0; overflow:hidden;
+}
+body[data-theme="tablet"] .room-header {
+  display:flex; flex-direction:column; gap:10px; flex-shrink:0;
+}
+body[data-theme="tablet"] .room-header-top { display:flex; align-items:center; gap:12px; }
+body[data-theme="tablet"] .back-btn {
+  width:44px; height:44px; border-radius:50%;
+  background:var(--surface); border:1px solid var(--border);
+  font-size:20px; display:flex; align-items:center; justify-content:center;
+  flex-shrink:0; color:var(--text-2);
+}
+body[data-theme="tablet"] .room-info { flex:1; min-width:0; display:flex; align-items:center; gap:12px; }
+body[data-theme="tablet"] .room-info-avatar {
+  width:44px; height:44px; border-radius:50%; border:1px solid var(--border);
+  display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0;
+}
+body[data-theme="tablet"] .room-info-name { font-size:16px; font-weight:700; }
+body[data-theme="tablet"] .room-info-meta { font-size:11px; color:var(--text-2); }
+
+body[data-theme="tablet"] .video-box {
+  background:#000; border:1px solid var(--border);
+  border-radius:var(--radius-lg); overflow:hidden; aspect-ratio:16/9;
+  display:flex; align-items:center; justify-content:center;
+  position:relative; flex-shrink:0;
+}
+body[data-theme="tablet"] .video-box iframe,
+body[data-theme="tablet"] .video-box video { width:100%; height:100%; border:none; }
+body[data-theme="tablet"] .video-box-personal {
+  border-color:var(--accent); border-width:2px;
+  }
+  body[data-theme="tablet"] .chat-block {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius-lg); padding:14px;
+  display:flex; flex-direction:column;
+  flex:1; min-height:0; overflow:hidden;
+}
+body[data-theme="tablet"] .chat-title {
+  font-size:12px; font-weight:700; color:var(--text-2);
+  text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; flex-shrink:0;
+}
+body[data-theme="tablet"] .chat-messages {
+  flex:1; min-height:0; overflow-y:auto; overscroll-behavior:contain;
+  margin-bottom:10px; padding-right:4px;
+}
+body[data-theme="tablet"] .chat-input-row {
+  display:flex; gap:8px; flex-shrink:0;
+  padding-top:10px; border-top:1px solid var(--border);
+}
+body[data-theme="tablet"] .chat-input-row input { margin-bottom:0; flex:1; }
+body[data-theme="tablet"] .chat-input-row .btn {
+  width:auto; padding:12px 18px; margin:0; min-height:46px;
+}
+
+body[data-theme="tablet"] .room-bottom-panel {
+  position:fixed; bottom:0; left:0; right:0; z-index:60;
+  height:64px;
+  padding:8px 20px calc(8px + var(--safe-bottom));
+  background:rgba(16,16,24,0.96);
+  backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+  border-top:1px solid var(--border);
+  display:flex; gap:8px; align-items:center; justify-content:center;
+  box-sizing:content-box;
+}
+body[data-theme="tablet"] .tab-btn {
+  height:44px;
+  min-width:110px;
+  padding:0 16px;
+  border-radius:12px;
+  background:var(--surface-2);
+  border:1px solid var(--border);
+  color:var(--text);
+  font-size:13px; font-weight:700;
+  display:inline-flex; align-items:center; justify-content:center; gap:6px;
+  cursor:pointer; transition:transform .1s;
+  position:relative;
+}
+body[data-theme="tablet"] .tab-btn:active { transform:scale(0.96); }
+body[data-theme="tablet"] .tab-btn.has-personal {
+  border-color:var(--accent);
+  background:rgba(111,82,232,0.15);
+}
+body[data-theme="tablet"] .tab-btn .badge {
+  position:absolute; top:-4px; right:-4px;
+  background:var(--danger); color:#fff; font-size:10px; font-weight:800;
+  min-width:18px; height:18px; border-radius:9px;
+  display:flex; align-items:center; justify-content:center; padding:0 4px;
+}
 </style>
 </head>
 <body data-theme="phone">
@@ -738,7 +499,6 @@ body[data-theme="simple"] .theme-switch button.active {
   <div class="theme-switch" id="themeSwitch">
     <button data-theme="phone" onclick="setTheme('phone')">📱 Телефон</button>
     <button data-theme="tablet" onclick="setTheme('tablet')">💻 Планшет</button>
-    <button data-theme="simple" onclick="setTheme('simple')">👵 Простая</button>
   </div>
   <button class="btn primary big block" onclick="openCreateRoom()">➕ Создать комнату</button>
 </div>
@@ -747,7 +507,7 @@ body[data-theme="simple"] .theme-switch button.active {
 <div class="toast-root" id="toastRoot"></div>
 <script>
 // ============================================================
-// КОНСТАНТЫ И СОСТОЯНИЕ
+// КОНСТАНТЫ
 // ============================================================
 const SUPABASE_URL = 'https://aritoekxhdmskwiejqve.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyaXRvZWt4aGRtc2t3aWVqcXZlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE1MDA3MjAsImV4cCI6MjEwNzA3NjcyMH0.smtTA67icGqn0vD9fbDzyc8bdKqz_O-b7D1M3bgSqm4';
@@ -780,22 +540,25 @@ if(!myId){ myId = 'u_' + Math.random().toString(36).slice(2,10); localStorage.se
 const AVATARS = ['🎬','🍿','🎥','📺','🎭','🎨','🌟','🌙','☀️','🔥','💎','🎪','🎯','🎲','🎸','🎤','📷','🎮','🚀','🌈'];
 const COLORS = ['#ff6b9d','#ffa06b','#ffd93d','#6bcf7f','#6bc5ff','#a06bff','#ff6b6b','#5eead4','#f472b6','#93c5fd','#fcd34d','#86efac'];
 
+// ============================================================
+// СОСТОЯНИЕ
+// ============================================================
 let rooms = [];
 let currentRoom = null;
 let currentRoomMessages = [];
 let currentPresence = [];
 let theme = localStorage.getItem(LS.theme) || 'phone';
+if(theme === 'simple') theme = 'phone'; // миграция со старой версии
 let selectedAvatar = AVATARS[0];
 let selectedColor = COLORS[0];
 let roomChannel = null, dmChannel = null, presenceChannel = null;
-let syncInterval = null, countdownInterval = null;
+let countdownInterval = null;
 let isHost = false;
 let roomsRefreshTimer = null;
 let heartbeatInterval = null;
 let autoSwitchAttempts = 0, autoSwitchDone = false, manualServerChoice = false;
 let presenceTimer = null;
-
-// ============================================================
+  // ============================================================
 // УТИЛИТЫ
 // ============================================================
 function esc(s){
@@ -820,12 +583,8 @@ function openSheet(html){
   document.getElementById('modalRoot').innerHTML =
     '<div class="sheet-overlay" onclick="if(event.target===this)closeSheet()"><div class="sheet">' + html + '</div></div>';
 }
-function closeSheet(){
-  document.getElementById('modalRoot').innerHTML = '';
-}
-function encodePass(p){
-  return btoa(unescape(encodeURIComponent(p)));
-}
+function closeSheet(){ document.getElementById('modalRoot').innerHTML = ''; }
+function encodePass(p){ return btoa(unescape(encodeURIComponent(p))); }
 function getDaysLeft(exp){
   if(!exp) return null;
   const d = new Date(exp) - new Date();
@@ -838,7 +597,17 @@ function getGreeting(){
   if(h < 18) return 'Добрый день';
   return 'Добрый вечер';
 }
-  // ============================================================
+// Онлайн-счётчик: всегда включает себя
+function countOnline(){
+  const online = currentPresence.filter(p => {
+    const u = new Date(p.updated_at || 0).getTime();
+    return Date.now() - u < 120000;
+  });
+  const hasSelf = online.some(p => p.user_id === myId);
+  return online.length + (hasSelf ? 0 : 1);
+}
+
+// ============================================================
 // ТЕМЫ
 // ============================================================
 function setTheme(t){
@@ -864,42 +633,130 @@ function initTheme(){
 }
 
 // ============================================================
+// ЛИЧНОЕ ВИДЕО (только для планшета, хранится в localStorage)
+// ============================================================
+function personalVideoKey(){
+  return currentRoom ? 'smotrim_personal_video_' + currentRoom.id : null;
+}
+function getPersonalVideo(){
+  const k = personalVideoKey();
+  return k ? localStorage.getItem(k) : null;
+}
+function setPersonalVideo(url){
+  const k = personalVideoKey();
+  if(!k) return;
+  if(url) localStorage.setItem(k, url);
+  else localStorage.removeItem(k);
+}
+
+function openPersonalVideoSheet(){
+  if(!currentRoom) return;
+  const url = getPersonalVideo() || '';
+  openSheet(
+    '<h2>🫈 Своё видео</h2>' +
+    '<p class="sub">Это видео видят только вы. Другие его не увидят.</p>' +
+    '<label class="field-label">Ссылка на видео</label>' +
+    '<input id="personalVideoUrl" class="input" placeholder="https://..." value="' + esc(url) + '">' +
+    '<div style="font-size:12px;color:var(--text-3);margin-bottom:12px;">' +
+      'YouTube · RuTube · VK · Twitch · .mp4 · .m3u8' +
+    '</div>' +
+    '<button class="btn primary block" onclick="savePersonalVideo()">Сохранить</button>' +
+    (url ? '<button class="btn danger block" onclick="removePersonalVideo()">Убрать видео</button>' : '') +
+    '<button class="btn ghost block" onclick="closeSheet()">Отмена</button>'
+  );
+  setTimeout(() => {
+    const i = document.getElementById('personalVideoUrl');
+    if(i) i.focus();
+  }, 150);
+}
+
+function savePersonalVideo(){
+  const url = document.getElementById('personalVideoUrl').value.trim();
+  if(!url) return toast('Вставь ссылку', 'error');
+  if(!url.match(/^https?:\/\//i)) return toast('Ссылка должна начинаться с http://', 'error');
+  if(!parseVideoUrl(url)) return toast('Не получилось распознать', 'error');
+  setPersonalVideo(url);
+  closeSheet();
+  renderPersonalVideo();
+  refreshTabButtons();
+  toast('Своё видео сохранено', 'success');
+}
+
+function removePersonalVideo(){
+  setPersonalVideo(null);
+  closeSheet();
+  renderPersonalVideo();
+  refreshTabButtons();
+  toast('Своё видео убрано');
+}
+
+function renderPersonalVideo(){
+  const box = document.getElementById('personalVideoBox');
+  if(!box) return;
+  const url = getPersonalVideo();
+  if(!url){
+    box.innerHTML = '<div class="video-placeholder" style="padding:16px;font-size:12px;">' +
+      'Нажми «🫈 Своё» внизу,<br>чтобы добавить видео для себя' +
+    '</div>';
+    return;
+  }
+  const vd = parseVideoUrl(url);
+  if(!vd){ box.innerHTML = '<div class="video-placeholder">Не удалось распознать</div>'; return; }
+  let vh = '';
+  if(vd.type === 'invidious'){
+    vh = '<iframe src="' + esc(vd.src) + '" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>';
+  } else if(vd.type === 'html5'){
+    vh = '<video src="' + esc(vd.src) + '" controls></video>';
+  } else if(vd.type === 'hls'){
+    vh = '<video id="personalHlsPlayer" controls></video>';
+    setTimeout(() => {
+      const v = document.getElementById('personalHlsPlayer');
+      if(!v) return;
+      if(window.Hls && window.Hls.isSupported()){
+        const h = new window.Hls();
+        h.loadSource(url);
+        h.attachMedia(v);
+      } else if(v.canPlayType('application/vnd.apple.mpegurl')){
+        v.src = url;
+      }
+    }, 50);
+  } else if(vd.embeddable){
+    vh = '<iframe src="' + esc(vd.src) + '" allow="encrypted-media; fullscreen" allowfullscreen></iframe>';
+  } else {
+    vh = '<a href="' + esc(url) + '" target="_blank" rel="noopener" class="btn primary" style="text-decoration:none;">Открыть</a>';
+  }
+  box.innerHTML = vh;
+}
+
+// ============================================================
 // НАВИГАЦИЯ
 // ============================================================
 function showScreen(name){
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   const el = document.getElementById('screen-' + name);
   if(el) el.classList.add('active');
-
   const homePanel = document.getElementById('homeBottomPanel');
   if(homePanel) homePanel.style.display = (name === 'home') ? 'flex' : 'none';
-
   const roomPanel = document.getElementById('roomBottomPanel');
   if(roomPanel) roomPanel.style.display = (name === 'room') ? 'flex' : 'none';
-
   window.scrollTo(0, 0);
 }
-
 function goHome(){
   if(currentRoom) leaveRoom();
   else showScreen('home');
-}
-
-// ============================================================
-// ОЧИСТКА СТАРЫХ КОМНАТ
+  }
+  // ============================================================
+// ОЧИСТКА
 // ============================================================
 async function cleanupRooms(){
   const last = localStorage.getItem(LS.cleanup);
   const now = Date.now();
   if(last && now - parseInt(last) < 3600000) return;
-  try {
-    await sb.rpc('cleanup_rooms_fn');
-    localStorage.setItem(LS.cleanup, now.toString());
-  } catch(e){ /* тихо */ }
+  try { await sb.rpc('cleanup_rooms_fn'); localStorage.setItem(LS.cleanup, now.toString()); } catch(e){}
 }
 
 // ============================================================
-// ГЛАВНАЯ: ЗАГРУЗКА И ОТРИСОВКА КОМНАТ
+// ГЛАВНАЯ
 // ============================================================
 async function loadRooms(){
   try {
@@ -911,27 +768,20 @@ async function loadRooms(){
     renderRooms();
   } catch(e){ console.error(e); }
 }
-
 function scheduleRoomsReload(){
   if(roomsRefreshTimer) return;
-  roomsRefreshTimer = setTimeout(() => {
-    roomsRefreshTimer = null;
-    loadRooms();
-  }, 1500);
+  roomsRefreshTimer = setTimeout(() => { roomsRefreshTimer = null; loadRooms(); }, 1500);
 }
-
 function renderRooms(){
   const area = document.getElementById('roomsArea');
   const empty = document.getElementById('emptyState');
   if(!area) return;
-
   if(rooms.length === 0){
     area.innerHTML = '';
     if(empty) empty.style.display = 'block';
     return;
   }
   if(empty) empty.style.display = 'none';
-
   area.innerHTML = rooms.map(r => {
     const days = getDaysLeft(r.expires_at);
     const warn = (days !== null && days <= 2)
@@ -946,25 +796,23 @@ function renderRooms(){
       '<div class="room-card-name">' + esc(r.name) + '</div>' +
     '</div>';
   }).join('');
-  }
-  // ============================================================
+}
+
+// ============================================================
 // СОЗДАНИЕ КОМНАТЫ
 // ============================================================
 function openCreateRoom(){
   selectedAvatar = AVATARS[Math.floor(Math.random() * AVATARS.length)];
   selectedColor = COLORS[Math.floor(Math.random() * COLORS.length)];
-
   const av = AVATARS.map(a =>
     '<button class="avatar-option ' + (a===selectedAvatar?'selected':'') + '" ' +
       'data-av="' + a + '" onclick="selectAvatar(\'' + a + '\')">' + a + '</button>'
   ).join('');
-
   const co = COLORS.map(c =>
     '<button class="color-option ' + (c===selectedColor?'selected':'') + '" ' +
       'data-col="' + c + '" onclick="selectColor(\'' + c + '\')" ' +
       'style="background:' + c + ';"></button>'
   ).join('');
-
   openSheet(
     '<h2>Новая комната</h2>' +
     '<p class="sub">Дай название и выбери тип</p>' +
@@ -984,12 +832,8 @@ function openCreateRoom(){
     '<button class="btn primary block" onclick="createRoom()">Создать</button>' +
     '<button class="btn ghost block" onclick="closeSheet()">Отмена</button>'
   );
-  setTimeout(() => {
-    const i = document.getElementById('roomName');
-    if(i) i.focus();
-  }, 150);
+  setTimeout(() => { const i = document.getElementById('roomName'); if(i) i.focus(); }, 150);
 }
-
 function onRoomTypeChange(){
   const type = document.getElementById('roomType').value;
   const passField = document.getElementById('roomPassword');
@@ -998,16 +842,13 @@ function onRoomTypeChange(){
 function selectAvatar(a){
   selectedAvatar = a;
   document.querySelectorAll('.avatar-option').forEach(el =>
-    el.classList.toggle('selected', el.dataset.av === a)
-  );
+    el.classList.toggle('selected', el.dataset.av === a));
 }
 function selectColor(c){
   selectedColor = c;
   document.querySelectorAll('.color-option').forEach(el =>
-    el.classList.toggle('selected', el.dataset.col === c)
-  );
+    el.classList.toggle('selected', el.dataset.col === c));
 }
-
 async function generateRoomName(base){
   const b = base.trim();
   if(!b) return '';
@@ -1025,7 +866,6 @@ async function generateRoomName(base){
     return max === 0 ? b : b + ' ' + (max + 1);
   } catch(e){ return b; }
 }
-
 async function createRoom(){
   const name = document.getElementById('roomName').value.trim();
   if(!name) return toast('Введи название', 'error');
@@ -1058,7 +898,7 @@ async function createRoom(){
 }
 
 // ============================================================
-// ВХОД / ВЫХОД ИЗ КОМНАТЫ
+// ВХОД / ВЫХОД
 // ============================================================
 async function enterRoom(roomId){
   let room = rooms.find(r => r.id === roomId);
@@ -1079,7 +919,6 @@ async function enterRoom(roomId){
     if(!savedOk) return toast('Скрытая комната. Открой по ссылке от хоста.', 'error');
     sessionStorage.setItem('room_invite_' + roomId, room.invite_code);
   }
-
   if(room.password_hash && room.host_id !== myId){
     const savedPass = sessionStorage.getItem('room_pass_' + roomId);
     const okPass = savedPass === room.password_hash;
@@ -1098,12 +937,12 @@ async function enterRoom(roomId){
 
   showScreen('room');
   renderRoomShell();
-  renderVideoOnly();
-  renderMessages();
 
   await loadRoomMessages(roomId);
   await loadPresence();
   await upsertPresence();
+  await loadPresence();
+  renderRoomHeaderMeta();
   updateDMBadge();
 
   await teardownChannels();
@@ -1113,7 +952,6 @@ async function enterRoom(roomId){
     const d = Math.ceil((new Date(room.countdown_start).getTime() - Date.now()) / 1000);
     if(d > 0) startCountdown();
   }
-
   maybeStartAutoSwitch();
 }
 
@@ -1129,7 +967,6 @@ function leaveRoom(){
   if(roomChannel){ sb.removeChannel(roomChannel); roomChannel = null; }
   if(dmChannel){ sb.removeChannel(dmChannel); dmChannel = null; }
   if(presenceChannel){ sb.removeChannel(presenceChannel); presenceChannel = null; }
-  if(syncInterval){ clearInterval(syncInterval); syncInterval = null; }
   if(countdownInterval){ clearInterval(countdownInterval); countdownInterval = null; }
   currentRoom = null;
   currentRoomMessages = [];
@@ -1146,16 +983,13 @@ async function restoreLastRoom(){
     .eq('id', lastRoom)
     .gt('expires_at', new Date().toISOString())
     .limit(1);
-  if(data && data.length){
-    enterRoom(lastRoom);
-    return true;
-  } else {
-    localStorage.removeItem(LS.lastRoom);
-    return false;
-  }
-  }
-  // ============================================================
-// REALTIME-ПОДПИСКИ
+  if(data && data.length){ enterRoom(lastRoom); return true; }
+  localStorage.removeItem(LS.lastRoom);
+  return false;
+}
+
+// ============================================================
+// REALTIME
 // ============================================================
 function subscribeToRoom(roomId){
   roomChannel = sb.channel('room-' + roomId)
@@ -1209,32 +1043,1065 @@ function subscribeToRoom(roomId){
       () => scheduleLoadPresence())
     .subscribe();
 }
-
 function scheduleLoadPresence(){
   if(presenceTimer) return;
   presenceTimer = setTimeout(() => {
     presenceTimer = null;
-    loadPresence().then(() => {
-      renderRoomHeaderMeta();
-    });
+    loadPresence().then(() => renderRoomHeaderMeta());
   }, 800);
+  }
+  <!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#101018">
+<title>Смотрим вместе</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest" defer></script>
+<style>
+:root {
+  --bg:#101018; --surface:#191924; --surface-2:#21212e;
+  --border:#2a2a38; --text:#ebeaf2; --text-2:#a8a8b8; --text-3:#6e6e82;
+  --accent:#6f52e8; --accent-2:#8b72f0;
+  --danger:#e05563; --success:#4a9e6e;
+  --radius:12px; --radius-lg:16px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+* { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+html, body { height:100%; width:100%; }
+body {
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",sans-serif;
+  background:var(--bg); color:var(--text); font-size:15px; line-height:1.5;
+  overflow-x:hidden; min-height:100vh; -webkit-font-smoothing:antialiased;
+  overscroll-behavior-y:none;
+}
+button { font-family:inherit; cursor:pointer; border:none; background:none; color:inherit; font-size:inherit; }
+input, textarea, select { font-family:inherit; font-size:16px; }
+.wrap { max-width:520px; margin:0 auto; padding:0 12px; }
+
+.btn {
+  display:inline-flex; align-items:center; justify-content:center; gap:6px;
+  padding:12px 16px; border-radius:var(--radius); font-size:14px; font-weight:700;
+  background:var(--surface-2); border:1px solid var(--border); color:var(--text);
+  min-height:46px; text-align:center; transition:transform .1s, opacity .15s;
+}
+.btn:active { transform:scale(0.98); opacity:0.9; }
+.btn.primary { background:var(--accent); color:#fff; border-color:var(--accent); }
+.btn.ghost { background:transparent; }
+.btn.danger { background:var(--danger); color:#fff; border-color:var(--danger); }
+.btn.block { width:100%; margin-top:6px; }
+.btn.small { padding:8px 12px; min-height:36px; font-size:12px; }
+.btn.big { min-height:56px; font-size:15px; font-weight:800; border-radius:var(--radius-lg); }
+.btn:disabled { opacity:0.5; cursor:not-allowed; }
+
+.input, .select {
+  width:100%; background:var(--bg); border:1px solid var(--border); color:var(--text);
+  padding:12px 14px; border-radius:var(--radius); font-size:16px; margin-bottom:8px;
+}
+.input:focus, .select:focus { outline:none; border-color:var(--accent); }
+.select { appearance:none; -webkit-appearance:none; }
+
+.field-label {
+  display:block; font-size:11px; color:var(--text-3); text-transform:uppercase;
+  letter-spacing:1px; font-weight:700; margin-bottom:5px; margin-top:12px;
+  }
+  .toast-root {
+  position:fixed; left:0; right:0; bottom:calc(120px + var(--safe-bottom));
+  z-index:200; display:flex; flex-direction:column; align-items:center;
+  gap:6px; pointer-events:none; padding:0 12px;
+}
+.toast {
+  background:var(--surface-2); color:var(--text); padding:10px 16px;
+  border-radius:20px; font-size:13px; font-weight:600; max-width:100%;
+  border:1px solid var(--border); animation:toastIn .25s; text-align:center;
+}
+.toast.error { background:var(--danger); color:#fff; }
+.toast.success { background:var(--success); color:#fff; }
+@keyframes toastIn { from{opacity:0;transform:translateY(10px);} to{opacity:1;transform:translateY(0);} }
+
+.sheet-overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,0.65); z-index:100;
+  display:flex; align-items:flex-end; justify-content:center;
+  animation:fadeIn .2s;
+}
+@keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
+.sheet {
+  background:var(--surface); width:100%; max-width:520px;
+  border-radius:20px 20px 0 0; border-top:1px solid var(--border);
+  padding:16px 16px calc(20px + var(--safe-bottom));
+  max-height:90vh; overflow-y:auto; animation:slideUp .25s;
+}
+@keyframes slideUp { from{transform:translateY(100%);} to{transform:translateY(0);} }
+.sheet::before {
+  content:''; display:block; width:44px; height:4px; background:var(--border);
+  border-radius:2px; margin:0 auto 14px;
+}
+.sheet h2 { font-size:17px; font-weight:800; margin-bottom:4px; }
+.sheet .sub { font-size:13px; color:var(--text-2); margin-bottom:14px; }
+
+.hidden-note { font-size:12px; color:var(--text-3); font-style:italic; padding:12px; text-align:center; }
+.empty-state { text-align:center; padding:40px 20px; color:var(--text-2); }
+.empty-state .big-icon { font-size:44px; margin-bottom:10px; opacity:0.5; }
+.empty-state h2 { font-size:15px; margin-bottom:6px; font-weight:700; }
+.empty-state p { font-size:12px; }
+
+.screen { display:none; padding:0; }
+.screen.active { display:block; }
+
+.app-header {
+  position:sticky; top:0; z-index:50;
+  background:rgba(16,16,24,0.95);
+  backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+}
+.app-header .wrap {
+  display:flex; align-items:center; justify-content:space-between; padding:12px;
+}
+.logo { font-size:16px; font-weight:800; cursor:pointer; }
+
+.room-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius-lg); padding:14px; cursor:pointer;
+  display:flex; flex-direction:column; gap:8px; position:relative;
+  transition:transform .1s; min-height:110px;
+}
+.room-card:active { transform:scale(0.97); }
+.room-card-avatar {
+  width:52px; height:52px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:26px; border:2px solid var(--border);
+}
+.room-card-name {
+  font-size:14px; font-weight:800; line-height:1.2;
+  overflow:hidden; display:-webkit-box; -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+}
+.room-card-badge {
+  position:absolute; top:10px; right:10px;
+  font-size:10px; font-weight:700; background:var(--accent);
+  border-radius:8px; padding:2px 7px; color:#fff;
+  }
+  .chat-msg {
+  padding:8px 0; border-bottom:1px solid var(--border);
+  display:flex; gap:10px; align-items:flex-start;
+}
+.chat-msg:last-child { border-bottom:none; }
+.chat-msg-avatar {
+  width:32px; height:32px; border-radius:50%; border:1px solid var(--border);
+  display:flex; align-items:center; justify-content:center; font-size:15px;
+  flex-shrink:0; background:var(--surface-2);
+}
+.chat-msg-body { flex:1; min-width:0; }
+.chat-msg-name { font-size:12px; font-weight:700; margin-bottom:2px; }
+.chat-msg-text { font-size:14px; word-wrap:break-word; }
+.chat-msg-time { font-size:10px; color:var(--text-3); margin-top:3px; }
+
+.sheet-list { display:flex; flex-direction:column; gap:4px; margin:8px 0; }
+.sheet-list .sheet-item {
+  display:flex; align-items:center; gap:14px;
+  padding:14px 12px; border-radius:12px; cursor:pointer;
+  font-size:15px; font-weight:600; min-height:56px;
+  transition:background .1s;
+}
+.sheet-list .sheet-item:active { background:var(--surface-2); }
+.sheet-list .sheet-item .ic { font-size:20px; flex-shrink:0; width:24px; text-align:center; }
+.sheet-list .sheet-item.danger { color:var(--danger); }
+.sheet-list .sheet-item .badge-auto { margin-left:auto; font-size:11px; color:var(--text-3); }
+
+.theme-switch {
+  display:flex; gap:6px; padding:4px;
+  border:1px solid var(--border); border-radius:14px; background:var(--surface);
+}
+.theme-switch button {
+  flex:1; padding:10px 8px; font-size:12px; font-weight:700;
+  border-radius:10px; color:var(--text-2); min-height:40px;
+  display:flex; align-items:center; justify-content:center; gap:6px;
+}
+.theme-switch button.active { background:var(--accent); color:#fff; }
+
+.video-placeholder {
+  color:#888; text-align:center; padding:20px; font-size:13px; line-height:1.5;
+}
+.video-placeholder .big { font-size:15px; font-weight:700; margin-bottom:6px; color:#bbb; }
+
+.countdown-overlay {
+  display:none; position:absolute; inset:0; z-index:20;
+  background:rgba(0,0,0,0.75);
+  align-items:center; justify-content:center; flex-direction:column; gap:8px;
+}
+.countdown-num { font-size:80px; font-weight:900; color:#fff; line-height:1; }
+.countdown-hint { font-size:13px; color:#ccc; }
+.play-overlay {
+  display:none; position:absolute; inset:0; z-index:20;
+  background:rgba(0,0,0,0.6);
+  align-items:center; justify-content:center; flex-direction:column; gap:8px;
+  pointer-events:none;
+}
+.play-overlay .text { font-size:20px; font-weight:800; color:#fff; }
+.play-overlay .hint { font-size:12px; color:#ccc; }
+
+.people-row {
+  display:flex; align-items:center; gap:12px;
+  padding:12px; border-bottom:1px solid var(--border);
+}
+.people-row:last-child { border-bottom:none; }
+.people-row-avatar {
+  width:40px; height:40px; border-radius:50%; border:1px solid var(--border);
+  display:flex; align-items:center; justify-content:center; font-size:20px;
+  flex-shrink:0;
+}
+.people-row-name { flex:1; font-size:14px; font-weight:700; }
+.people-row-status { font-size:11px; color:var(--text-3); }
+.people-row .btn { flex-shrink:0; }
+
+.dm-box { display:flex; flex-direction:column; height:55vh; min-height:300px; }
+.dm-messages {
+  flex:1; overflow-y:auto; padding:10px;
+  background:var(--bg); border-radius:12px; margin-bottom:10px;
+}
+.dm-msg {
+  max-width:80%; padding:10px 14px; border-radius:16px;
+  margin-bottom:8px; font-size:15px; word-wrap:break-word;
+}
+.dm-msg.mine { background:var(--accent); color:#fff; margin-left:auto; border-bottom-right-radius:4px; }
+.dm-msg.their { background:var(--surface-2); color:var(--text); margin-right:auto; border-bottom-left-radius:4px; }
+.dm-time { font-size:10px; opacity:0.6; margin-top:4px; }
+
+.avatar-option {
+  width:44px; height:44px; border-radius:50%;
+  border:2px solid var(--border); background:var(--surface-2);
+  font-size:22px; display:flex; align-items:center; justify-content:center;
+  cursor:pointer;
+}
+.avatar-option.selected { border-color:var(--accent); transform:scale(1.08); }
+.color-option {
+  width:38px; height:38px; border-radius:50%;
+  border:2px solid var(--border); cursor:pointer;
+}
+.color-option.selected { border-color:var(--text); transform:scale(1.08); }
+
+.video-section { display:flex; flex-direction:column; gap:4px; flex-shrink:0; }
+.video-label {
+  font-size:10px; font-weight:800; letter-spacing:1px; text-transform:uppercase;
+  padding:4px 10px; border-radius:8px;
+  display:inline-flex; align-items:center; gap:6px;
+  align-self:flex-start;
+}
+.video-label-common { color:var(--text-3); background:var(--surface-2); }
+.video-label-personal { color:#fff; background:var(--accent); }
+  /* ---------- ТЕЛЕФОН ---------- */
+body[data-theme="phone"] #screen-home { padding:12px 0 200px; }
+body[data-theme="phone"] .greeting {
+  padding:16px 12px 4px; font-size:22px; font-weight:800; letter-spacing:-0.4px;
+}
+body[data-theme="phone"] .greeting-sub {
+  padding:0 12px 12px; font-size:13px; color:var(--text-2);
+}
+body[data-theme="phone"] .rooms-grid {
+  display:grid; grid-template-columns:repeat(2,1fr); gap:10px; padding:0 12px;
+}
+body[data-theme="phone"] .bottom-panel {
+  position:fixed; left:0; right:0; bottom:0; z-index:60;
+  max-width:520px; margin:0 auto;
+  padding:10px 12px calc(10px + var(--safe-bottom));
+  background:rgba(16,16,24,0.96);
+  backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+  border-top:1px solid var(--border);
+  display:flex; flex-direction:column; gap:8px;
+}
+body[data-theme="phone"] .room-header {
+  position:sticky; top:0; z-index:40; background:var(--bg);
+  padding:10px 0 8px; margin-bottom:6px;
+  display:flex; flex-direction:column; gap:8px;
+}
+body[data-theme="phone"] .room-header-top { display:flex; align-items:center; gap:8px; }
+body[data-theme="phone"] .back-btn {
+  width:40px; height:40px; border-radius:50%;
+  background:var(--surface); border:1px solid var(--border);
+  font-size:18px; display:flex; align-items:center; justify-content:center;
+  flex-shrink:0; color:var(--text-2);
+}
+body[data-theme="phone"] .room-info { flex:1; min-width:0; display:flex; align-items:center; gap:10px; }
+body[data-theme="phone"] .room-info-avatar {
+  width:40px; height:40px; border-radius:50%; border:1px solid var(--border);
+  display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0;
+}
+body[data-theme="phone"] .room-info-text { flex:1; min-width:0; overflow:hidden; }
+body[data-theme="phone"] .room-info-name {
+  font-size:15px; font-weight:700;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+body[data-theme="phone"] .room-info-meta {
+  font-size:11px; color:var(--text-2);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+body[data-theme="phone"] .video-box {
+  position:sticky; top:88px; z-index:30;
+  background:#000; border:1px solid var(--border);
+  border-radius:var(--radius); overflow:hidden; aspect-ratio:16/9;
+  margin-bottom:8px; display:flex; align-items:center; justify-content:center;
+  position:relative;
+}
+body[data-theme="phone"] .video-box iframe,
+body[data-theme="phone"] .video-box video { width:100%; height:100%; border:none; }
+body[data-theme="phone"] .chat-block {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius); padding:10px;
+  display:flex; flex-direction:column; height:55vh; margin-bottom:12px;
+}
+body[data-theme="phone"] .chat-title {
+  font-size:11px; font-weight:700; color:var(--text-2);
+  text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; flex-shrink:0;
+}
+body[data-theme="phone"] .chat-messages {
+  flex:1; overflow-y:auto; overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch; margin-bottom:8px; padding-right:2px;
+}
+body[data-theme="phone"] .room-bottom-panel {
+  position:fixed; left:0; right:0; bottom:0; z-index:60;
+  max-width:520px; margin:0 auto;
+  padding:8px 12px calc(8px + var(--safe-bottom));
+  background:rgba(16,16,24,0.96);
+  backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+  border-top:1px solid var(--border);
+  display:flex; gap:6px; align-items:center;
+}
+body[data-theme="phone"] .room-bottom-panel .input { margin-bottom:0; flex:1; min-width:0; }
+body[data-theme="phone"] .icon-btn {
+  width:44px; height:44px; border-radius:12px;
+  background:var(--surface-2); border:1px solid var(--border);
+  display:flex; align-items:center; justify-content:center;
+  font-size:18px; flex-shrink:0; position:relative;
+}
+body[data-theme="phone"] .icon-btn:active { transform:scale(0.94); }
+body[data-theme="phone"] .icon-btn .badge {
+  position:absolute; top:-4px; right:-4px;
+  background:var(--danger); color:#fff; font-size:10px; font-weight:800;
+  min-width:18px; height:18px; border-radius:9px;
+  display:flex; align-items:center; justify-content:center; padding:0 4px;
+  }
+  /* ---------- ПЛАНШЕТ ---------- */
+body[data-theme="tablet"] { overflow:hidden; height:100vh; }
+body[data-theme="tablet"] .app-header {
+  position:fixed; top:0; left:0; right:0; z-index:50;
+  background:rgba(16,16,24,0.95);
+  backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+}
+body[data-theme="tablet"] .app-header .wrap {
+  max-width:1400px; display:flex; align-items:center; justify-content:space-between;
+  padding:12px 20px;
+}
+body[data-theme="tablet"] .logo { font-size:18px; font-weight:800; }
+body[data-theme="tablet"] #screen-home {
+  padding:80px 20px 100px;
+  max-width:1400px;
+  margin:0 auto;
+}
+body[data-theme="tablet"] .greeting {
+  padding:12px 0 6px; font-size:28px; font-weight:800; letter-spacing:-0.6px;
+}
+body[data-theme="tablet"] .greeting-sub {
+  padding:0 0 20px; font-size:15px; color:var(--text-2);
+}
+body[data-theme="tablet"] .rooms-grid {
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+  gap:16px; padding:0;
+}
+body[data-theme="tablet"] .bottom-panel {
+  position:fixed; bottom:0; left:0; right:0; z-index:60;
+  padding:12px 20px calc(12px + var(--safe-bottom));
+  background:rgba(16,16,24,0.96);
+  backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+  border-top:1px solid var(--border);
+  display:flex; gap:12px; justify-content:center;
+}
+body[data-theme="tablet"] .bottom-panel .btn { min-width:280px; }
+
+body[data-theme="tablet"] #screen-room {
+  position:fixed;
+  top:58px; left:0; right:0;
+  bottom:calc(64px + var(--safe-bottom));
+  overflow:hidden;
+}
+body[data-theme="tablet"] .room-layout {
+  display:grid; grid-template-columns:1.5fr 1fr; gap:16px;
+  max-width:1400px; margin:0 auto; padding:8px 20px 0;
+  height:100%; box-sizing:border-box;
+}
+body[data-theme="tablet"] .room-left {
+  display:flex; flex-direction:column; gap:8px;
+  overflow-y:auto; min-height:0; padding-right:4px;
+  scrollbar-width:thin;
+}
+body[data-theme="tablet"] .room-right {
+  display:flex; flex-direction:column; gap:10px;
+  min-height:0; overflow:hidden;
+}
+body[data-theme="tablet"] .room-header {
+  display:flex; flex-direction:column; gap:10px; flex-shrink:0;
+}
+body[data-theme="tablet"] .room-header-top { display:flex; align-items:center; gap:12px; }
+body[data-theme="tablet"] .back-btn {
+  width:44px; height:44px; border-radius:50%;
+  background:var(--surface); border:1px solid var(--border);
+  font-size:20px; display:flex; align-items:center; justify-content:center;
+  flex-shrink:0; color:var(--text-2);
+}
+body[data-theme="tablet"] .room-info { flex:1; min-width:0; display:flex; align-items:center; gap:12px; }
+body[data-theme="tablet"] .room-info-avatar {
+  width:44px; height:44px; border-radius:50%; border:1px solid var(--border);
+  display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0;
+}
+body[data-theme="tablet"] .room-info-name { font-size:16px; font-weight:700; }
+body[data-theme="tablet"] .room-info-meta { font-size:11px; color:var(--text-2); }
+
+body[data-theme="tablet"] .video-box {
+  background:#000; border:1px solid var(--border);
+  border-radius:var(--radius-lg); overflow:hidden; aspect-ratio:16/9;
+  display:flex; align-items:center; justify-content:center;
+  position:relative; flex-shrink:0;
+}
+body[data-theme="tablet"] .video-box iframe,
+body[data-theme="tablet"] .video-box video { width:100%; height:100%; border:none; }
+body[data-theme="tablet"] .video-box-personal {
+  border-color:var(--accent); border-width:2px;
+}
+
+body[data-theme="tablet"] .chat-block {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius-lg); padding:14px;
+  display:flex; flex-direction:column;
+  flex:1; min-height:0; overflow:hidden;
+}
+body[data-theme="tablet"] .chat-title {
+  font-size:12px; font-weight:700; color:var(--text-2);
+  text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; flex-shrink:0;
+}
+body[data-theme="tablet"] .chat-messages {
+  flex:1; min-height:0; overflow-y:auto; overscroll-behavior:contain;
+  margin-bottom:10px; padding-right:4px;
+}
+body[data-theme="tablet"] .chat-input-row {
+  display:flex; gap:8px; flex-shrink:0;
+  padding-top:10px; border-top:1px solid var(--border);
+}
+body[data-theme="tablet"] .chat-input-row input { margin-bottom:0; flex:1; }
+body[data-theme="tablet"] .chat-input-row .btn {
+  width:auto; padding:12px 18px; margin:0; min-height:46px;
+}
+body[data-theme="tablet"] .room-bottom-panel {
+  position:fixed; bottom:0; left:0; right:0; z-index:60;
+  height:64px;
+  padding:8px 20px calc(8px + var(--safe-bottom));
+  background:rgba(16,16,24,0.96);
+  backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+  border-top:1px solid var(--border);
+  display:flex; gap:8px; align-items:center; justify-content:center;
+  box-sizing:content-box;
+}
+body[data-theme="tablet"] .tab-btn {
+  height:44px;
+  min-width:110px;
+  padding:0 16px;
+  border-radius:12px;
+  background:var(--surface-2);
+  border:1px solid var(--border);
+  color:var(--text);
+  font-size:13px; font-weight:700;
+  display:inline-flex; align-items:center; justify-content:center; gap:6px;
+  cursor:pointer; transition:transform .1s;
+  position:relative;
+}
+body[data-theme="tablet"] .tab-btn:active { transform:scale(0.96); }
+body[data-theme="tablet"] .tab-btn.has-personal {
+  border-color:var(--accent);
+  background:rgba(111,82,232,0.15);
+}
+body[data-theme="tablet"] .tab-btn .badge {
+  position:absolute; top:-4px; right:-4px;
+  background:var(--danger); color:#fff; font-size:10px; font-weight:800;
+  min-width:18px; height:18px; border-radius:9px;
+  display:flex; align-items:center; justify-content:center; padding:0 4px;
+}
+</style>
+</head>
+<body data-theme="phone">
+
+<header class="app-header">
+  <div class="wrap">
+    <div class="logo" onclick="goHome()">Смотрим вместе</div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section id="screen-home" class="screen active">
+    <div class="greeting" id="greeting">Добрый вечер</div>
+    <div class="greeting-sub">Найди комнату или создай свою</div>
+    <div id="roomsArea" class="rooms-grid"></div>
+    <div id="emptyState" class="empty-state" style="display:none;">
+      <div class="big-icon">🎬</div>
+      <h2>Пока нет комнат</h2>
+      <p>Создай первую — например, «Кино на вечер»</p>
+    </div>
+  </section>
+
+  <section id="screen-room" class="screen">
+    <div id="roomContent"></div>
+  </section>
+</main>
+
+<div class="bottom-panel" id="homeBottomPanel">
+  <div class="theme-switch" id="themeSwitch">
+    <button data-theme="phone" onclick="setTheme('phone')">📱 Телефон</button>
+    <button data-theme="tablet" onclick="setTheme('tablet')">💻 Планшет</button>
+  </div>
+  <button class="btn primary big block" onclick="openCreateRoom()">➕ Создать комнату</button>
+</div>
+
+<div id="modalRoot"></div>
+<div class="toast-root" id="toastRoot"></div>
+<script>
+  // ============================================================
+// КОНСТАНТЫ
+// ============================================================
+const SUPABASE_URL = 'https://aritoekxhdmskwiejqve.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyaXRvZWt4aGRtc2t3aWVqcXZlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE1MDA3MjAsImV4cCI6MjEwNzA3NjcyMH0.smtTA67icGqn0vD9fbDzyc8bdKqz_O-b7D1M3bgSqm4';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const LS = {
+  myId: 'smotrim_my_id',
+  myName: 'smotrim_my_name',
+  myAvatar: 'smotrim_my_avatar',
+  theme: 'smotrim_theme',
+  lastRoom: 'smotrim_last_room',
+  cleanup: 'smotrim_last_cleanup',
+  invidious: 'smotrim_invidious'
+};
+
+const INVIDIOUS_INSTANCES = [
+  'https://inv.nadeko.net',
+  'https://invidious.nerdvpn.de',
+  'https://invidious.tiekoetter.com',
+  'https://invidious.f5.si',
+  'https://yewtu.be',
+  'https://invidious.privacyredirect.com',
+  'https://iv.melmac.space'
+];
+let currentInvidious = localStorage.getItem(LS.invidious) || INVIDIOUS_INSTANCES[0];
+
+let myId = localStorage.getItem(LS.myId);
+if(!myId){ myId = 'u_' + Math.random().toString(36).slice(2,10); localStorage.setItem(LS.myId, myId); }
+
+const AVATARS = ['🎬','🍿','🎥','📺','🎭','🎨','🌟','🌙','☀️','🔥','💎','🎪','🎯','🎲','🎸','🎤','📷','🎮','🚀','🌈'];
+const COLORS = ['#ff6b9d','#ffa06b','#ffd93d','#6bcf7f','#6bc5ff','#a06bff','#ff6b6b','#5eead4','#f472b6','#93c5fd','#fcd34d','#86efac'];
+
+// ============================================================
+// СОСТОЯНИЕ
+// ============================================================
+let rooms = [];
+let currentRoom = null;
+let currentRoomMessages = [];
+let currentPresence = [];
+let theme = localStorage.getItem(LS.theme) || 'phone';
+if(theme === 'simple') theme = 'phone';
+let selectedAvatar = AVATARS[0];
+let selectedColor = COLORS[0];
+let roomChannel = null, dmChannel = null, presenceChannel = null;
+let countdownInterval = null;
+let isHost = false;
+let roomsRefreshTimer = null;
+let heartbeatInterval = null;
+let autoSwitchAttempts = 0, autoSwitchDone = false, manualServerChoice = false;
+let presenceTimer = null;
+
+// ============================================================
+// УТИЛИТЫ
+// ============================================================
+function esc(s){
+  return String(s).replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+}
+function toast(msg, type){
+  const r = document.getElementById('toastRoot');
+  if(!r) return;
+  const el = document.createElement('div');
+  el.className = 'toast ' + (type || '');
+  el.textContent = msg;
+  r.appendChild(el);
+  setTimeout(() => {
+    el.style.opacity = '0';
+    el.style.transition = 'opacity .3s';
+    setTimeout(() => el.remove(), 300);
+  }, 3000);
+}
+function openSheet(html){
+  document.getElementById('modalRoot').innerHTML =
+    '<div class="sheet-overlay" onclick="if(event.target===this)closeSheet()"><div class="sheet">' + html + '</div></div>';
+}
+function closeSheet(){ document.getElementById('modalRoot').innerHTML = ''; }
+function encodePass(p){ return btoa(unescape(encodeURIComponent(p))); }
+function getDaysLeft(exp){
+  if(!exp) return null;
+  const d = new Date(exp) - new Date();
+  return Math.max(0, Math.ceil(d / 86400000));
+}
+function getGreeting(){
+  const h = new Date().getHours();
+  if(h < 6) return 'Доброй ночи';
+  if(h < 12) return 'Доброе утро';
+  if(h < 18) return 'Добрый день';
+  return 'Добрый вечер';
+}
+function countOnline(){
+  const online = currentPresence.filter(p => {
+    const u = new Date(p.updated_at || 0).getTime();
+    return Date.now() - u < 120000;
+  });
+  const hasSelf = online.some(p => p.user_id === myId);
+  return online.length + (hasSelf ? 0 : 1);
 }
 
 // ============================================================
-// РЕНДЕР ОБОЛОЧКИ КОМНАТЫ
+// ТЕМЫ
+// ============================================================
+function setTheme(t){
+  theme = t;
+  document.body.dataset.theme = t;
+  localStorage.setItem(LS.theme, t);
+  const sw = document.getElementById('themeSwitch');
+  if(sw){
+    sw.querySelectorAll('button').forEach(b =>
+      b.classList.toggle('active', b.dataset.theme === t)
+    );
+  }
+  if(currentRoom) renderRoomShell();
+}
+function initTheme(){
+  document.body.dataset.theme = theme;
+  const sw = document.getElementById('themeSwitch');
+  if(sw){
+    sw.querySelectorAll('button').forEach(b =>
+      b.classList.toggle('active', b.dataset.theme === theme)
+    );
+  }
+}
+
+// ============================================================
+// ЛИЧНОЕ ВИДЕО
+// ============================================================
+function personalVideoKey(){
+  return currentRoom ? 'smotrim_personal_video_' + currentRoom.id : null;
+}
+function getPersonalVideo(){
+  const k = personalVideoKey();
+  return k ? localStorage.getItem(k) : null;
+}
+function setPersonalVideo(url){
+  const k = personalVideoKey();
+  if(!k) return;
+  if(url) localStorage.setItem(k, url);
+  else localStorage.removeItem(k);
+}
+function openPersonalVideoSheet(){
+  if(!currentRoom) return;
+  const url = getPersonalVideo() || '';
+  openSheet(
+    '<h2>🫈 Своё видео</h2>' +
+    '<p class="sub">Это видео видят только вы. Другие его не увидят.</p>' +
+    '<label class="field-label">Ссылка на видео</label>' +
+    '<input id="personalVideoUrl" class="input" placeholder="https://..." value="' + esc(url) + '">' +
+    '<div style="font-size:12px;color:var(--text-3);margin-bottom:12px;">' +
+      'YouTube · RuTube · VK · Twitch · .mp4 · .m3u8' +
+    '</div>' +
+    '<button class="btn primary block" onclick="savePersonalVideo()">Сохранить</button>' +
+    (url ? '<button class="btn danger block" onclick="removePersonalVideo()">Убрать видео</button>' : '') +
+    '<button class="btn ghost block" onclick="closeSheet()">Отмена</button>'
+  );
+  setTimeout(() => {
+    const i = document.getElementById('personalVideoUrl');
+    if(i) i.focus();
+  }, 150);
+}
+function savePersonalVideo(){
+  const url = document.getElementById('personalVideoUrl').value.trim();
+  if(!url) return toast('Вставь ссылку', 'error');
+  if(!url.match(/^https?:\/\//i)) return toast('Ссылка должна начинаться с http://', 'error');
+  if(!parseVideoUrl(url)) return toast('Не получилось распознать', 'error');
+  setPersonalVideo(url);
+  closeSheet();
+  renderPersonalVideo();
+  refreshTabButtons();
+  toast('Своё видео сохранено', 'success');
+}
+function removePersonalVideo(){
+  setPersonalVideo(null);
+  closeSheet();
+  renderPersonalVideo();
+  refreshTabButtons();
+  toast('Своё видео убрано');
+}
+function renderPersonalVideo(){
+  const box = document.getElementById('personalVideoBox');
+  if(!box) return;
+  const url = getPersonalVideo();
+  if(!url){
+    box.innerHTML = '<div class="video-placeholder" style="padding:16px;font-size:12px;">' +
+      'Нажми «🫈 Своё» внизу,<br>чтобы добавить видео для себя' +
+    '</div>';
+    return;
+  }
+  const vd = parseVideoUrl(url);
+  if(!vd){ box.innerHTML = '<div class="video-placeholder">Не удалось распознать</div>'; return; }
+  let vh = '';
+  if(vd.type === 'invidious'){
+    vh = '<iframe src="' + esc(vd.src) + '" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>';
+  } else if(vd.type === 'html5'){
+    vh = '<video src="' + esc(vd.src) + '" controls></video>';
+  } else if(vd.type === 'hls'){
+    vh = '<video id="personalHlsPlayer" controls></video>';
+    setTimeout(() => {
+      const v = document.getElementById('personalHlsPlayer');
+      if(!v) return;
+      if(window.Hls && window.Hls.isSupported()){
+        const h = new window.Hls();
+        h.loadSource(url);
+        h.attachMedia(v);
+      } else if(v.canPlayType('application/vnd.apple.mpegurl')){
+        v.src = url;
+      }
+    }, 50);
+  } else if(vd.embeddable){
+    vh = '<iframe src="' + esc(vd.src) + '" allow="encrypted-media; fullscreen" allowfullscreen></iframe>';
+  } else {
+    vh = '<a href="' + esc(url) + '" target="_blank" rel="noopener" class="btn primary" style="text-decoration:none;">Открыть</a>';
+  }
+  box.innerHTML = vh;
+}
+
+// ============================================================
+// НАВИГАЦИЯ
+// ============================================================
+function showScreen(name){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById('screen-' + name);
+  if(el) el.classList.add('active');
+  const homePanel = document.getElementById('homeBottomPanel');
+  if(homePanel) homePanel.style.display = (name === 'home') ? 'flex' : 'none';
+  const roomPanel = document.getElementById('roomBottomPanel');
+  if(roomPanel) roomPanel.style.display = (name === 'room') ? 'flex' : 'none';
+  window.scrollTo(0, 0);
+}
+function goHome(){
+  if(currentRoom) leaveRoom();
+  else showScreen('home');
+  }
+  // ============================================================
+// ОЧИСТКА
+// ============================================================
+async function cleanupRooms(){
+  const last = localStorage.getItem(LS.cleanup);
+  const now = Date.now();
+  if(last && now - parseInt(last) < 3600000) return;
+  try { await sb.rpc('cleanup_rooms_fn'); localStorage.setItem(LS.cleanup, now.toString()); } catch(e){}
+}
+
+// ============================================================
+// ГЛАВНАЯ
+// ============================================================
+async function loadRooms(){
+  try {
+    const {data, error} = await sb.from('rooms').select('*')
+      .gt('expires_at', new Date().toISOString())
+      .order('created_at', {ascending:false});
+    if(error){ console.error(error); return; }
+    rooms = (data || []).filter(r => !r.is_hidden || r.host_id === myId);
+    renderRooms();
+  } catch(e){ console.error(e); }
+}
+function scheduleRoomsReload(){
+  if(roomsRefreshTimer) return;
+  roomsRefreshTimer = setTimeout(() => { roomsRefreshTimer = null; loadRooms(); }, 1500);
+}
+function renderRooms(){
+  const area = document.getElementById('roomsArea');
+  const empty = document.getElementById('emptyState');
+  if(!area) return;
+  if(rooms.length === 0){
+    area.innerHTML = '';
+    if(empty) empty.style.display = 'block';
+    return;
+  }
+  if(empty) empty.style.display = 'none';
+  area.innerHTML = rooms.map(r => {
+    const days = getDaysLeft(r.expires_at);
+    const warn = (days !== null && days <= 2)
+      ? '<div class="room-card-badge">' + days + ' дн.</div>' : '';
+    const lock = r.password_hash
+      ? '<div class="room-card-badge" style="background:var(--danger);top:auto;bottom:10px;right:10px;">🔒</div>' : '';
+    return '<div class="room-card" onclick="enterRoom(\'' + esc(r.id) + '\')">' +
+      warn + lock +
+      '<div class="room-card-avatar" style="background:' + esc(r.color || '#6f52e8') + ';">' +
+        (r.avatar || '🎬') +
+      '</div>' +
+      '<div class="room-card-name">' + esc(r.name) + '</div>' +
+    '</div>';
+  }).join('');
+}
+
+// ============================================================
+// СОЗДАНИЕ КОМНАТЫ
+// ============================================================
+function openCreateRoom(){
+  selectedAvatar = AVATARS[Math.floor(Math.random() * AVATARS.length)];
+  selectedColor = COLORS[Math.floor(Math.random() * COLORS.length)];
+  const av = AVATARS.map(a =>
+    '<button class="avatar-option ' + (a===selectedAvatar?'selected':'') + '" ' +
+      'data-av="' + a + '" onclick="selectAvatar(\'' + a + '\')">' + a + '</button>'
+  ).join('');
+  const co = COLORS.map(c =>
+    '<button class="color-option ' + (c===selectedColor?'selected':'') + '" ' +
+      'data-col="' + c + '" onclick="selectColor(\'' + c + '\')" ' +
+      'style="background:' + c + ';"></button>'
+  ).join('');
+  openSheet(
+    '<h2>Новая комната</h2>' +
+    '<p class="sub">Дай название и выбери тип</p>' +
+    '<label class="field-label">Название</label>' +
+    '<input id="roomName" class="input" placeholder="Например: Кино" maxlength="20">' +
+    '<label class="field-label">Аватар</label>' +
+    '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px;">' + av + '</div>' +
+    '<label class="field-label">Цвет</label>' +
+    '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px;">' + co + '</div>' +
+    '<label class="field-label">Тип комнаты</label>' +
+    '<select id="roomType" class="select" onchange="onRoomTypeChange()">' +
+      '<option value="public">Публичная — видна всем</option>' +
+      '<option value="hidden">Скрытая — только по ссылке</option>' +
+      '<option value="password">С паролем — видна в списке</option>' +
+    '</select>' +
+    '<input id="roomPassword" class="input" placeholder="Пароль" type="password" style="display:none;margin-top:8px;">' +
+    '<button class="btn primary block" onclick="createRoom()">Создать</button>' +
+    '<button class="btn ghost block" onclick="closeSheet()">Отмена</button>'
+  );
+  setTimeout(() => { const i = document.getElementById('roomName'); if(i) i.focus(); }, 150);
+}
+function onRoomTypeChange(){
+  const type = document.getElementById('roomType').value;
+  const passField = document.getElementById('roomPassword');
+  if(passField) passField.style.display = type === 'password' ? 'block' : 'none';
+}
+function selectAvatar(a){
+  selectedAvatar = a;
+  document.querySelectorAll('.avatar-option').forEach(el =>
+    el.classList.toggle('selected', el.dataset.av === a));
+}
+function selectColor(c){
+  selectedColor = c;
+  document.querySelectorAll('.color-option').forEach(el =>
+    el.classList.toggle('selected', el.dataset.col === c));
+}
+async function generateRoomName(base){
+  const b = base.trim();
+  if(!b) return '';
+  try {
+    const {data} = await sb.from('rooms').select('name').ilike('name', b + '%');
+    if(!data || data.length === 0) return b;
+    let max = 0;
+    data.forEach(r => {
+      if(r.name === b) max = Math.max(max, 1);
+      else {
+        const m = r.name.match(new RegExp('^' + b.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ' (\\d+)$'));
+        if(m) max = Math.max(max, parseInt(m[1]));
+      }
+    });
+    return max === 0 ? b : b + ' ' + (max + 1);
+  } catch(e){ return b; }
+}
+async function createRoom(){
+  const name = document.getElementById('roomName').value.trim();
+  if(!name) return toast('Введи название', 'error');
+  if(name.length > 20) return toast('Слишком длинное', 'error');
+  const type = document.getElementById('roomType').value;
+  const isHidden = type === 'hidden';
+  const isPassword = type === 'password';
+  const inviteCode = isHidden ? ('inv_' + Math.random().toString(36).slice(2,12)) : null;
+  let passwordHash = null;
+  if(isPassword){
+    const pass = (document.getElementById('roomPassword').value || '').trim();
+    if(!pass) return toast('Введи пароль', 'error');
+    if(pass.length < 3) return toast('Пароль слишком короткий', 'error');
+    passwordHash = encodePass(pass);
+  }
+  const finalName = await generateRoomName(name);
+  const roomId = 'room_' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+  const exp = new Date(); exp.setDate(exp.getDate() + 10);
+  const {error} = await sb.from('rooms').insert({
+    id: roomId, name: finalName, avatar: selectedAvatar, color: selectedColor,
+    host_id: myId, video_url: null, sync_state: {},
+    expires_at: exp.toISOString(),
+    is_hidden: isHidden, invite_code: inviteCode, password_hash: passwordHash
+  });
+  if(error){ toast('Ошибка: ' + error.message, 'error'); return; }
+  closeSheet();
+  toast('Комната «' + finalName + '» создана', 'success');
+  await loadRooms();
+  setTimeout(() => enterRoom(roomId), 300);
+}
+
+// ============================================================
+// ВХОД / ВЫХОД
+// ============================================================
+async function enterRoom(roomId){
+  let room = rooms.find(r => r.id === roomId);
+  if(!room){
+    const {data, error} = await sb.from('rooms').select('*').eq('id', roomId).limit(1);
+    if(error || !data || data.length === 0) return toast('Комната не найдена', 'error');
+    room = data[0];
+    if(!rooms.find(r => r.id === roomId)) rooms.push(room);
+  }
+  if(room.expires_at && new Date(room.expires_at) < new Date())
+    return toast('Комната удалена (срок истёк)', 'error');
+  if(room.is_hidden && room.host_id !== myId){
+    const params = new URLSearchParams(window.location.search);
+    const urlInvite = params.get('invite');
+    const savedInvite = sessionStorage.getItem('room_invite_' + roomId);
+    const savedOk = (urlInvite === room.invite_code) || (savedInvite === room.invite_code);
+    if(!savedOk) return toast('Скрытая комната. Открой по ссылке от хоста.', 'error');
+    sessionStorage.setItem('room_invite_' + roomId, room.invite_code);
+  }
+  if(room.password_hash && room.host_id !== myId){
+    const savedPass = sessionStorage.getItem('room_pass_' + roomId);
+    const okPass = savedPass === room.password_hash;
+    if(!okPass){
+      const entered = prompt('Комната с паролем. Введи пароль:');
+      if(!entered) return;
+      const hash = encodePass(entered);
+      if(hash !== room.password_hash) return toast('Неверный пароль', 'error');
+      sessionStorage.setItem('room_pass_' + roomId, hash);
+    }
+  }
+  currentRoom = room;
+  isHost = (room.host_id === myId);
+  localStorage.setItem(LS.lastRoom, roomId);
+  showScreen('room');
+  renderRoomShell();
+  await loadRoomMessages(roomId);
+  await loadPresence();
+  await upsertPresence();
+  await loadPresence();
+  renderRoomHeaderMeta();
+  updateDMBadge();
+  await teardownChannels();
+  subscribeToRoom(roomId);
+  if(room.countdown_start){
+    const d = Math.ceil((new Date(room.countdown_start).getTime() - Date.now()) / 1000);
+    if(d > 0) startCountdown();
+  }
+  maybeStartAutoSwitch();
+}
+async function teardownChannels(){
+  try {
+    if(roomChannel){ await sb.removeChannel(roomChannel); roomChannel = null; }
+    if(dmChannel){ await sb.removeChannel(dmChannel); dmChannel = null; }
+    if(presenceChannel){ await sb.removeChannel(presenceChannel); presenceChannel = null; }
+  } catch(e){ console.warn('teardown', e); }
+}
+function leaveRoom(){
+  if(roomChannel){ sb.removeChannel(roomChannel); roomChannel = null; }
+  if(dmChannel){ sb.removeChannel(dmChannel); dmChannel = null; }
+  if(presenceChannel){ sb.removeChannel(presenceChannel); presenceChannel = null; }
+  if(countdownInterval){ clearInterval(countdownInterval); countdownInterval = null; }
+  currentRoom = null;
+  currentRoomMessages = [];
+  currentPresence = [];
+  localStorage.removeItem(LS.lastRoom);
+  showScreen('home');
+  loadRooms();
+}
+async function restoreLastRoom(){
+  const lastRoom = localStorage.getItem(LS.lastRoom);
+  if(!lastRoom) return false;
+  const {data} = await sb.from('rooms').select('id')
+    .eq('id', lastRoom)
+    .gt('expires_at', new Date().toISOString())
+    .limit(1);
+  if(data && data.length){ enterRoom(lastRoom); return true; }
+  localStorage.removeItem(LS.lastRoom);
+  return false;
+}
+
+// ============================================================
+// REALTIME
+// ============================================================
+function subscribeToRoom(roomId){
+  roomChannel = sb.channel('room-' + roomId)
+    .on('postgres_changes',
+      {event:'INSERT', schema:'public', table:'room_messages', filter:'room_id=eq.' + roomId},
+      payload => appendMessage(payload.new))
+    .on('postgres_changes',
+      {event:'UPDATE', schema:'public', table:'room_messages', filter:'room_id=eq.' + roomId},
+      () => loadRoomMessages(roomId))
+    .on('postgres_changes',
+      {event:'UPDATE', schema:'public', table:'rooms', filter:'id=eq.' + roomId},
+      p => {
+        if(!currentRoom || currentRoom.id !== roomId) return;
+        const oldVideo = currentRoom.video_url;
+        const oldCountdown = currentRoom.countdown_start;
+        currentRoom = p.new;
+        if(oldVideo !== p.new.video_url){
+          renderVideoOnly();
+          renderRoomHeaderMeta();
+          autoSwitchDone = false;
+          manualServerChoice = false;
+          autoSwitchAttempts = 0;
+          maybeStartAutoSwitch();
+        }
+        if(oldCountdown !== p.new.countdown_start && p.new.countdown_start){
+          startCountdown();
+        }
+      })
+    .on('postgres_changes',
+      {event:'DELETE', schema:'public', table:'rooms', filter:'id=eq.' + roomId},
+      () => { toast('Комната удалена', 'error'); leaveRoom(); })
+    .subscribe();
+  dmChannel = sb.channel('dm-' + myId)
+    .on('postgres_changes',
+      {event:'INSERT', schema:'public', table:'direct_messages', filter:'to_user_id=eq.' + myId},
+      p => {
+        if(p.new.room_id !== currentRoom?.id) return;
+        toast('Сообщение от ' + (p.new.from_name || 'гостя'), 'success');
+        updateDMBadge();
+        const dmPeer = document.getElementById('dmPeerId');
+        if(dmPeer && dmPeer.value === p.new.from_user_id){
+          openDM(p.new.from_user_id, p.new.from_name);
+        }
+      })
+    .subscribe();
+  presenceChannel = sb.channel('presence-' + roomId)
+    .on('postgres_changes',
+      {event:'*', schema:'public', table:'room_presence', filter:'room_id=eq.' + roomId},
+      () => scheduleLoadPresence())
+    .subscribe();
+}
+function scheduleLoadPresence(){
+  if(presenceTimer) return;
+  presenceTimer = setTimeout(() => {
+    presenceTimer = null;
+    loadPresence().then(() => renderRoomHeaderMeta());
+  }, 800);
+  }
+  // ============================================================
+// РЕНДЕР КОМНАТЫ
 // ============================================================
 function renderRoomShell(){
   const r = currentRoom;
   if(!r) return;
   const days = getDaysLeft(r.expires_at);
   const metaExtra = (r.password_hash ? ' · 🔒' : '') + (r.is_hidden ? ' · скрытая' : '');
-  const onlineCount = currentPresence.filter(p => {
-    const u = new Date(p.updated_at || 0).getTime();
-    return Date.now() - u < 120000;
-  }).length;
-
+  const onlineCount = countOnline();
   const isTablet = theme === 'tablet';
-  const isSimple = theme === 'simple';
 
   const header =
     '<div class="room-header">' +
@@ -1257,39 +2124,27 @@ function renderRoomShell(){
       '</div>' +
     '</div>';
 
-  const videoBox =
-    '<div class="video-box" id="videoBox">' +
-      '<div id="countdownOverlay" class="countdown-overlay">' +
-        '<div class="countdown-num" id="countdownNum"></div>' +
-        '<div class="countdown-hint">Приготовься смотреть</div>' +
-      '</div>' +
-      '<div id="playOverlay" class="play-overlay">' +
-        '<div class="text">Нажми Play</div>' +
-        '<div class="hint">Видео начнётся у всех</div>' +
-      '</div>' +
+  const commonVideoSection =
+    '<div class="video-section video-section-common">' +
+      (isTablet ? '<div class="video-label video-label-common">👥 СМОТРИМ ВМЕСТЕ</div>' : '') +
+      '<div class="video-box" id="videoBox"></div>' +
     '</div>';
 
-  const videoActions =
-    '<div class="video-actions" id="videoActions">' +
-      (isSimple
-        ? '<button class="btn primary big" onclick="openVideoSheet()">' +
-            (r.video_url ? '🎬 Заменить видео' : '🎬 Выбрать видео') +
-          '</button>'
-        : '<button class="btn primary" onclick="openVideoSheet()">' +
-            (r.video_url ? 'Заменить' : 'Выбрать видео') +
-          '</button>' +
-          '<button class="btn" onclick="openActionsSheet()">⋯ Ещё</button>'
-      ) +
-    '</div>';
+  const personalVideoSection = isTablet
+    ? '<div class="video-section video-section-personal">' +
+        '<div class="video-label video-label-personal">🫈 ТОЛЬКО ДЛЯ ТЕБЯ</div>' +
+        '<div class="video-box video-box-personal" id="personalVideoBox"></div>' +
+      '</div>'
+    : '';
 
   const chatBlock =
     '<div class="chat-block">' +
       '<div class="chat-title">💬 Чат</div>' +
       '<div class="chat-messages" id="chatMessages"></div>' +
-      (isSimple
+      (isTablet
         ? '<div class="chat-input-row">' +
-            '<input id="chatInput" class="input" placeholder="Написать сообщение..." maxlength="500">' +
-            '<button class="btn primary big block" onclick="sendMessage()">Отправить</button>' +
+            '<input id="chatInput" class="input" placeholder="Сообщение..." maxlength="500">' +
+            '<button class="btn primary" onclick="sendMessage()">Отправить</button>' +
           '</div>'
         : '') +
     '</div>';
@@ -1299,82 +2154,78 @@ function renderRoomShell(){
     layout =
       '<div class="room-layout">' +
         '<div class="room-left">' +
-          header + videoBox + videoActions +
+          header + commonVideoSection + personalVideoSection +
         '</div>' +
         '<div class="room-right">' +
           chatBlock +
-          '<div class="room-bottom-panel">' + buildBottomPanel(false) + '</div>' +
         '</div>' +
       '</div>';
   } else {
     layout =
-      header + videoBox + videoActions + chatBlock +
+      header + commonVideoSection + chatBlock +
       '<div style="height:80px;"></div>';
   }
-
   document.getElementById('roomContent').innerHTML = layout;
 
-  if(!isTablet){
-    let panel = document.getElementById('roomBottomPanel');
-    if(!panel){
-      panel = document.createElement('div');
-      panel.id = 'roomBottomPanel';
-      panel.className = 'room-bottom-panel';
-      document.body.appendChild(panel);
-    }
-    panel.innerHTML = buildBottomPanel(isSimple);
-    panel.style.display = 'flex';
-  } else {
-    const panel = document.getElementById('roomBottomPanel');
-    if(panel) panel.style.display = 'none';
+  let panel = document.getElementById('roomBottomPanel');
+  if(!panel){
+    panel = document.createElement('div');
+    panel.id = 'roomBottomPanel';
+    panel.className = 'room-bottom-panel';
+    document.body.appendChild(panel);
   }
+  panel.innerHTML = isTablet ? buildTabletBottomPanel() : buildPhoneBottomPanel();
+  panel.style.display = 'flex';
+
+  renderVideoOnly();
+  if(isTablet) renderPersonalVideo();
+  renderMessages();
 
   setTimeout(() => {
     const i = document.getElementById('chatInput');
-    if(i && !isSimple){
-      i.addEventListener('keydown', e => {
-        if(e.key === 'Enter') sendMessage();
-      });
+    if(i){
+      i.addEventListener('keydown', e => { if(e.key === 'Enter') sendMessage(); });
     }
   }, 100);
 }
-
-function buildBottomPanel(isSimple){
+function buildPhoneBottomPanel(){
   const dmBadge = '<span id="dmBadge"></span>';
-  if(isSimple){
-    return '' +
-      '<div class="row">' +
-        '<input id="chatInput" class="input" placeholder="Написать сообщение..." maxlength="500">' +
-      '</div>' +
-      '<button class="btn primary big block" onclick="sendMessage()">Отправить</button>' +
-      '<button class="icon-btn" onclick="openVideoSheet()">🎬 Видео</button>' +
-      '<button class="icon-btn" onclick="openPeopleSheet()">👥 Люди' + dmBadge + '</button>' +
-      '<button class="icon-btn" onclick="openActionsSheet()">⚙️ Управление</button>';
-  }
   return '' +
     '<input id="chatInput" class="input" placeholder="Сообщение..." maxlength="500">' +
     '<button class="icon-btn" onclick="openVideoSheet()" title="Видео">📎</button>' +
     '<button class="icon-btn" onclick="openPeopleSheet()" title="Люди">👥' + dmBadge + '</button>' +
     '<button class="icon-btn" onclick="openActionsSheet()" title="Ещё">⋯</button>';
 }
-
+function buildTabletBottomPanel(){
+  const dmBadge = '<span id="dmBadge"></span>';
+  const hasPersonal = !!getPersonalVideo();
+  return '' +
+    '<button class="tab-btn" onclick="openVideoSheet()">📎 Общее</button>' +
+    '<button class="tab-btn' + (hasPersonal ? ' has-personal' : '') + '" onclick="openPersonalVideoSheet()">🫈 Своё</button>' +
+    '<button class="tab-btn" onclick="openPeopleSheet()">👥 Люди' + dmBadge + '</button>' +
+    '<button class="tab-btn" onclick="openActionsSheet()">⋯ Ещё</button>';
+}
+function refreshTabButtons(){
+  if(theme !== 'tablet') return;
+  const panel = document.getElementById('roomBottomPanel');
+  if(panel) panel.innerHTML = buildTabletBottomPanel();
+  updateDMBadge();
+}
 function renderRoomHeaderMeta(){
   const r = currentRoom;
   if(!r) return;
   const el = document.getElementById('roomMeta');
   if(!el) return;
   const days = getDaysLeft(r.expires_at);
-  const onlineCount = currentPresence.filter(p => {
-    const u = new Date(p.updated_at || 0).getTime();
-    return Date.now() - u < 120000;
-  }).length;
+  const onlineCount = countOnline();
   const metaExtra = (r.password_hash ? ' · 🔒' : '') + (r.is_hidden ? ' · скрытая' : '');
   el.textContent = (isHost ? 'Хост' : 'Гость') +
     (days !== null ? ' · ' + days + ' дн.' : '') +
     ' · 🟢 ' + onlineCount + ' онлайн' + metaExtra;
-  }
-  // ============================================================
-// ВИДЕО: РАСПОЗНАВАНИЕ ССЫЛОК
+}
+
+// ============================================================
+// ВИДЕО: РАСПОЗНАВАНИЕ
 // ============================================================
 function parseVideoUrl(url){
   if(!url) return null;
@@ -1402,7 +2253,7 @@ function parseVideoUrl(url){
 }
 
 // ============================================================
-// ВИДЕО: РЕНДЕР ПЛЕЕРА
+// ВИДЕО: РЕНДЕР
 // ============================================================
 function renderVideoOnly(){
   const r = currentRoom;
@@ -1411,7 +2262,7 @@ function renderVideoOnly(){
   const vd = parseVideoUrl(r.video_url);
   let vh = '';
   if(!vd){
-    vh = '<div class="video-placeholder"><div class="big">Тут будет видео</div>Нажми «Выбрать видео»</div>';
+    vh = '<div class="video-placeholder"><div class="big">Тут будет видео</div>Нажми «📎» внизу</div>';
   } else if(vd.type === 'invidious'){
     vh = '<iframe id="videoPlayer" src="' + esc(vd.src) + '" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>';
   } else if(vd.type === 'html5'){
@@ -1433,11 +2284,9 @@ function renderVideoOnly(){
     '<div class="text">Нажми Play</div>' +
     '<div class="hint">Видео начнётся у всех</div></div>';
   box.innerHTML = vh + countdownHtml + playHtml;
-
   if(vd && vd.type === 'html5') initHtml5Sync();
   if(vd && vd.type === 'hls') initHls();
 }
-
 function openVideoSheet(){
   const r = currentRoom;
   if(!r) return;
@@ -1452,12 +2301,8 @@ function openVideoSheet(){
     '<button class="btn primary block" onclick="saveVideo()">Старт (15 сек)</button>' +
     '<button class="btn ghost block" onclick="closeSheet()">Отмена</button>'
   );
-  setTimeout(() => {
-    const i = document.getElementById('videoUrlInput');
-    if(i) i.focus();
-  }, 150);
+  setTimeout(() => { const i = document.getElementById('videoUrlInput'); if(i) i.focus(); }, 150);
 }
-
 async function saveVideo(){
   const url = document.getElementById('videoUrlInput').value.trim();
   if(!url) return toast('Вставь ссылку', 'error');
@@ -1481,17 +2326,13 @@ async function saveVideo(){
   toast('Старт через 15 секунд', 'success');
   maybeStartAutoSwitch();
 }
-
 function initHtml5Sync(){
   const v = document.getElementById('videoPlayer');
   if(!v) return;
-  v.addEventListener('play', () => {
-    if(!manualServerChoice) updateSync({playing:true, time:v.currentTime});
-  });
+  v.addEventListener('play', () => { if(!manualServerChoice) updateSync({playing:true, time:v.currentTime}); });
   v.addEventListener('pause', () => { updateSync({playing:false, time:v.currentTime}); });
   v.addEventListener('seeked', () => { updateSync({playing:!v.paused, time:v.currentTime, seek:true}); });
 }
-
 function initHls(){
   const v = document.getElementById('videoPlayer');
   if(!v || !currentRoom) return;
@@ -1503,14 +2344,12 @@ function initHls(){
     v.src = currentRoom.video_url;
   }
 }
-
 async function updateSync(d){
   if(!currentRoom) return;
   const s = Object.assign({}, currentRoom.sync_state || {}, d);
   s.updated = Date.now();
   await sb.from('rooms').update({sync_state:s}).eq('id', currentRoom.id);
 }
-
 function startCountdown(){
   if(countdownInterval) clearInterval(countdownInterval);
   const o = document.getElementById('countdownOverlay');
@@ -1528,14 +2367,13 @@ function startCountdown(){
     }
   }, 100);
 }
-
 function showPlayOverlay(){
   const p = document.getElementById('playOverlay');
   if(p){ p.style.display = 'flex'; setTimeout(() => p.style.display = 'none', 5000); }
 }
 
 // ============================================================
-// АВТОПОИСК INVIDIOUS
+// INVIDIOUS
 // ============================================================
 async function checkInvidious(url){
   try {
@@ -1548,41 +2386,24 @@ async function checkInvidious(url){
     return data && (data.version || data.software);
   } catch(e){ return false; }
 }
-
 async function findWorkingInvidious(){
   const saved = localStorage.getItem(LS.invidious);
-  if(saved && await checkInvidious(saved)){
-    currentInvidious = saved;
-    return saved;
-  }
+  if(saved && await checkInvidious(saved)){ currentInvidious = saved; return saved; }
   for(const url of INVIDIOUS_INSTANCES){
-    if(await checkInvidious(url)){
-      currentInvidious = url;
-      localStorage.setItem(LS.invidious, url);
-      return url;
-    }
+    if(await checkInvidious(url)){ currentInvidious = url; localStorage.setItem(LS.invidious, url); return url; }
   }
   return null;
 }
-
 function maybeStartAutoSwitch(){
-  if(autoSwitchDone) return;
-  if(manualServerChoice) return;
+  if(autoSwitchDone || manualServerChoice) return;
   if(!currentRoom || !currentRoom.video_url) return;
   const vd = parseVideoUrl(currentRoom.video_url);
   if(!vd || vd.type !== 'invidious') return;
-
   setTimeout(async () => {
-    if(!currentRoom) return;
-    if(manualServerChoice || autoSwitchDone) return;
+    if(!currentRoom || manualServerChoice || autoSwitchDone) return;
     const frame = document.getElementById('videoPlayer');
     if(!frame || frame.tagName !== 'IFRAME') return;
-
-    if(autoSwitchAttempts >= 3){
-      autoSwitchDone = true;
-      switchToYouTubeFallback();
-      return;
-    }
+    if(autoSwitchAttempts >= 3){ autoSwitchDone = true; switchToYouTubeFallback(); return; }
     autoSwitchAttempts++;
     const idx = INVIDIOUS_INSTANCES.indexOf(currentInvidious);
     const next = INVIDIOUS_INSTANCES[(idx + 1) % INVIDIOUS_INSTANCES.length];
@@ -1598,7 +2419,6 @@ function maybeStartAutoSwitch(){
     }
   }, 10000);
 }
-
 function switchToYouTubeFallback(){
   if(!currentRoom || !currentRoom.video_url) return;
   const yt = currentRoom.video_url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/|live\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
@@ -1630,7 +2450,6 @@ async function loadRoomMessages(roomId){
     renderMessages();
   } catch(e){}
 }
-
 function renderMessages(){
   const box = document.getElementById('chatMessages');
   if(!box) return;
@@ -1641,7 +2460,6 @@ function renderMessages(){
   box.innerHTML = currentRoomMessages.map(messageHtml).join('');
   box.scrollTop = box.scrollHeight;
 }
-
 function messageHtml(m){
   const time = new Date(m.created_at).toLocaleTimeString('ru-RU', {hour:'2-digit', minute:'2-digit'});
   return '<div class="chat-msg" data-id="' + m.id + '" ' +
@@ -1656,7 +2474,6 @@ function messageHtml(m){
     '</div>' +
   '</div>';
 }
-
 function appendMessage(m){
   if(currentRoomMessages.some(x => x.id === m.id)) return;
   const box = document.getElementById('chatMessages');
@@ -1667,7 +2484,6 @@ function appendMessage(m){
   box.insertAdjacentHTML('beforeend', messageHtml(m));
   if(wasAtBottom) box.scrollTop = box.scrollHeight;
 }
-
 async function sendMessage(){
   const inp = document.getElementById('chatInput');
   if(!inp) return;
@@ -1690,7 +2506,6 @@ async function sendMessage(){
   });
   if(error) toast('Ошибка: ' + error.message, 'error');
 }
-
 async function hideMessage(id){
   try {
     await sb.from('message_hides').insert({message_id: id, user_id: myId});
@@ -1708,16 +2523,11 @@ async function hideMessage(id){
 // ДЕЙСТВИЯ С СООБЩЕНИЕМ
 // ============================================================
 let msgTouchTimer = null, msgTouchStartX = 0;
-
 function startMsgTouch(e, id, userId, name){
   const t = e.touches[0];
   msgTouchStartX = t.clientX;
-  msgTouchTimer = setTimeout(() => {
-    msgTouchTimer = null;
-    openMsgActions(id, userId, name);
-  }, 500);
+  msgTouchTimer = setTimeout(() => { msgTouchTimer = null; openMsgActions(id, userId, name); }, 500);
 }
-
 function endMsgTouch(e){
   if(msgTouchTimer){ clearTimeout(msgTouchTimer); msgTouchTimer = null; }
   if(!e.changedTouches) return;
@@ -1732,7 +2542,6 @@ function endMsgTouch(e){
     }
   }
 }
-
 function openMsgActions(id, userId, name){
   if(!userId) return;
   const isMine = userId === myId;
@@ -1750,16 +2559,16 @@ function openMsgActions(id, userId, name){
       '<div class="sheet-item" onclick="closeSheet()"><span class="ic">✖️</span> Отмена</div>' +
     '</div>'
   );
-  }
-  // ============================================================
-// ЛЮДИ И ПРИСУТСТВИЕ
+}
+
+// ============================================================
+// ЛЮДИ
 // ============================================================
 async function loadPresence(){
   if(!currentRoom) return;
   const {data} = await sb.from('room_presence').select('*').eq('room_id', currentRoom.id);
   currentPresence = data || [];
 }
-
 async function upsertPresence(){
   if(!currentRoom) return;
   await sb.from('room_presence').upsert({
@@ -1769,7 +2578,6 @@ async function upsertPresence(){
     updated_at: new Date().toISOString()
   });
 }
-
 function openPeopleSheet(){
   if(!currentRoom) return;
   const online = currentPresence.filter(p => {
@@ -1792,7 +2600,6 @@ function openPeopleSheet(){
         ? '<button class="btn small" onclick="closeSheet();openDM(\'' + esc(p.user_id) + '\',\'' + esc(p.name || 'Гость') + '\')">Написать</button>'
         : '') +
     '</div>';
-
   openSheet(
     '<h2>👥 В комнате (' + online.length + ')</h2>' +
     '<div style="max-height:60vh;overflow-y:auto;margin:12px -16px 12px;">' +
@@ -1802,9 +2609,8 @@ function openPeopleSheet(){
     '</div>' +
     '<button class="btn ghost block" onclick="closeSheet()">Закрыть</button>'
   );
-}
-
-// ============================================================
+  }
+  // ============================================================
 // ЛИЧНЫЕ СООБЩЕНИЯ
 // ============================================================
 async function openDM(userId, userName){
@@ -1840,13 +2646,10 @@ async function openDM(userId, userName){
     const b = document.getElementById('dmMessages');
     if(b) b.scrollTop = b.scrollHeight;
     const i = document.getElementById('dmInput');
-    if(i) i.addEventListener('keydown', e => {
-      if(e.key === 'Enter') sendDM(userId, userName);
-    });
+    if(i) i.addEventListener('keydown', e => { if(e.key === 'Enter') sendDM(userId, userName); });
   }, 100);
   updateDMBadge();
 }
-
 async function sendDM(userId, userName){
   const inp = document.getElementById('dmInput');
   if(!inp) return;
@@ -1860,7 +2663,6 @@ async function sendDM(userId, userName){
   });
   openDM(userId, userName);
 }
-
 async function updateDMBadge(){
   if(!currentRoom) return;
   const {data} = await sb.from('direct_messages')
@@ -1878,7 +2680,6 @@ async function updateDMBadge(){
   });
   setBadge(unread);
 }
-
 function setBadge(n){
   const b = document.getElementById('dmBadge');
   if(!b) return;
@@ -1895,13 +2696,19 @@ function openActionsSheet(){
   const days = getDaysLeft(r.expires_at);
   const canExtendNow = isHost && days !== null && days <= 2 &&
     (!r.extended_at || (Date.now() - new Date(r.extended_at).getTime()) > 8 * 86400000);
-
+  const isTablet = theme === 'tablet';
+  const hasPersonal = !!getPersonalVideo();
   openSheet(
     '<h2>⚙️ Управление</h2>' +
     '<div class="sheet-list">' +
       '<div class="sheet-item" onclick="closeSheet();openVideoSheet()">' +
-        '<span class="ic">🎬</span> ' + (r.video_url ? 'Заменить видео' : 'Выбрать видео') +
+        '<span class="ic">🎬</span> ' + (r.video_url ? 'Заменить общее видео' : 'Выбрать общее видео') +
       '</div>' +
+      (isTablet
+        ? '<div class="sheet-item" onclick="closeSheet();openPersonalVideoSheet()">' +
+            '<span class="ic">🫈</span> ' + (hasPersonal ? 'Заменить своё видео' : 'Своё видео (только для тебя)') +
+          '</div>'
+        : '') +
       (canExtendNow
         ? '<div class="sheet-item" onclick="closeSheet();extendRoom()">' +
             '<span class="ic">📅</span> Продлить на 10 дней' +
@@ -1919,7 +2726,6 @@ function openActionsSheet(){
     '</div>'
   );
 }
-
 async function extendRoom(){
   if(!currentRoom || !isHost) return;
   const ne = new Date(); ne.setDate(ne.getDate() + 10);
@@ -1934,7 +2740,6 @@ async function extendRoom(){
   renderRoomHeaderMeta();
   loadRooms();
 }
-
 async function deleteRoom(){
   if(!currentRoom || !isHost) return;
   if(!confirm('Удалить комнату «' + currentRoom.name + '»? Всё удалится.')) return;
@@ -1948,36 +2753,27 @@ async function deleteRoom(){
 // ============================================================
 function startHeartbeat(){
   if(heartbeatInterval) clearInterval(heartbeatInterval);
-  heartbeatInterval = setInterval(() => {
-    if(currentRoom) upsertPresence();
-  }, 30000);
-  }
-  // ============================================================
+  heartbeatInterval = setInterval(() => { if(currentRoom) upsertPresence(); }, 30000);
+}
+
+// ============================================================
 // ИНИЦИАЛИЗАЦИЯ
 // ============================================================
 (async function init(){
   initTheme();
   const g = document.getElementById('greeting');
   if(g) g.textContent = getGreeting();
-
   cleanupRooms();
   findWorkingInvidious();
-
   await loadRooms();
-
   sb.channel('rooms-list')
     .on('postgres_changes', {event:'*', schema:'public', table:'rooms'}, () => scheduleRoomsReload())
     .subscribe();
-
   startHeartbeat();
-
   const params = new URLSearchParams(window.location.search);
   const roomParam = params.get('room');
-  if(roomParam){
-    enterRoom(roomParam);
-  } else {
-    restoreLastRoom();
-  }
+  if(roomParam) enterRoom(roomParam);
+  else restoreLastRoom();
 })();
 </script>
 </body>
