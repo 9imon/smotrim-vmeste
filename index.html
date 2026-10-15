@@ -672,7 +672,100 @@ body.in-room #screen-room{
 <div class="toast-root" id="toastRoot"></div>
 
 <script>
-/* JS будет добавлен в Сообщениях 3 и 4 */
+/* ============================================================
+   МИНИ-ПАТЧ: проверка кнопок (временный)
+   ============================================================ */
+const html = document.documentElement;
+const skyOverlay = document.getElementById('skyOverlay');
+const themeIcon = document.getElementById('themeIcon');
+
+// Тема
+(function initTheme(){
+  const saved = localStorage.getItem('smotrim_theme') || 'dark';
+  html.setAttribute('data-theme', saved);
+  themeIcon.textContent = saved === 'dark' ? '🌙' : '☀️';
+})();
+
+function toggleTheme(){
+  const cur = html.getAttribute('data-theme');
+  const goingDark = cur !== 'dark';
+
+  skyOverlay.classList.remove('sunset','sunrise');
+  void skyOverlay.offsetWidth;
+  skyOverlay.classList.add(goingDark ? 'sunset' : 'sunrise');
+
+  setTimeout(() => {
+    const next = goingDark ? 'dark' : 'light';
+    html.setAttribute('data-theme', next);
+    themeIcon.textContent = goingDark ? '🌙' : '☀️';
+    localStorage.setItem('smotrim_theme', next);
+  }, 720);
+
+  setTimeout(() => skyOverlay.classList.remove('sunset','sunrise'), 1900);
+}
+
+// Уведомления (просто проверка разрешения)
+function toggleNotifications(){
+  if(!('Notification' in window)){
+    toast('Уведомления не поддерживаются', 'error');
+    return;
+  }
+  if(Notification.permission === 'granted'){
+    toast('🔔 Уведомления уже включены', 'success');
+    return;
+  }
+  if(Notification.permission === 'denied'){
+    toast('🔕 Заблокированы в настройках браузера', 'error');
+    return;
+  }
+  Notification.requestPermission().then(p => {
+    if(p === 'granted') toast('🔔 Уведомления включены!', 'success');
+    else toast('Уведомления отклонены', 'error');
+  });
+}
+
+// Справка
+function openHelp(){
+  openSheet(
+    '<h2>📖 Как пользоваться</h2>' +
+    '<div class="help-content">' +
+      '<h3>🎬 Создать комнату</h3><p>Нажми <b>🎬 внизу</b>. Комната живёт <b>10 дней</b>.</p>' +
+      '<h3>🔒 Приватность</h3><p>Публичная, скрытая или с паролем.</p>' +
+      '<h3>🔗 Скрытая</h3><p>Скопируй ссылку — отправь другу.</p>' +
+      '<h3>📺 Видео</h3><p>Хост выбирает общее видео. Каждый может добавить своё.</p>' +
+      '<h3>💬 Чат и ЛС</h3><p>Общий чат + личные сообщения.</p>' +
+      '<div class="tip">Гость может управлять плеером, но не вставлять общее видео.</div>' +
+    '</div>' +
+    '<button class="btn ghost block" style="margin-top:16px" onclick="closeSheet()">Закрыть</button>'
+  );
+}
+
+// Заглушки (полноценно будут в Сообщении 3/4)
+function goHome(){ toast('Главная'); }
+function openCreateRoom(){ toast('Создание комнаты — в следующем шаге'); }
+
+// Шторки
+function openSheet(html){
+  document.getElementById('modalRoot').innerHTML =
+    '<div class="sheet-overlay" onclick="if(event.target===this)closeSheet()">' +
+      '<div class="sheet">' + html + '</div>' +
+    '</div>';
+}
+function closeSheet(){ document.getElementById('modalRoot').innerHTML = ''; }
+
+// Тосты
+function toast(msg, type){
+  const root = document.getElementById('toastRoot');
+  const el = document.createElement('div');
+  el.className = 'toast ' + (type || '');
+  el.textContent = msg;
+  root.appendChild(el);
+  setTimeout(() => {
+    el.style.opacity = '0';
+    el.style.transition = 'opacity .3s';
+    setTimeout(() => el.remove(), 300);
+  }, 3000);
+}
 </script>
 </body>
 </html>
