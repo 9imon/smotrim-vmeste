@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#101018">
 <title>Смотрим вместе</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -125,6 +125,19 @@ input,textarea,select{font-family:inherit;font-size:16px}
 .video-placeholder{color:#888;text-align:center;padding:20px;font-size:13px;line-height:1.5}
 .video-placeholder .big{font-size:15px;font-weight:700;margin-bottom:6px;color:#bbb}
 
+.chat-block{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  padding:10px;display:flex;flex-direction:column;min-height:0;overflow:hidden;
+}
+.chat-title{font-size:11px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;flex-shrink:0}
+.chat-messages{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding-right:2px}
+.chat-input-row{
+  display:flex;gap:6px;flex-shrink:0;padding-top:8px;
+  border-top:1px solid var(--border);background:transparent;
+}
+.chat-input-row .input{flex:1;margin-bottom:0;min-width:0}
+.chat-input-row .btn{width:auto;padding:12px 16px;margin:0;min-height:46px;flex-shrink:0}
+
 .chat-msg{padding:8px 0;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:flex-start}
 .chat-msg:last-child{border-bottom:none}
 .chat-msg-avatar{width:32px;height:32px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;background:var(--surface-2)}
@@ -146,7 +159,7 @@ input,textarea,select{font-family:inherit;font-size:16px}
 .people-row-name{flex:1;font-size:14px;font-weight:700}
 .people-row-status{font-size:11px;color:var(--text-3)}
 
-.video-section{display:flex;flex-direction:column;gap:4px}
+.video-section{display:flex;flex-direction:column;gap:4px;flex-shrink:0}
 .video-label{
   font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;
   padding:4px 10px;border-radius:8px;display:inline-flex;align-items:center;gap:6px;
@@ -158,7 +171,7 @@ input,textarea,select{font-family:inherit;font-size:16px}
   position:relative;background:#000;border:1px solid var(--border);border-radius:var(--radius);
   overflow:hidden;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;
 }
-.video-box iframe,.video-box video{width:100%;height:100%;border:none;display:block}
+.video-box iframe,.video-box video{width:100%;height:100%;border:none}
 .video-box-personal{border-color:var(--accent);border-width:2px}
 
 .countdown-overlay{
@@ -214,15 +227,13 @@ input,textarea,select{font-family:inherit;font-size:16px}
   .bottom-panel .btn{min-width:280px}
 }
 
-/* ============ ROOM LAYOUT ============ */
-
 body.in-room #screen-room{
   position:fixed;
   top:var(--header-h);left:0;right:0;
-  bottom:0;
+  bottom:calc(var(--dock-h) + var(--safe-bottom));
   display:flex;flex-direction:column;
   overflow:hidden;
-  padding:0 12px calc(var(--dock-h) + var(--safe-bottom) + 8px);
+  padding:0 12px;
   background:var(--bg);
   z-index:1;
   max-width:520px;
@@ -244,58 +255,24 @@ body.in-room #screen-room{
 .room-info-name{font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .room-info-meta{font-size:11px;color:var(--text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
-/* Колоночная раскладка комнаты: видео | чат */
 .room-layout{
   display:flex;flex-direction:column;
   flex:1;min-height:0;
   gap:8px;
-  overflow:hidden;
 }
-
 .room-left{
   display:flex;flex-direction:column;gap:8px;
-  min-width:0;min-height:0;
-  flex-shrink:0;
+  min-width:0;
 }
 .room-right{
-  flex:1 1 0;
-  min-height:0;
+  flex:1;min-height:0;
   display:flex;flex-direction:column;
-  overflow:hidden;
-  gap:0;
 }
 
-.video-section-common{flex-shrink:0}
+.video-section-common{flex-shrink:0;margin-bottom:0}
 .video-section-personal{display:none}
+.chat-block{flex:1;min-height:0;margin-bottom:8px;overflow:hidden}
 
-/* Чат: сам блок без поля ввода, поле отдельным блоком снизу */
-.chat-block{
-  background:var(--surface);
-  border:1px solid var(--border);border-bottom:none;
-  border-radius:var(--radius) var(--radius) 0 0;
-  padding:10px 10px 0 10px;
-  display:flex;flex-direction:column;
-  flex:1 1 0;min-height:0;overflow:hidden;
-}
-.chat-title{font-size:11px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;flex-shrink:0}
-.chat-messages{
-  flex:1 1 0;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
-  overscroll-behavior:contain;padding-right:2px;padding-bottom:8px;
-}
-
-/* Поле ввода чата — отдельная зона ПОД чатом, над доком */
-.chat-input-bar{
-  background:var(--surface);
-  border:1px solid var(--border);border-top:1px solid var(--border);
-  border-radius:0 0 var(--radius) var(--radius);
-  padding:8px 10px;
-  display:flex;gap:6px;flex-shrink:0;
-  margin-bottom:8px;
-}
-.chat-input-bar .input{flex:1;margin-bottom:0;min-width:0;background:var(--bg)}
-.chat-input-bar .btn{width:auto;padding:12px 16px;margin:0;min-height:46px;flex-shrink:0}
-
-/* Док снизу */
 .room-bottom-panel{
   position:fixed;left:0;right:0;bottom:0;z-index:60;
   max-width:520px;margin:0 auto;
@@ -320,33 +297,34 @@ body.in-room #screen-room{
   display:flex;align-items:center;justify-content:center;padding:0 4px;
 }
 
-/* Ландшафт телефона: две колонки */
 @media (orientation: landscape) and (min-width: 700px){
   body.in-room #screen-room{
     max-width:1400px;
-    padding:0 12px calc(var(--dock-h) + var(--safe-bottom) + 8px);
+    padding:0 16px;
   }
   .room-layout{
     display:grid;
     grid-template-columns:1.4fr 1fr;
-    gap:10px;
+    gap:12px;
     flex:1;
     min-height:0;
     height:100%;
-    overflow:hidden;
   }
   .room-left{
     display:flex;flex-direction:column;gap:8px;
-    min-height:0;min-width:0;
+    min-height:0;
+    min-width:0;
     overflow-y:auto;
     padding-right:4px;
   }
   .room-right{
     display:flex;flex-direction:column;
-    min-height:0;overflow:hidden;
+    min-height:0;
+    overflow:hidden;
   }
   .video-section-personal{display:flex}
-  .chat-input-bar .btn{padding:12px 14px;font-size:13px}
+  .chat-block{flex:1;min-height:0;margin-bottom:0;overflow:hidden}
+  .chat-messages{flex:1;min-height:0;overflow-y:auto}
   .room-bottom-panel{
     max-width:1400px;
     padding:8px 12px calc(8px + var(--safe-bottom));
@@ -358,9 +336,9 @@ body.in-room #screen-room{
   .tab-btn{
     flex:1 1 0;
     min-width:0;
-    max-width:220px;
+    max-width:200px;
     height:44px;
-    padding:0 10px;
+    padding:0 8px;
     border-radius:12px;
     background:var(--surface-2);
     border:1px solid var(--border);
@@ -385,46 +363,33 @@ body.in-room #screen-room{
     font-size:10px;font-weight:800;min-width:18px;height:18px;border-radius:9px;
     display:flex;align-items:center;justify-content:center;padding:0 4px;
   }
+  .room-bottom-panel .dock-input{
+    flex:1 1 40%;
+    min-width:0;
+    margin-bottom:0;
+    display:block;
+  }
 }
 
-/* ПК: две колонки, видео слева (60%), чат справа (40%) */
 @media (min-width: 1024px) and (hover: hover) and (pointer: fine){
   body.in-room #screen-room{
-    max-width:1600px;
-    padding:0 24px calc(var(--dock-h) + var(--safe-bottom) + 12px);
+    max-width:1400px;
+    padding:0 24px;
   }
   .room-layout{
-    display:grid;
     grid-template-columns:1.5fr 1fr;
     gap:20px;
-    flex:1;
-    min-height:0;
-    height:100%;
-    overflow:hidden;
-    padding-top:12px;
+    padding-top:16px;
   }
-  .room-left{
-    display:flex;flex-direction:column;gap:12px;
-    min-height:0;min-width:0;
-    overflow-y:auto;
-    padding-right:6px;
-  }
-  .room-right{
-    display:flex;flex-direction:column;
-    min-height:0;overflow:hidden;
-  }
-  .video-section-personal{display:flex}
   .back-btn{width:44px;height:44px;font-size:20px}
   .room-info-avatar{width:44px;height:44px;font-size:22px}
   .room-info-name{font-size:17px}
   .room-info-meta{font-size:12px}
   .video-box{border-radius:var(--radius-lg)}
-  .chat-block{padding:16px 16px 0 16px;border-radius:var(--radius-lg) var(--radius-lg) 0 0}
-  .chat-input-bar{padding:12px 16px;border-radius:0 0 var(--radius-lg) var(--radius-lg);margin-bottom:0}
+  .chat-block{padding:16px;border-radius:var(--radius-lg)}
   .chat-title{font-size:12px}
-  .chat-msg-text{font-size:15px}
   .room-bottom-panel{
-    max-width:1600px;
+    max-width:1400px;
     height:auto;
     min-height:72px;
     padding:14px 24px calc(14px + var(--safe-bottom));
@@ -438,7 +403,7 @@ body.in-room #screen-room{
     gap:8px;
   }
   .tab-btn:hover{background:var(--surface);border-color:var(--text-3)}
-  .chat-input-bar .btn{min-height:52px;padding:12px 24px;font-size:15px}
+  .chat-input-row .btn{min-height:52px;padding:12px 24px;font-size:15px}
 }
 </style>
 </head>
@@ -542,9 +507,6 @@ function countOnline(){
 }
 function isLandscape(){
   return window.innerWidth >= 700 && window.innerWidth > window.innerHeight;
-}
-function isDesktop(){
-  return window.innerWidth >= 1024 && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 }
 
 function showScreen(name){
@@ -958,6 +920,7 @@ function renderRoomShell(){
   const days = getDaysLeft(r.expires_at);
   const metaExtra = (r.password_hash ? ' · 🔒' : '') + (r.is_hidden ? ' · скрытая' : '');
   const onlineCount = countOnline();
+  const landscape = isLandscape();
 
   const header =
     '<div class="room-header"><div class="room-header-top">' +
@@ -974,25 +937,24 @@ function renderRoomShell(){
   const commonVideo = videoSectionHtml(false);
   const personalVideo = videoSectionHtml(true);
 
-  // Чат: заголовок + скроллящиеся сообщения. БЕЗ поля ввода.
   const chatBlock =
     '<div class="chat-block">' +
       '<div class="chat-title">💬 Чат</div>' +
       '<div class="chat-messages" id="chatMessages"></div>' +
-    '</div>';
-
-  // Поле ввода — отдельный блок ПОД чатом
-  const inputBar =
-    '<div class="chat-input-bar">' +
-      '<input id="chatInput" class="input" placeholder="Сообщение..." maxlength="500">' +
-      '<button class="btn primary" onclick="sendMessage()">Отправить</button>' +
+      (landscape
+        ? ''
+        : '<div class="chat-input-row">' +
+            '<input id="chatInput" class="input" placeholder="Сообщение..." maxlength="500">' +
+            '<button class="btn primary" onclick="sendMessage()">Отправить</button>' +
+          '</div>'
+      ) +
     '</div>';
 
   const layout =
     header +
     '<div class="room-layout">' +
       '<div class="room-left">' + commonVideo + personalVideo + '</div>' +
-      '<div class="room-right">' + chatBlock + inputBar + '</div>' +
+      '<div class="room-right">' + chatBlock + '</div>' +
     '</div>';
 
   document.getElementById('roomContent').innerHTML = layout;
@@ -1002,26 +964,23 @@ function renderRoomShell(){
   panel.className = 'room-bottom-panel';
 
   renderVideoOnly();
-  renderPersonalVideo();
+  if(landscape) renderPersonalVideo();
   renderMessages();
   bindChatInput();
 }
 function buildDock(){
   const hasPersonal = !!getPersonalVideo();
-  const landscape = isLandscape() && !isDesktop();
-  const desktop = isDesktop();
-  if(landscape || desktop){
-    // на широких экранах — большие tab-кнопки
+  const landscape = isLandscape();
+  if(landscape){
     return '' +
+      '<input id="chatInput" class="input dock-input" placeholder="Сообщение..." maxlength="500">' +
       '<button class="tab-btn" onclick="openVideoSheet()">📎 Общее</button>' +
       '<button class="tab-btn' + (hasPersonal ? ' has-personal' : '') + '" onclick="openPersonalVideoSheet()">🫈 Своё</button>' +
       '<button class="tab-btn" onclick="openPeopleSheet()">👥 Люди<span id="dmBadge"></span></button>' +
       '<button class="tab-btn" onclick="openActionsSheet()">⋯ Ещё</button>';
   }
-  // на телефоне портрет — иконки
   return '' +
     '<button class="icon-btn" onclick="openVideoSheet()" title="Видео">📎</button>' +
-    '<button class="icon-btn" onclick="openPersonalVideoSheet()" title="Своё видео" style="' + (hasPersonal ? 'border-color:var(--accent)' : '') + '">🫈</button>' +
     '<button class="icon-btn" onclick="openPeopleSheet()" title="Люди">👥<span id="dmBadge"></span></button>' +
     '<button class="icon-btn" onclick="openActionsSheet()" title="Ещё">⋯</button>';
 }
@@ -1086,7 +1045,7 @@ function renderMessages(){
   const box = document.getElementById('chatMessages'); if(!box) return;
   if(currentRoomMessages.length === 0){ box.innerHTML = '<div class="hidden-note">Пока тихо. Напиши первым</div>'; return; }
   box.innerHTML = currentRoomMessages.map(messageHtml).join('');
-  requestAnimationFrame(() => { box.scrollTop = box.scrollHeight; });
+  box.scrollTop = box.scrollHeight;
 }
 function messageHtml(m){
   const time = new Date(m.created_at).toLocaleTimeString('ru-RU', {hour:'2-digit', minute:'2-digit'});
@@ -1105,7 +1064,7 @@ function appendMessage(m){
   currentRoomMessages.push(m);
   if(currentRoomMessages.length === 1) box.innerHTML = '';
   box.insertAdjacentHTML('beforeend', messageHtml(m));
-  if(wasAtBottom) requestAnimationFrame(() => { box.scrollTop = box.scrollHeight; });
+  if(wasAtBottom) box.scrollTop = box.scrollHeight;
 }
 async function sendMessage(){
   const inp = document.getElementById('chatInput'); if(!inp) return;
