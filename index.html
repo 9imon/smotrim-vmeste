@@ -673,89 +673,122 @@ body.in-room #screen-room{
 
 <script>
 /* ============================================================
-   МИНИ-ПАТЧ: проверка кнопок (временный)
+   1. КОНСТАНТЫ И КЛИЕНТ SUPABASE
    ============================================================ */
-const html = document.documentElement;
-const skyOverlay = document.getElementById('skyOverlay');
-const themeIcon = document.getElementById('themeIcon');
+const SUPABASE_URL = 'https://aritoekxhdmskwiejqve.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyaXRvZWt4aGRtc2t3aWVqcXZlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE1MDA3MjAsImV4cCI6MjEwNzA3NjcyMH0.smtTA67icGqn0vD9fbDzyc8bdKqz_O-b7D1M3bgSqm4';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// Тема
+const INVIDIOUS_INSTANCES = [
+  'https://inv.nadeko.net',
+  'https://invidious.nerdvpn.de',
+  'https://invidious.tiekoetter.com',
+  'https://invidious.f5.si',
+  'https://yewtu.be'
+];
+let currentInvidious = localStorage.getItem('smotrim_invidious') || INVIDIOUS_INSTANCES[0];
+
+const AVATARS = ['🎬','🍿','🎥','📺','🎭','🎨','🌟','🌙','☀️','🔥','💎','🎪','🎯','🎲','🎸','🎤','📷','🎮','🚀','🌈'];
+const COLORS = ['#ff6b9d','#ffa06b','#ffd93d','#6bcf7f','#6bc5ff','#a06bff','#ff6b6b','#5eead4','#f472b6','#93c5fd','#fcd34d','#86efac'];
+
+/* ============================================================
+   2. ГЛОБАЛЬНОЕ СОСТОЯНИЕ
+   ============================================================ */
+let myId = null;               // auth.uid() после signInAnonymously
+let myName = localStorage.getItem('smotrim_my_name') || '';
+let myAvatar = localStorage.getItem('smotrim_my_avatar') || '👤';
+let rooms = [];
+let currentRoom = null;
+let currentRoomMessages = [];
+let currentPresence = [];
+let selectedAvatar = AVATARS[0];
+let selectedColor = COLORS[0];
+let roomChannel = null;
+let dmChannel = null;
+let presenceChannel = null;
+let countdownInterval = null;
+let heartbeatInterval = null;
+let presenceTimer = null;
+let syncInterval = null;
+let isHost = false;
+let suppressSync = false;
+let autoSwitchAttempts = 0;
+let autoSwitchDone = false;
+let manualServerChoice = false;
+let askAvatar = '👤';
+
+/* ============================================================
+   3. ТЕМА
+   ============================================================ */
+const htmlEl = document.documentElement;
+const skyOverlayEl = document.getElementById('skyOverlay');
+const themeIconEl = document.getElementById('themeIcon');
+
 (function initTheme(){
   const saved = localStorage.getItem('smotrim_theme') || 'dark';
-  html.setAttribute('data-theme', saved);
-  themeIcon.textContent = saved === 'dark' ? '🌙' : '☀️';
+  htmlEl.setAttribute('data-theme', saved);
+  if(themeIconEl) themeIconEl.textContent = saved === 'dark' ? '🌙' : '☀️';
 })();
 
 function toggleTheme(){
-  const cur = html.getAttribute('data-theme');
+  const cur = htmlEl.getAttribute('data-theme');
   const goingDark = cur !== 'dark';
-
-  skyOverlay.classList.remove('sunset','sunrise');
-  void skyOverlay.offsetWidth;
-  skyOverlay.classList.add(goingDark ? 'sunset' : 'sunrise');
-
+  skyOverlayEl.classList.remove('sunset','sunrise');
+  void skyOverlayEl.offsetWidth;
+  skyOverlayEl.classList.add(goingDark ? 'sunset' : 'sunrise');
   setTimeout(() => {
     const next = goingDark ? 'dark' : 'light';
-    html.setAttribute('data-theme', next);
-    themeIcon.textContent = goingDark ? '🌙' : '☀️';
+    htmlEl.setAttribute('data-theme', next);
+    if(themeIconEl) themeIconEl.textContent = goingDark ? '🌙' : '☀️';
     localStorage.setItem('smotrim_theme', next);
   }, 720);
-
-  setTimeout(() => skyOverlay.classList.remove('sunset','sunrise'), 1900);
+  setTimeout(() => skyOverlayEl.classList.remove('sunset','sunrise'), 1900);
 }
 
-// Уведомления (просто проверка разрешения)
-function toggleNotifications(){
-  if(!('Notification' in window)){
-    toast('Уведомления не поддерживаются', 'error');
-    return;
-  }
+/* ============================================================
+   4. УВЕДОМЛЕНИЯ (запрос разрешения)
+   ============================================================ */
+let notificationsEnabled = false;
+const bellBtnEl = document.getElementById('bellBtn');
+
+function updateBellState(){
+  if(!('Notification' in window)){ bellBtnEl.classList.add('muted'); return; }
   if(Notification.permission === 'granted'){
-    toast('🔔 Уведомления уже включены', 'success');
-    return;
+    notificationsEnabled = true;
+    bellBtnEl.textContent = '🔔';
+    bellBtnEl.classList.remove('muted');
+  } else if(Notification.permission === 'denied'){
+    notificationsEnabled = false;
+    bellBtnEl.textContent = '🔕';
+    bellBtnEl.classList.add('muted');
+  } else {
+    notificationsEnabled = false;
+    bellBtnEl.textContent = '🔔';
+    bellBtnEl.classList.remove('muted');
   }
-  if(Notification.permission === 'denied'){
-    toast('🔕 Заблокированы в настройках браузера', 'error');
+}
+
+function toggleNotifications(){
+  if(!('Notification' in window)){ toast('Уведомления не поддерживаются', 'error'); return; }
+  if(Notification.permission === 'granted'){
+    notificationsEnabled = !notificationsEnabled;
+    bellBtnEl.classList.toggle('muted', !notificationsEnabled);
+    toast(notificationsEnabled ? '🔔 Уведомления включены' : '🔕 Уведомления отключены');
     return;
   }
   Notification.requestPermission().then(p => {
+    updateBellState();
     if(p === 'granted') toast('🔔 Уведомления включены!', 'success');
     else toast('Уведомления отклонены', 'error');
   });
 }
 
-// Справка
-function openHelp(){
-  openSheet(
-    '<h2>📖 Как пользоваться</h2>' +
-    '<div class="help-content">' +
-      '<h3>🎬 Создать комнату</h3><p>Нажми <b>🎬 внизу</b>. Комната живёт <b>10 дней</b>.</p>' +
-      '<h3>🔒 Приватность</h3><p>Публичная, скрытая или с паролем.</p>' +
-      '<h3>🔗 Скрытая</h3><p>Скопируй ссылку — отправь другу.</p>' +
-      '<h3>📺 Видео</h3><p>Хост выбирает общее видео. Каждый может добавить своё.</p>' +
-      '<h3>💬 Чат и ЛС</h3><p>Общий чат + личные сообщения.</p>' +
-      '<div class="tip">Гость может управлять плеером, но не вставлять общее видео.</div>' +
-    '</div>' +
-    '<button class="btn ghost block" style="margin-top:16px" onclick="closeSheet()">Закрыть</button>'
-  );
-}
-
-// Заглушки (полноценно будут в Сообщении 3/4)
-function goHome(){ toast('Главная'); }
-function openCreateRoom(){ toast('Создание комнаты — в следующем шаге'); }
-
-// Шторки
-function openSheet(html){
-  document.getElementById('modalRoot').innerHTML =
-    '<div class="sheet-overlay" onclick="if(event.target===this)closeSheet()">' +
-      '<div class="sheet">' + html + '</div>' +
-    '</div>';
-}
-function closeSheet(){ document.getElementById('modalRoot').innerHTML = ''; }
-
-// Тосты
+/* ============================================================
+   5. ТОСТЫ И ШТОРКИ
+   ============================================================ */
 function toast(msg, type){
   const root = document.getElementById('toastRoot');
+  if(!root) return;
   const el = document.createElement('div');
   el.className = 'toast ' + (type || '');
   el.textContent = msg;
@@ -766,6 +799,831 @@ function toast(msg, type){
     setTimeout(() => el.remove(), 300);
   }, 3000);
 }
+function openSheet(html){
+  document.getElementById('modalRoot').innerHTML =
+    '<div class="sheet-overlay" onclick="if(event.target===this)closeSheet()">' +
+      '<div class="sheet">' + html + '</div>' +
+    '</div>';
+}
+function closeSheet(){ document.getElementById('modalRoot').innerHTML = ''; }
+
+/* ============================================================
+   6. УТИЛИТЫ
+   ============================================================ */
+function esc(s){
+  return String(s).replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+}
+async function sha256(t){
+  const buf = new TextEncoder().encode(t);
+  const hash = await crypto.subtle.digest('SHA-256', buf);
+  return Array.from(new Uint8Array(hash)).map(x => x.toString(16).padStart(2,'0')).join('');
+}
+function getDaysLeft(exp){
+  if(!exp) return null;
+  const d = new Date(exp) - new Date();
+  return Math.max(0, Math.ceil(d / 86400000));
+}
+function generateInviteCode(){ return 'inv_' + Math.random().toString(36).slice(2,12); }
+function isLandscape(){ return window.innerWidth >= 700 && window.innerWidth > window.innerHeight; }
+
+/* ============================================================
+   7. ИНИЦИАЛИЗАЦИЯ AUTH
+   ============================================================ */
+async function initAuth(){
+  try {
+    const { data: { user } } = await sb.auth.getUser();
+    if(user){
+      myId = user.id;
+      return;
+    }
+    const { data, error } = await sb.auth.signInAnonymously();
+    if(error){
+      console.error('signInAnonymously error:', error);
+      toast('Ошибка авторизации: ' + error.message, 'error');
+      return;
+    }
+    myId = data.user.id;
+  } catch(e){
+    console.error('initAuth catch:', e);
+    toast('Не удалось войти', 'error');
+  }
+}
+
+/* ============================================================
+   8. ЗАГРУЗКА И РЕНДЕР КОМНАТ
+   ============================================================ */
+async function cleanupRooms(){
+  const last = localStorage.getItem('smotrim_last_cleanup');
+  if(last && Date.now() - parseInt(last) < 3600000) return;
+  try {
+    await sb.rpc('cleanup_rooms_fn');
+    localStorage.setItem('smotrim_last_cleanup', Date.now().toString());
+  } catch(e){ /* pg_cron может уже это делать */ }
+}
+
+async function loadRooms(){
+  try {
+    const { data, error } = await sb.from('rooms')
+      .select('*')
+      .gt('expires_at', new Date().toISOString())
+      .order('created_at', { ascending: false });
+    if(error){
+      console.error('loadRooms error:', error);
+      toast('Ошибка загрузки: ' + error.message, 'error');
+      return;
+    }
+    rooms = (data || []).filter(r => r && r.name && !r.is_hidden || (r && r.host_id === myId));
+    renderRooms();
+  } catch(e){
+    console.error(e);
+    toast('Ошибка сети', 'error');
+  }
+}
+
+function renderRooms(){
+  const area = document.getElementById('roomsArea');
+  const empty = document.getElementById('emptyState');
+  if(!area) return;
+  if(rooms.length === 0){
+    area.innerHTML = '';
+    if(empty) empty.style.display = 'block';
+    return;
+  }
+  if(empty) empty.style.display = 'none';
+  area.innerHTML = rooms.map(r => {
+    const days = getDaysLeft(r.expires_at);
+    const badges = [];
+    if(days !== null && days <= 3) badges.push('<span class="room-tile-badge warn">⏱ ' + days + 'д</span>');
+    else badges.push('<span></span>');
+    if(r.password_hash) badges.push('<span class="room-tile-badge">🔒</span>');
+    else if(r.is_hidden) badges.push('<span class="room-tile-badge">👁</span>');
+    else badges.push('<span></span>');
+    return '<div class="room-tile" style="background:' + esc(r.color || '#6f52e8') + '" onclick="enterRoom(\'' + esc(r.id) + '\')">' +
+      '<div class="room-tile-badges">' + badges.join('') + '</div>' +
+      '<div class="room-tile-emoji">' + (r.avatar || '🎬') + '</div>' +
+      '<div class="room-tile-name">' + esc(r.name) + '</div>' +
+    '</div>';
+  }).join('');
+}
+
+/* ============================================================
+   9. СОЗДАНИЕ КОМНАТЫ
+   ============================================================ */
+function openCreateRoom(){
+  if(!myId){
+    toast('Подключение... подожди секунду', 'error');
+    return;
+  }
+  selectedAvatar = AVATARS[Math.floor(Math.random() * AVATARS.length)];
+  selectedColor = COLORS[Math.floor(Math.random() * COLORS.length)];
+
+  const av = AVATARS.map(a =>
+    '<button class="avatar-option ' + (a===selectedAvatar?'selected':'') + '" data-av="' + a + '" onclick="selectAvatar(\'' + a + '\')">' + a + '</button>'
+  ).join('');
+  const co = COLORS.map(c =>
+    '<button class="color-option ' + (c===selectedColor?'selected':'') + '" data-col="' + c + '" onclick="selectColor(\'' + c + '\')" style="background:' + c + '"></button>'
+  ).join('');
+
+  openSheet(
+    '<h2>🎬 Новая комната</h2>' +
+    '<p class="sub">Дай название и выбери стиль</p>' +
+    '<label class="field-label">Название</label>' +
+    '<input id="roomName" class="input" placeholder="Например: Кино" maxlength="20">' +
+    '<label class="field-label">Аватар</label>' +
+    '<div class="avatar-picker">' + av + '</div>' +
+    '<label class="field-label">Цвет</label>' +
+    '<div class="color-picker">' + co + '</div>' +
+    '<label class="field-label">🔒 Приватность</label>' +
+    '<select id="roomPrivacy" class="select" onchange="onPrivacyChange()">' +
+      '<option value="public">🌐 Публичная — видна всем</option>' +
+      '<option value="hidden">👁 Скрытая — только по ссылке</option>' +
+      '<option value="password">🔒 С паролем — видна в списке</option>' +
+    '</select>' +
+    '<input id="roomPassword" class="input" placeholder="Пароль" type="password" style="display:none;margin-top:8px">' +
+    '<button class="btn primary block" onclick="createRoom()">Создать</button>' +
+    '<button class="btn ghost block" onclick="closeSheet()">Отмена</button>'
+  );
+  setTimeout(() => { const i = document.getElementById('roomName'); if(i) i.focus(); }, 150);
+}
+function selectAvatar(a){
+  selectedAvatar = a;
+  document.querySelectorAll('.avatar-option').forEach(el => el.classList.toggle('selected', el.dataset.av === a));
+}
+function selectColor(c){
+  selectedColor = c;
+  document.querySelectorAll('.color-option').forEach(el => el.classList.toggle('selected', el.dataset.col === c));
+}
+function onPrivacyChange(){
+  const v = document.getElementById('roomPrivacy').value;
+  document.getElementById('roomPassword').style.display = v === 'password' ? 'block' : 'none';
+}
+
+function generateRoomName(base){
+  const b = base.trim();
+  if(!b) return '';
+  const existing = rooms.filter(r => r.name === b || r.name.startsWith(b + ' '));
+  if(existing.length === 0) return b;
+  let max = 1;
+  existing.forEach(r => {
+    if(r.name === b) max = Math.max(max, 1);
+    else {
+      const m = r.name.match(new RegExp('^' + b.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ' (\\d+)$'));
+      if(m) max = Math.max(max, parseInt(m[1]));
+    }
+  });
+  return b + ' ' + (max + 1);
+}
+
+async function createRoom(){
+  const nameEl = document.getElementById('roomName');
+  if(!nameEl) return;
+  const name = nameEl.value.trim();
+  if(!name) return toast('Введи название', 'error');
+  if(name.length > 20) return toast('Слишком длинное', 'error');
+
+  const privacy = document.getElementById('roomPrivacy').value;
+  const isHidden = privacy === 'hidden' || privacy === 'password';
+  let passwordHash = null;
+
+  if(privacy === 'password'){
+    const pass = (document.getElementById('roomPassword').value || '').trim();
+    if(!pass) return toast('Введи пароль', 'error');
+    if(pass.length < 3) return toast('Пароль слишком короткий', 'error');
+    passwordHash = await sha256(pass);
+  }
+
+  const finalName = generateRoomName(name);
+  const roomId = 'room_' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+  const expires = new Date();
+  expires.setDate(expires.getDate() + 10);
+
+  const inviteCode = isHidden ? generateInviteCode() : null;
+
+  const { error } = await sb.from('rooms').insert({
+    id: roomId,
+    name: finalName,
+    avatar: selectedAvatar,
+    color: selectedColor,
+    host_id: myId,
+    video_url: null,
+    sync_state: {},
+    expires_at: expires.toISOString(),
+    is_hidden: isHidden,
+    invite_code: inviteCode,
+    password_hash: passwordHash
+  });
+
+  if(error){
+    console.error('createRoom error:', error);
+    toast('Ошибка: ' + error.message, 'error');
+    return;
+  }
+
+  closeSheet();
+  toast('Комната «' + finalName + '» создана', 'success');
+  await loadRooms();
+  setTimeout(() => enterRoom(roomId), 300);
+}
+
+/* ============================================================
+   10. ВХОД В КОМНАТУ
+   ============================================================ */
+async function enterRoom(roomId){
+  let room = rooms.find(r => r.id === roomId);
+
+  if(!room){
+    const { data, error } = await sb.from('rooms').select('*').eq('id', roomId).limit(1);
+    if(error || !data || data.length === 0){
+      toast('Комната не найдена', 'error');
+      return;
+    }
+    room = data[0];
+    if(!rooms.find(r => r.id === roomId)) rooms.push(room);
+  }
+
+  if(room.expires_at && new Date(room.expires_at) < new Date()){
+    toast('Комната удалена', 'error');
+    return;
+  }
+
+  // Проверка invite-кода для скрытых комнат
+  if(room.is_hidden && room.host_id !== myId){
+    const urlInvite = new URLSearchParams(location.search).get('invite');
+    const savedInvite = sessionStorage.getItem('room_invite_' + roomId);
+    if(urlInvite !== room.invite_code && savedInvite !== room.invite_code){
+      toast('Скрытая комната. Нужна ссылка от хоста.', 'error');
+      return;
+    }
+    sessionStorage.setItem('room_invite_' + roomId, room.invite_code);
+  }
+
+  // Проверка пароля
+  if(room.password_hash && room.host_id !== myId){
+    const savedPass = sessionStorage.getItem('room_pass_' + roomId);
+    if(savedPass !== room.password_hash){
+      const entered = prompt('🔒 Комната с паролем. Введи пароль:');
+      if(!entered) return;
+      const hash = await sha256(entered);
+      if(hash !== room.password_hash){
+        toast('Неверный пароль', 'error');
+        return;
+      }
+      sessionStorage.setItem('room_pass_' + roomId, hash);
+    }
+  }
+
+  await teardownChannels();
+  currentRoom = room;
+  isHost = room.host_id === myId;
+  localStorage.setItem('smotrim_last_room', roomId);
+
+  showScreen('room');
+  renderRoomShell();
+  await loadRoomMessages(roomId);
+  await upsertPresence();
+  await loadPresence();
+  renderRoomHeaderMeta();
+  updateDMBadge();
+  subscribeToRoom(roomId);
+
+  if(room.countdown_start){
+    const diff = Math.ceil((new Date(room.countdown_start).getTime() - Date.now()) / 1000);
+    if(diff > 0) startCountdown();
+  }
+}
+
+async function teardownChannels(){
+  try {
+    if(roomChannel){ await sb.removeChannel(roomChannel); roomChannel = null; }
+    if(dmChannel){ await sb.removeChannel(dmChannel); dmChannel = null; }
+    if(presenceChannel){ await sb.removeChannel(presenceChannel); presenceChannel = null; }
+  } catch(e){ console.warn(e); }
+}
+
+async function leaveRoom(){
+  if(currentRoom){
+    try {
+      await sb.from('room_presence').delete().eq('room_id', currentRoom.id).eq('user_id', myId);
+    } catch(e){}
+  }
+  await teardownChannels();
+  if(countdownInterval){ clearInterval(countdownInterval); countdownInterval = null; }
+  if(syncInterval){ clearInterval(syncInterval); syncInterval = null; }
+  currentRoom = null;
+  currentRoomMessages = [];
+  currentPresence = [];
+  localStorage.removeItem('smotrim_last_room');
+  showScreen('home');
+  loadRooms();
+}
+
+function goHome(){ if(currentRoom) leaveRoom(); else showScreen('home'); }
+
+function showScreen(name){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById('screen-' + name);
+  if(el) el.classList.add('active');
+  document.body.classList.toggle('in-room', name === 'room');
+  document.getElementById('fabCreate').classList.toggle('hidden', name !== 'home');
+  document.getElementById('roomDock').style.display = name === 'room' ? 'flex' : 'none';
+  window.scrollTo(0, 0);
+}
+
+/* ============================================================
+   11. ПАРСИНГ И РЕНДЕР ВИДЕО
+   ============================================================ */
+function parseVideoUrl(url){
+  if(!url) return null;
+  url = url.trim();
+  if(!url.match(/^https?:\/\//i)) return null;
+
+  const yt = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/|live\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+  if(yt) return { type:'invidious', videoId:yt[1], src:currentInvidious + '/embed/' + yt[1], embeddable:true };
+
+  const rt = url.match(/rutube\.ru\/(?:video|play\/embed|live)\/([a-zA-Z0-9]+)/);
+  if(rt) return { type:'iframe', src:'https://rutube.ru/play/embed/' + rt[1], embeddable:true, nosync:true };
+
+  const vk = url.match(/(?:vk\.com|vkvideo\.ru)\/video(-?\d+)_(\d+)/);
+  if(vk) return { type:'iframe', src:'https://vk.com/video_ext.php?oid=' + vk[1] + '&id=' + vk[2] + '&autoplay=0', embeddable:true, nosync:true };
+
+  const dm = url.match(/dailymotion\.com\/video\/([a-zA-Z0-9]+)/);
+  if(dm) return { type:'iframe', src:'https://www.dailymotion.com/embed/video/' + dm[1], embeddable:true, nosync:true };
+
+  const vm = url.match(/vimeo\.com\/(\d+)/);
+  if(vm) return { type:'iframe', src:'https://player.vimeo.com/video/' + vm[1], embeddable:true, nosync:true };
+
+  const tw = url.match(/twitch\.tv\/([a-zA-Z0-9_]+)$/);
+  if(tw) return { type:'iframe', src:'https://player.twitch.tv/?channel=' + tw[1] + '&parent=' + location.hostname, embeddable:true, nosync:true };
+
+  const ok = url.match(/ok\.ru\/video\/(\d+)/);
+  if(ok) return { type:'iframe', src:'https://ok.ru/videoembed/' + ok[1], embeddable:true, nosync:true };
+
+  const tg = url.match(/t\.me\/([a-zA-Z0-9_]+)\/(\d+)/);
+  if(tg) return { type:'iframe', src:'https://t.me/' + tg[1] + '/' + tg[2] + '?embed=1', embeddable:true, nosync:true };
+
+  if(url.match(/\.(mp4|webm|ogg|mov|m4v)(\?|$)/i)) return { type:'html5', src:url, embeddable:true };
+  if(url.match(/\.m3u8(\?|$)/i)) return { type:'hls', src:url, embeddable:true };
+
+  return { type:'iframe', src:url, embeddable:false, nosync:true };
+}
+
+function videoSectionHtml(isPersonal){
+  const label = isPersonal
+    ? '<div class="video-label video-label-personal">🫈 ТОЛЬКО ДЛЯ ТЕБЯ</div>'
+    : '<div class="video-label video-label-common">👥 СМОТРИМ ВМЕСТЕ</div>';
+  const boxId = isPersonal ? 'personalVideoBox' : 'videoBox';
+  const cls = isPersonal ? 'video-box video-box-personal' : 'video-box';
+  const sectionCls = isPersonal ? 'video-section video-section-personal' : 'video-section video-section-common';
+  return '<div class="' + sectionCls + '">' + label + '<div class="' + cls + '" id="' + boxId + '"></div></div>';
+}
+
+function renderVideoOnly(){
+  const r = currentRoom;
+  const box = document.getElementById('videoBox');
+  if(!r || !box) return;
+
+  const vd = parseVideoUrl(r.video_url);
+  let vh = '';
+
+  if(!vd){
+    vh = '<div class="video-placeholder"><div class="big-emoji">📺</div><div class="big">Тут будет видео</div><div>Хост ещё не выбрал</div></div>';
+  } else if(vd.type === 'invidious'){
+    vh = '<iframe id="videoPlayer" src="' + esc(vd.src) + '" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>';
+  } else if(vd.type === 'html5'){
+    vh = '<video id="videoPlayer" src="' + esc(vd.src) + '" controls playsinline></video>';
+  } else if(vd.type === 'hls'){
+    vh = '<video id="videoPlayer" controls playsinline></video>';
+  } else if(vd.embeddable){
+    vh = '<iframe id="videoPlayer" src="' + esc(vd.src) + '" allow="encrypted-media; fullscreen; picture-in-picture" allowfullscreen></iframe>';
+  } else {
+    vh = '<div style="padding:20px;color:#888;text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px">' +
+      '<div style="font-size:40px">🔗</div>' +
+      '<div style="font-size:13px">Этот сайт нельзя встроить</div>' +
+      '<a href="' + esc(r.video_url) + '" target="_blank" rel="noopener" class="btn primary small" style="text-decoration:none">▶ Открыть видео</a>' +
+    '</div>';
+  }
+
+  const cd = '<div id="countdownOverlay" class="countdown-overlay"><div class="countdown-num" id="countdownNum"></div><div class="countdown-hint">Приготовься смотреть</div></div>';
+  const play = '<div id="playOverlay" class="play-overlay"><div class="arrow">▶</div><div class="text">Нажми Play</div><div class="hint">Видео начнётся у всех</div></div>';
+
+  box.innerHTML = vh + cd + play;
+
+  if(vd && vd.type === 'html5') initHtml5Sync();
+  if(vd && vd.type === 'hls') initHls();
+  if(vd && vd.type === 'invidious') maybeStartAutoSwitch();
+}
+
+function initHtml5Sync(){
+  const v = document.getElementById('videoPlayer');
+  if(!v) return;
+  v.addEventListener('play', () => { if(!suppressSync) updateSync({ playing:true, time:v.currentTime }); });
+  v.addEventListener('pause', () => { if(!suppressSync) updateSync({ playing:false, time:v.currentTime }); });
+  v.addEventListener('seeked', () => { if(!suppressSync) updateSync({ playing:!v.paused, time:v.currentTime, seek:true }); });
+}
+
+function initHls(){
+  const v = document.getElementById('videoPlayer');
+  if(!v || !currentRoom) return;
+  if(window.Hls && window.Hls.isSupported()){
+    const hls = new window.Hls();
+    hls.loadSource(currentRoom.video_url);
+    hls.attachMedia(v);
+  } else if(v.canPlayType('application/vnd.apple.mpegurl')){
+    v.src = currentRoom.video_url;
+  }
+}
+
+async function updateSync(data){
+  if(!currentRoom) return;
+  const state = Object.assign({}, currentRoom.sync_state || {}, data);
+  state.updated = Date.now();
+  await sb.from('rooms').update({ sync_state: state }).eq('id', currentRoom.id);
+}
+
+function applySyncState(){
+  if(!currentRoom || !currentRoom.sync_state) return;
+  const s = currentRoom.sync_state;
+  if(!s.updated) return;
+  if(Date.now() - s.updated > 20000) return;
+  suppressSync = true;
+  const v = document.getElementById('videoPlayer');
+  if(v && v.tagName === 'VIDEO'){
+    const target = (s.time || 0) + ((Date.now() - s.updated) / 1000);
+    if(Math.abs(v.currentTime - target) > 3) v.currentTime = target;
+    if(s.playing && v.paused) v.play().catch(() => {});
+    if(!s.playing && !v.paused) v.pause();
+  }
+  setTimeout(() => { suppressSync = false; }, 500);
+}
+
+/* ============================================================
+   12. INVIDIOUS СЕРВЕРА
+   ============================================================ */
+async function checkInvidious(url){
+  try {
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), 3000);
+    const r = await fetch(url + '/api/v1/stats', { signal: ctrl.signal, method: 'HEAD' });
+    clearTimeout(t);
+    return r.ok;
+  } catch(e){ return false; }
+}
+
+function maybeStartAutoSwitch(){
+  if(autoSwitchDone || manualServerChoice) return;
+  if(!currentRoom || !currentRoom.video_url) return;
+  const vd = parseVideoUrl(currentRoom.video_url);
+  if(!vd || vd.type !== 'invidious') return;
+
+  setTimeout(async () => {
+    if(!currentRoom || manualServerChoice || autoSwitchDone) return;
+    const frame = document.getElementById('videoPlayer');
+    if(!frame || frame.tagName !== 'IFRAME') return;
+    if(autoSwitchAttempts >= 2){ autoSwitchDone = true; return; }
+    autoSwitchAttempts++;
+    const idx = INVIDIOUS_INSTANCES.indexOf(currentInvidious);
+    const next = INVIDIOUS_INSTANCES[(idx + 1) % INVIDIOUS_INSTANCES.length];
+    if(await checkInvidious(next)){
+      currentInvidious = next;
+      localStorage.setItem('smotrim_invidious', next);
+      toast('Переключаю сервер: ' + new URL(next).hostname);
+      renderVideoOnly();
+      maybeStartAutoSwitch();
+    } else {
+      maybeStartAutoSwitch();
+    }
+  }, 8000);
+}
+
+async function openInvidiousPicker(){
+  toast('Проверяю сервера...');
+  const working = [];
+  await Promise.all(INVIDIOUS_INSTANCES.map(async url => {
+    if(await checkInvidious(url)) working.push(url);
+  }));
+  if(working.length === 0){
+    toast('Все сервера недоступны', 'error');
+    return;
+  }
+  const list = working.map(url => {
+    const active = url === currentInvidious ? '✅ ' : '';
+    return '<button class="btn ghost block" style="text-align:left;justify-content:flex-start;margin-bottom:6px" onclick="switchInvidious(\'' + url + '\')">' + active + new URL(url).hostname + '</button>';
+  }).join('');
+  openSheet(
+    '<h2>🌐 Выбрать сервер</h2>' +
+    '<p class="sub">Работает в РФ. Если не грузится — попробуй другой.</p>' +
+    list +
+    '<button class="btn ghost block" onclick="closeSheet()">Отмена</button>'
+  );
+}
+
+function switchInvidious(url){
+  currentInvidious = url;
+  localStorage.setItem('smotrim_invidious', url);
+  manualServerChoice = true;
+  toast('Сервер: ' + new URL(url).hostname);
+  closeSheet();
+  renderVideoOnly();
+}
+
+/* ============================================================
+   13. ОТСЧЁТ ПЕРЕД СТАРТОМ
+   ============================================================ */
+function startCountdown(){
+  if(countdownInterval) clearInterval(countdownInterval);
+  const overlay = document.getElementById('countdownOverlay');
+  const num = document.getElementById('countdownNum');
+  if(!overlay || !num) return;
+  countdownInterval = setInterval(() => {
+    const diff = Math.ceil((new Date(currentRoom.countdown_start).getTime() - Date.now()) / 1000);
+    if(diff > 0){
+      num.textContent = diff;
+      overlay.style.display = 'flex';
+    } else {
+      overlay.style.display = 'none';
+      clearInterval(countdownInterval);
+      countdownInterval = null;
+      handleStart();
+    }
+  }, 100);
+}
+
+function handleStart(){
+  const vd = parseVideoUrl(currentRoom.video_url);
+  if(!vd) return;
+  if(vd.type === 'html5' || vd.type === 'hls'){
+    const v = document.getElementById('videoPlayer');
+    if(v && v.tagName === 'VIDEO'){
+      v.currentTime = 0;
+      v.play().catch(() => showPlayOverlay());
+    }
+    return;
+  }
+  showPlayOverlay();
+}
+
+function showPlayOverlay(){
+  const p = document.getElementById('playOverlay');
+  if(p){
+    p.style.display = 'flex';
+    setTimeout(() => p.style.display = 'none', 5000);
+  }
+}
+
+/* ============================================================
+   14. РЕНДЕР КОМНАТЫ (каркас)
+   ============================================================ */
+function renderRoomShell(){
+  const r = currentRoom;
+  if(!r) return;
+
+  const days = getDaysLeft(r.expires_at);
+  const landscape = isLandscape();
+  const onlineCount = currentPresence.filter(p =>
+    Date.now() - new Date(p.updated_at || 0).getTime() < 120000
+  ).length + 1;
+
+  const metaExtra = (r.password_hash ? ' · 🔒' : '') + (r.is_hidden ? ' · скрытая' : '');
+
+  const header =
+    '<div class="room-header">' +
+      '<div class="room-header-top">' +
+        '<button class="back-btn" onclick="leaveRoom()">←</button>' +
+        '<div class="room-info">' +
+          '<div class="room-info-avatar" style="background:' + esc(r.color || '#6f52e8') + '">' + (r.avatar || '🎬') + '</div>' +
+          '<div class="room-info-text">' +
+            '<div class="room-info-name">' + esc(r.name) + '</div>' +
+            '<div class="room-info-meta" id="roomMeta">' + (isHost ? 'Хост' : 'Гость') + (days !== null ? ' · ' + days + ' дн.' : '') + ' · 🟢 ' + onlineCount + ' онлайн' + metaExtra + '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+
+  const commonVideo = videoSectionHtml(false);
+  const personalVideo = videoSectionHtml(true);
+
+  const chatBlock =
+    '<div class="chat-block">' +
+      '<div class="chat-title">💬 Чат</div>' +
+      '<div class="chat-messages" id="chatMessages"></div>' +
+      (landscape ? '' : '<div class="chat-input-row">' +
+        '<input id="chatInput" class="input" placeholder="Сообщение..." maxlength="500">' +
+        '<button class="btn primary" onclick="sendMessage()">➤</button>' +
+      '</div>') +
+    '</div>';
+
+  const layout =
+    header +
+    '<div class="room-layout">' +
+      '<div class="room-left">' + commonVideo + personalVideo + '</div>' +
+      '<div class="room-right">' + chatBlock + '</div>' +
+    '</div>';
+
+  document.getElementById('roomContent').innerHTML = layout;
+
+  const dock = document.getElementById('roomDock');
+  dock.innerHTML = buildDock();
+
+  renderVideoOnly();
+  renderPersonalVideo();
+  renderMessages();
+  bindChatInput();
+}
+
+function buildDock(){
+  const hasPersonal = !!getPersonalVideo();
+  const landscape = isLandscape();
+  if(landscape){
+    return '' +
+      '<input id="chatInput" class="input dock-input" placeholder="Сообщение..." maxlength="500">' +
+      '<button class="tab-btn" onclick="openVideoSheet()">📎 Общее</button>' +
+      '<button class="tab-btn' + (hasPersonal ? ' has-personal' : '') + '" onclick="openPersonalVideoSheet()">🫈 Своё</button>' +
+      '<button class="tab-btn" onclick="openPeopleSheet()">👥 Люди<span id="dmBadge"></span></button>' +
+      '<button class="tab-btn" onclick="openActionsSheet()">⋯ Ещё</button>';
+  }
+  return '' +
+    '<button class="icon-btn" onclick="openVideoSheet()" title="Видео">📎</button>' +
+    '<button class="icon-btn" onclick="openPeopleSheet()" title="Люди">👥<span id="dmBadge"></span></button>' +
+    '<button class="icon-btn" onclick="openActionsSheet()" title="Ещё">⋯</button>' +
+    '<button class="icon-btn" onclick="openInvidiousPicker()" title="Сервер" style="margin-left:auto">🌐</button>';
+}
+
+/* ============================================================
+   15. СОБЫТИЯ РЕАЛТАЙМА
+   ============================================================ */
+function subscribeToRoom(roomId){
+  roomChannel = sb.channel('room-' + roomId)
+    .on('postgres_changes', { event:'INSERT', schema:'public', table:'room_messages', filter:'room_id=eq.' + roomId }, p => appendMessage(p.new))
+    .on('postgres_changes', { event:'UPDATE', schema:'public', table:'rooms', filter:'id=eq.' + roomId }, p => {
+      if(!currentRoom || currentRoom.id !== roomId) return;
+      const oldVideo = currentRoom.video_url;
+      const oldCountdown = currentRoom.countdown_start;
+      currentRoom = p.new;
+      if(oldVideo !== p.new.video_url){
+        renderVideoOnly();
+        renderRoomHeaderMeta();
+        autoSwitchDone = false;
+        manualServerChoice = false;
+        autoSwitchAttempts = 0;
+      }
+      if(oldCountdown !== p.new.countdown_start && p.new.countdown_start) startCountdown();
+      else if(!isHost) applySyncState();
+    })
+    .on('postgres_changes', { event:'DELETE', schema:'public', table:'rooms', filter:'id=eq.' + roomId }, () => {
+      toast('Комната удалена', 'error');
+      leaveRoom();
+    })
+    .subscribe();
+
+  dmChannel = sb.channel('dm-' + myId)
+    .on('postgres_changes', { event:'INSERT', schema:'public', table:'direct_messages', filter:'to_user_id=eq.' + myId }, p => {
+      if(p.new.room_id !== (currentRoom && currentRoom.id)) return;
+      toast('Сообщение от ' + (p.new.from_name || 'гостя'), 'success');
+      updateDMBadge();
+      const peerEl = document.getElementById('dmPeerId');
+      if(peerEl && peerEl.value === p.new.from_user_id) openDM(p.new.from_user_id, p.new.from_name);
+    })
+    .subscribe();
+
+  presenceChannel = sb.channel('presence-' + roomId)
+    .on('postgres_changes', { event:'*', schema:'public', table:'room_presence', filter:'room_id=eq.' + roomId }, () => scheduleLoadPresence())
+    .subscribe();
+
+  if(syncInterval) clearInterval(syncInterval);
+  syncInterval = setInterval(() => {
+    if(!currentRoom) return;
+    const v = document.getElementById('videoPlayer');
+    if(v && v.tagName === 'VIDEO' && !v.paused) updateSync({ playing:true, time:v.currentTime });
+  }, 3000);
+}
+
+function scheduleLoadPresence(){
+  if(presenceTimer) return;
+  presenceTimer = setTimeout(() => {
+    presenceTimer = null;
+    loadPresence().then(renderRoomHeaderMeta);
+  }, 800);
+}
+
+function renderRoomHeaderMeta(){
+  const r = currentRoom;
+  if(!r) return;
+  const el = document.getElementById('roomMeta');
+  if(!el) return;
+  const days = getDaysLeft(r.expires_at);
+  const onlineCount = currentPresence.filter(p =>
+    Date.now() - new Date(p.updated_at || 0).getTime() < 120000
+  ).length + 1;
+  const metaExtra = (r.password_hash ? ' · 🔒' : '') + (r.is_hidden ? ' · скрытая' : '');
+  el.textContent = (isHost ? 'Хост' : 'Гость') + (days !== null ? ' · ' + days + ' дн.' : '') + ' · 🟢 ' + onlineCount + ' онлайн' + metaExtra;
+}
+
+/* ============================================================
+   16. ФУНКЦИИ-ЗАГЛУШКИ (реализация в Сообщении 4)
+   ============================================================ */
+function loadRoomMessages(roomId){ /* Сообщение 4 */ }
+function renderMessages(){ /* Сообщение 4 */ }
+function appendMessage(m){ /* Сообщение 4 */ }
+function bindChatInput(){ /* Сообщение 4 */ }
+function sendMessage(){ /* Сообщение 4 */ }
+function loadPresence(){ return Promise.resolve(); /* Сообщение 4 */ }
+function upsertPresence(){ return Promise.resolve(); /* Сообщение 4 */ }
+function updateDMBadge(){ /* Сообщение 4 */ }
+function openVideoSheet(){ /* Сообщение 4 */ }
+function openPersonalVideoSheet(){ /* Сообщение 4 */ }
+function renderPersonalVideo(){ /* Сообщение 4 */ }
+function getPersonalVideo(){ return null; /* Сообщение 4 */ }
+function openPeopleSheet(){ /* Сообщение 4 */ }
+function openActionsSheet(){ /* Сообщение 4 */ }
+
+/* ============================================================
+   17. СПРАВКА
+   ============================================================ */
+function openHelp(){
+  openSheet(
+    '<h2>📖 Как пользоваться</h2>' +
+    '<div class="help-content">' +
+      '<h3>🎬 Создать комнату</h3><p>Нажми <b>🎬 внизу</b>. Комната живёт <b>10 дней</b>.</p>' +
+      '<h3>🔒 Приватность</h3><p>Публичная, скрытая или с паролем.</p>' +
+      '<h3>🔗 Скрытая</h3><p>Скопируй ссылку — отправь другу.</p>' +
+      '<h3>📺 Видео</h3><p>YouTube · RuTube · VK · Twitch · Dailymotion · Vimeo · OK.ru · Telegram · .mp4 · .m3u8</p>' +
+      '<h3>🌐 Сервер</h3><p>Если YouTube не работает — смени сервер кнопкой 🌐.</p>' +
+      '<h3>💬 Чат и ЛС</h3><p>Общий чат + личные сообщения.</p>' +
+      '<div class="tip">Гость может управлять плеером, но не вставлять общее видео.</div>' +
+    '</div>' +
+    '<button class="btn ghost block" style="margin-top:16px" onclick="closeSheet()">Закрыть</button>'
+  );
+}
+
+/* ============================================================
+   18. ВОССТАНОВЛЕНИЕ ПОСЛЕДНЕЙ КОМНАТЫ
+   ============================================================ */
+async function restoreLastRoom(){
+  const lastRoom = localStorage.getItem('smotrim_last_room');
+  if(!lastRoom) return false;
+  const { data } = await sb.from('rooms').select('id').eq('id', lastRoom).gt('expires_at', new Date().toISOString()).limit(1);
+  if(data && data.length){ enterRoom(lastRoom); return true; }
+  localStorage.removeItem('smotrim_last_room');
+  return false;
+}
+
+/* ============================================================
+   19. HEARTBEAT ПРИСУТСТВИЯ
+   ============================================================ */
+function startHeartbeat(){
+  if(heartbeatInterval) clearInterval(heartbeatInterval);
+  heartbeatInterval = setInterval(() => { if(currentRoom) upsertPresence(); }, 30000);
+}
+
+/* ============================================================
+   20. ПРИВЕТСТВИЕ ПО ВРЕМЕНИ СУТОК
+   ============================================================ */
+function getGreeting(){
+  const h = new Date().getHours();
+  if(h < 6) return '🌙 Доброй ночи';
+  if(h < 12) return '☀️ Доброе утро';
+  if(h < 18) return '🌤 Добрый день';
+  return '🌆 Добрый вечер';
+}
+
+/* ============================================================
+   21. ИНИЦИАЛИЗАЦИЯ
+   ============================================================ */
+(async function init(){
+  const g = document.getElementById('greeting');
+  if(g) g.textContent = getGreeting();
+
+  updateBellState();
+  await initAuth();
+  await cleanupRooms();
+  await loadRooms();
+
+  // Подписка на изменения списка комнат
+  sb.channel('rooms-list')
+    .on('postgres_changes', { event:'*', schema:'public', table:'rooms' }, () => loadRooms())
+    .subscribe();
+
+  startHeartbeat();
+
+  // Поворот экрана → перерисовка
+  let lastOrient = isLandscape() ? 'land' : 'port';
+  const checkOrient = () => {
+    const cur = isLandscape() ? 'land' : 'port';
+    if(cur === lastOrient) return;
+    lastOrient = cur;
+    if(currentRoom) renderRoomShell();
+  };
+  window.addEventListener('orientationchange', () => setTimeout(checkOrient, 300));
+  window.addEventListener('resize', checkOrient);
+
+  // URL параметры — сразу в комнату
+  const params = new URLSearchParams(location.search);
+  const roomParam = params.get('room');
+  if(roomParam) enterRoom(roomParam);
+  else restoreLastRoom();
+})();
 </script>
 </body>
 </html>
