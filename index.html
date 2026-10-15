@@ -2158,8 +2158,15 @@ function getGreeting(){
   // URL параметры — сразу в комнату
   const params = new URLSearchParams(location.search);
   const roomParam = params.get('room');
-  if(roomParam) enterRoom(roomParam);
-  else restoreLastRoom();
+  if(roomParam) await enterRoom(roomParam);
+  else await restoreLastRoom();
+
+  setInterval(() => {
+    if(currentRoom && !window.pollTimer){
+      console.log('🔧 WATCHDOG: запускаю polling принудительно');
+      subscribeToRoom(currentRoom.id);
+    }
+  }, 3000);
 })();
 </script>
 </body>
