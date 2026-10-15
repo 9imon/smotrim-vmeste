@@ -1456,8 +1456,8 @@ function buildDock(){
    15. POLLING (вместо WebSocket — работает в РФ)
    ============================================================ */
 function subscribeToRoom(roomId){
-function subscribeToRoom(roomId){
   // Убираем WS-подписки
+  if(roomChannel){ sb.removeChannel(roomChannel); roomChannel = null; }
   if(roomChannel){ sb.removeChannel(roomChannel); roomChannel = null; }
   if(dmChannel){ sb.removeChannel(dmChannel); dmChannel = null; }
   if(presenceChannel){ sb.removeChannel(presenceChannel); presenceChannel = null; }
