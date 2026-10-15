@@ -1523,20 +1523,514 @@ function renderRoomHeaderMeta(){
 /* ============================================================
    16. ФУНКЦИИ-ЗАГЛУШКИ (реализация в Сообщении 4)
    ============================================================ */
-function loadRoomMessages(roomId){ /* Сообщение 4 */ }
-function renderMessages(){ /* Сообщение 4 */ }
-function appendMessage(m){ /* Сообщение 4 */ }
-function bindChatInput(){ /* Сообщение 4 */ }
-function sendMessage(){ /* Сообщение 4 */ }
-function loadPresence(){ return Promise.resolve(); /* Сообщение 4 */ }
-function upsertPresence(){ return Promise.resolve(); /* Сообщение 4 */ }
-function updateDMBadge(){ /* Сообщение 4 */ }
-function openVideoSheet(){ /* Сообщение 4 */ }
-function openPersonalVideoSheet(){ /* Сообщение 4 */ }
-function renderPersonalVideo(){ /* Сообщение 4 */ }
-function getPersonalVideo(){ return null; /* Сообщение 4 */ }
-function openPeopleSheet(){ /* Сообщение 4 */ }
-function openActionsSheet(){ /* Сообщение 4 */ }
+/* ============================================================
+   16. ЧАТ КОМНАТЫ
+   ============================================================ */
+async function loadRoomMessages(roomId){
+  try {
+    const { data, error } = await sb.from('room_messages')
+      .select('*')
+      .eq('room_id', roomId)
+      .eq('hidden', false)
+      .order('created_at', { ascending: true })
+      .limit(200);
+    if(error){ console.error('loadRoomMessages:', error); return; }
+    currentRoomMessages = data || [];
+    renderMessages();
+  } catch(e){ console.error(e); }
+}
+
+function renderMessages(){
+  const box = document.getElementById('chatMessages');
+  if(!box) return;
+  if(currentRoomMessages.length === 0){
+    box.innerHTML = '<div class="hidden-note">Пока тихо. Напиши первым 👋</div>';
+    return;
+  }
+  box.innerHTML = currentRoomMessages.map(messageHtml).join('');
+  box.scrollTop = box.scrollHeight;
+}
+
+function messageHtml(m){
+  const time = new Date(m.created_at).toLocaleTimeString('ru-RU', { hour:'2-digit', minute:'2-digit' });
+  const isMine = m.user_id === myId;
+  const actions = isMine ? '' :
+    '<div style="display:flex;flex-direction:column;gap:2px;flex-shrink:0">' +
+      '<button class="dm-action-btn" onclick="openDM(\'' + esc(m.user_id) + '\',\'' + esc(m.name) + '\')" title="ЛС" style="background:none;border:none;color:var(--text-3);font-size:14px;padding:3px;cursor:pointer">💬</button>' +
+      '<button class="dm-action-btn" onclick="hideMessage(' + m.id + ')" title="Скрыть" style="background:none;border:none;color:var(--text-3);font-size:14px;padding:3px;cursor:pointer">👁</button>' +
+    '</div>';
+  return '<div class="chat-msg">' +
+    '<div class="chat-msg-avatar">' + (m.avatar || '👤') + '</div>' +
+    '<div class="chat-msg-body">' +
+      '<div class="chat-msg-name">' + esc(m.name) + '</div>' +
+      '<div class="chat-msg-text">' + esc(m.text) + '</div>' +
+      '<div class="chat-msg-time">' + time + '</div>' +
+    '</div>' +
+    actions +
+  '</div>';
+}
+
+function appendMessage(m){
+  if(currentRoomMessages.some(x => x.id === m.id)) return;
+  const box = document.getElementById('chatMessages');
+  if(!box) return;
+  const wasAtBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 100;
+  currentRoomMessages.push(m);
+  if(currentRoomMessages.length === 1) box.innerHTML = '';
+  box.insertAdjacentHTML('beforeend', messageHtml(m));
+  if(wasAtBottom) box.scrollTop = box.scrollHeight;
+
+  if(m.user_id !== myId){
+    notifyNewMessage(m);
+  }
+}
+
+function bindChatInput(){
+  const i = document.getElementById('chatInput');
+  if(i && !i.dataset.bound){
+    i.dataset.bound = '1';
+    i.addEventListener('keydown', e => {
+      if(e.key === 'Enter'){ e.preventDefault(); sendMessage(); }
+    });
+  }
+}
+
+async function sendMessage(){
+  const inp = document.getElementById('chatInput');
+  if(!inp) return;
+  const text = inp.value.trim();
+  if(!text) return;
+
+  if(!myName){
+    askName(text);
+    return;
+  }
+
+  inp.value = '';
+  const { error } = await sb.from('room_messages').insert({
+    room_id: currentRoom.id,
+    name: myName,
+    avatar: myAvatar,
+    text: text,
+    user_id: myId,
+    hidden: false
+  });
+  if(error){
+    console.error('sendMessage:', error);
+    toast('Ошибка: ' + error.message, 'error');
+  }
+}
+
+async function hideMessage(msgId){
+  try {
+    await sb.from('message_hides').insert({ message_id: msgId, user_id: myId });
+    const { data } = await sb.from('message_hides').select('*').eq('message_id', msgId);
+    const count = (data || []).length;
+    if(count >= 3){
+      await sb.from('room_messages').update({ hidden: true }).eq('id', msgId);
+      toast('Скрыто у всех', 'success');
+    } else {
+      toast('Скрыто у тебя (' + count + '/3)');
+    }
+    await loadRoomMessages(currentRoom.id);
+  } catch(e){ toast('Ошибка: ' + e.message, 'error'); }
+}
+
+/* ============================================================
+   17. ЛС (ЛИЧНЫЕ СООБЩЕНИЯ)
+   ============================================================ */
+async function openDM(userId, userName){
+  if(userId === myId) return toast('Это ты');
+  await sb.from('dm_reads').upsert({
+    room_id: currentRoom.id,
+    user_id: myId,
+    peer_id: userId,
+    last_read_at: new Date().toISOString()
+  });
+  const { data } = await sb.from('direct_messages').select('*')
+    .eq('room_id', currentRoom.id)
+    .or('and(from_user_id.eq.' + myId + ',to_user_id.eq.' + userId + '),and(from_user_id.eq.' + userId + ',to_user_id.eq.' + myId + ')')
+    .order('created_at', { ascending: true });
+  const html = (data || []).map(m => {
+    const mine = m.from_user_id === myId;
+    return '<div class="dm-msg ' + (mine ? 'mine' : 'their') + '">' + esc(m.text) +
+      '<div class="dm-time">' + new Date(m.created_at).toLocaleTimeString('ru-RU', {hour:'2-digit', minute:'2-digit'}) + '</div></div>';
+  }).join('');
+  openSheet(
+    '<h2>💬 ' + esc(userName) + '</h2>' +
+    '<input type="hidden" id="dmPeerId" value="' + esc(userId) + '">' +
+    '<div class="dm-box">' +
+      '<div class="dm-messages" id="dmMessages">' + (html || '<div class="hidden-note">Начни переписку 👋</div>') + '</div>' +
+      '<div class="chat-input-row">' +
+        '<input id="dmInput" class="input" placeholder="Сообщение..." maxlength="500">' +
+        '<button class="btn primary small" onclick="sendDM(\'' + esc(userId) + '\',\'' + esc(userName) + '\')">➤</button>' +
+      '</div>' +
+    '</div>' +
+    '<button class="btn ghost block" onclick="closeSheet()">Закрыть</button>'
+  );
+  setTimeout(() => {
+    const box = document.getElementById('dmMessages');
+    if(box) box.scrollTop = box.scrollHeight;
+    const inp = document.getElementById('dmInput');
+    if(inp) inp.addEventListener('keydown', e => { if(e.key === 'Enter') sendDM(userId, userName); });
+  }, 100);
+  updateDMBadge();
+}
+
+async function sendDM(userId, userName){
+  const inp = document.getElementById('dmInput');
+  if(!inp) return;
+  const text = inp.value.trim();
+  if(!text) return;
+  inp.value = '';
+  const { error } = await sb.from('direct_messages').insert({
+    room_id: currentRoom.id,
+    from_user_id: myId,
+    to_user_id: userId,
+    from_name: myName || 'Гость',
+    to_name: userName,
+    text
+  });
+  if(error){ toast('Ошибка: ' + error.message, 'error'); return; }
+  openDM(userId, userName);
+}
+
+async function updateDMBadge(){
+  if(!currentRoom) return;
+  const { data } = await sb.from('direct_messages').select('from_user_id, created_at')
+    .eq('room_id', currentRoom.id).eq('to_user_id', myId);
+  if(!data || data.length === 0){ setDMBadge(0); return; }
+  const { data: reads } = await sb.from('dm_reads').select('*')
+    .eq('room_id', currentRoom.id).eq('user_id', myId);
+  const readMap = {};
+  (reads || []).forEach(r => { readMap[r.peer_id] = new Date(r.last_read_at).getTime(); });
+  let unread = 0;
+  data.forEach(m => {
+    const last = readMap[m.from_user_id] || 0;
+    if(new Date(m.created_at).getTime() > last) unread++;
+  });
+  setDMBadge(unread);
+}
+
+function setDMBadge(n){
+  const b = document.getElementById('dmBadge');
+  if(!b) return;
+  b.textContent = n > 0 ? String(n) : '';
+  b.className = n > 0 ? 'badge' : '';
+  updateTitleBadge();
+}
+
+/* ============================================================
+   18. ПРИСУТСТВИЕ
+   ============================================================ */
+async function loadPresence(){
+  if(!currentRoom) return;
+  try {
+    const { data } = await sb.from('room_presence').select('*').eq('room_id', currentRoom.id);
+    currentPresence = data || [];
+  } catch(e){ console.error(e); }
+}
+
+async function upsertPresence(){
+  if(!currentRoom) return;
+  try {
+    await sb.from('room_presence').upsert({
+      room_id: currentRoom.id,
+      user_id: myId,
+      name: myName || 'Гость',
+      status: 'active',
+      updated_at: new Date().toISOString()
+    });
+  } catch(e){ console.error(e); }
+}
+
+function openPeopleSheet(){
+  if(!currentRoom) return;
+  const now = Date.now();
+  const online = currentPresence.filter(p => now - new Date(p.updated_at || 0).getTime() < 120000);
+  const offline = currentPresence.filter(p => now - new Date(p.updated_at || 0).getTime() >= 120000);
+
+  const render = (p, isOnline) =>
+    '<div class="people-row">' +
+      '<div class="people-row-avatar">' + (p.user_id === myId ? '🧑' : '👤') + '</div>' +
+      '<div style="flex:1;min-width:0">' +
+        '<div class="people-row-name">' + esc(p.name || 'Гость') + (p.user_id === myId ? ' (ты)' : '') + '</div>' +
+        '<div class="people-row-status">' + (isOnline ? '🟢 в сети' : '⚪ отошёл') + '</div>' +
+      '</div>' +
+      (p.user_id !== myId ?
+        '<button class="btn small" onclick="closeSheet();openDM(\'' + esc(p.user_id) + '\',\'' + esc(p.name || 'Гость') + '\')">Написать</button>' : '') +
+    '</div>';
+
+  openSheet(
+    '<h2>👥 В комнате (' + online.length + ')</h2>' +
+    '<div style="max-height:60vh;overflow-y:auto;margin:12px -16px">' +
+      online.map(p => render(p, true)).join('') +
+      (offline.length ? '<div class="hidden-note">Отошли</div>' + offline.map(p => render(p, false)).join('') : '') +
+      (currentPresence.length === 0 ? '<div class="hidden-note">Пока никого</div>' : '') +
+    '</div>' +
+    '<button class="btn ghost block" onclick="closeSheet()">Закрыть</button>'
+  );
+}
+
+/* ============================================================
+   19. ОБЩЕЕ ВИДЕО
+   ============================================================ */
+function openVideoSheet(){
+  if(!currentRoom) return;
+  if(!isHost) return toast('Только хост может менять общее видео', 'error');
+  openSheet(
+    '<h2>📺 ' + (currentRoom.video_url ? 'Заменить' : 'Выбрать') + ' видео</h2>' +
+    '<p class="sub">Вставь ссылку. Все увидят это видео.</p>' +
+    '<label class="field-label">Ссылка</label>' +
+    '<input id="videoUrlInput" class="input" placeholder="https://..." value="' + esc(currentRoom.video_url || '') + '">' +
+    '<div style="font-size:12px;color:var(--text-3);margin-bottom:12px">YouTube · RuTube · VK · Twitch · Dailymotion · Vimeo · OK.ru · Telegram · .mp4 · .m3u8</div>' +
+    '<button class="btn primary block" onclick="saveVideoFromModal()">▶ Старт (15 сек)</button>' +
+    '<button class="btn ghost block" onclick="closeSheet()">Отмена</button>'
+  );
+  setTimeout(() => { const i = document.getElementById('videoUrlInput'); if(i) i.focus(); }, 150);
+}
+
+async function saveVideoFromModal(){
+  const url = document.getElementById('videoUrlInput').value.trim();
+  if(!url) return toast('Вставь ссылку', 'error');
+  if(!url.match(/^https?:\/\//i)) return toast('Ссылка должна начинаться с http://', 'error');
+  const data = parseVideoUrl(url);
+  if(!data) return toast('Не получилось распознать ссылку', 'error');
+  const countdownStart = new Date();
+  countdownStart.setSeconds(countdownStart.getSeconds() + 15);
+  const { error } = await sb.from('rooms').update({
+    video_url: url,
+    sync_state: {},
+    countdown_start: countdownStart.toISOString()
+  }).eq('id', currentRoom.id);
+  if(error){ toast('Ошибка: ' + error.message, 'error'); return; }
+  currentRoom.video_url = url;
+  currentRoom.countdown_start = countdownStart.toISOString();
+  closeSheet();
+  autoSwitchDone = false;
+  manualServerChoice = false;
+  autoSwitchAttempts = 0;
+  renderVideoOnly();
+  startCountdown();
+  toast('Старт через 15 секунд', 'success');
+}
+
+/* ============================================================
+   20. ЛИЧНОЕ ВИДЕО
+   ============================================================ */
+function personalVideoKey(){ return currentRoom ? 'smotrim_personal_video_' + currentRoom.id : null; }
+function getPersonalVideo(){ const k = personalVideoKey(); return k ? localStorage.getItem(k) : null; }
+function setPersonalVideo(url){ const k = personalVideoKey(); if(!k) return; if(url) localStorage.setItem(k, url); else localStorage.removeItem(k); }
+
+function openPersonalVideoSheet(){
+  if(!currentRoom) return;
+  const url = getPersonalVideo() || '';
+  openSheet(
+    '<h2>🫈 Своё видео</h2>' +
+    '<p class="sub">Это видео видят только вы.</p>' +
+    '<label class="field-label">Ссылка</label>' +
+    '<input id="personalVideoUrl" class="input" placeholder="https://..." value="' + esc(url) + '">' +
+    '<button class="btn primary block" onclick="savePersonalVideo()">Сохранить</button>' +
+    (url ? '<button class="btn danger block" onclick="removePersonalVideo()">Убрать</button>' : '') +
+    '<button class="btn ghost block" onclick="closeSheet()">Отмена</button>'
+  );
+  setTimeout(() => { const i = document.getElementById('personalVideoUrl'); if(i) i.focus(); }, 150);
+}
+
+function savePersonalVideo(){
+  const url = document.getElementById('personalVideoUrl').value.trim();
+  if(!url) return toast('Вставь ссылку', 'error');
+  if(!parseVideoUrl(url)) return toast('Не получилось распознать', 'error');
+  setPersonalVideo(url);
+  closeSheet();
+  renderPersonalVideo();
+  toast('Своё видео сохранено', 'success');
+}
+
+function removePersonalVideo(){
+  setPersonalVideo(null);
+  closeSheet();
+  renderPersonalVideo();
+  toast('Своё видео убрано');
+}
+
+function renderPersonalVideo(){
+  const box = document.getElementById('personalVideoBox');
+  if(!box) return;
+  const url = getPersonalVideo();
+  if(!url){
+    box.innerHTML = '<div class="video-placeholder" style="padding:16px;font-size:12px">Нажми «Своё» внизу, чтобы добавить видео для себя</div>';
+    return;
+  }
+  const vd = parseVideoUrl(url);
+  if(!vd){ box.innerHTML = '<div class="video-placeholder">Не удалось распознать</div>'; return; }
+  let vh = '';
+  if(vd.type === 'invidious'){
+    vh = '<iframe src="' + esc(vd.src) + '" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>';
+  } else if(vd.type === 'html5'){
+    vh = '<video src="' + esc(vd.src) + '" controls playsinline></video>';
+  } else if(vd.type === 'hls'){
+    vh = '<video id="personalHlsPlayer" controls playsinline></video>';
+    requestAnimationFrame(() => {
+      const v = document.getElementById('personalHlsPlayer');
+      if(!v) return;
+      if(window.Hls && window.Hls.isSupported()){
+        const h = new window.Hls();
+        h.loadSource(url);
+        h.attachMedia(v);
+      } else if(v.canPlayType('application/vnd.apple.mpegurl')){
+        v.src = url;
+      }
+    });
+  } else if(vd.embeddable){
+    vh = '<iframe src="' + esc(vd.src) + '" allow="encrypted-media; fullscreen" allowfullscreen></iframe>';
+  } else {
+    vh = '<a href="' + esc(url) + '" target="_blank" rel="noopener" class="btn primary small" style="text-decoration:none">Открыть</a>';
+  }
+  box.innerHTML = vh;
+}
+
+/* ============================================================
+   21. УПРАВЛЕНИЕ КОМНАТОЙ
+   ============================================================ */
+function openActionsSheet(){
+  if(!currentRoom) return;
+  const r = currentRoom;
+  const days = getDaysLeft(r.expires_at);
+  const canExtend = isHost && days !== null && days <= 2 && (!r.extended_at || (Date.now() - new Date(r.extended_at).getTime()) > 8 * 86400000);
+  const hasPersonal = !!getPersonalVideo();
+
+  openSheet(
+    '<h2>⚙️ Управление</h2>' +
+    '<div class="sheet-list">' +
+      (isHost ? '<div class="sheet-item" onclick="closeSheet();openVideoSheet()"><span class="ic">🎬</span> ' + (r.video_url ? 'Заменить общее видео' : 'Выбрать общее видео') + '</div>' : '') +
+      '<div class="sheet-item" onclick="closeSheet();openPersonalVideoSheet()"><span class="ic">🫈</span> ' + (hasPersonal ? 'Заменить своё видео' : 'Своё видео (только для тебя)') + '</div>' +
+      '<div class="sheet-item" onclick="closeSheet();openPeopleSheet()"><span class="ic">👥</span> Кто в комнате</div>' +
+      (canExtend ? '<div class="sheet-item" onclick="closeSheet();extendRoom()"><span class="ic">📅</span> Продлить на 10 дней<span class="badge-auto">осталось ' + days + ' дн.</span></div>' : '') +
+      (r.video_url && parseVideoUrl(r.video_url) && parseVideoUrl(r.video_url).type === 'invidious' ?
+        '<div class="sheet-item" onclick="closeSheet();openInvidiousPicker()"><span class="ic">🌐</span> Сменить сервер YouTube</div>' : '') +
+      (isHost ? '<div class="sheet-item danger" onclick="closeSheet();deleteRoom()"><span class="ic">🗑️</span> Удалить комнату</div>' : '') +
+      '<div class="sheet-item" onclick="closeSheet();leaveRoom()"><span class="ic">🚪</span> Выйти из комнаты</div>' +
+    '</div>'
+  );
+}
+
+async function extendRoom(){
+  if(!currentRoom || !isHost) return;
+  const ne = new Date();
+  ne.setDate(ne.getDate() + 10);
+  const { error } = await sb.from('rooms').update({
+    expires_at: ne.toISOString(),
+    extended_at: new Date().toISOString()
+  }).eq('id', currentRoom.id);
+  if(error){ toast('Ошибка: ' + error.message, 'error'); return; }
+  currentRoom.expires_at = ne.toISOString();
+  toast('Продлено на 10 дней', 'success');
+  renderRoomHeaderMeta();
+}
+
+async function deleteRoom(){
+  if(!currentRoom || !isHost) return;
+  if(!confirm('Удалить комнату «' + currentRoom.name + '»?')) return;
+  const { error } = await sb.from('rooms').delete().eq('id', currentRoom.id);
+  if(error){ toast('Ошибка: ' + error.message, 'error'); return; }
+  toast('Комната удалена', 'success');
+  leaveRoom();
+}
+
+/* ============================================================
+   22. ИМЯ ПОЛЬЗОВАТЕЛЯ
+   ============================================================ */
+function askName(pendingText){
+  askAvatar = '👤';
+  openSheet(
+    '<h2>Как тебя зовут?</h2>' +
+    '<p class="sub">Имя показывается в чате</p>' +
+    '<label class="field-label">Имя</label>' +
+    '<input id="askNameInput" class="input" placeholder="Например: Валера" maxlength="20">' +
+    '<label class="field-label">Аватар</label>' +
+    '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px">' +
+      AVATARS.slice(0,12).map(a => '<button class="avatar-option' + (a===askAvatar?' selected':'') + '" data-av="' + a + '" onclick="selectAskAvatar(\'' + a + '\')">' + a + '</button>').join('') +
+    '</div>' +
+    '<button class="btn primary block" onclick="saveAskName(' + (pendingText ? "'" + esc(pendingText).replace(/'/g, "\\'") + "'" : 'null') + ')">Сохранить</button>' +
+    '<button class="btn ghost block" onclick="closeSheet()">Отмена</button>'
+  );
+  setTimeout(() => { const i = document.getElementById('askNameInput'); if(i) i.focus(); }, 150);
+}
+
+function selectAskAvatar(a){
+  askAvatar = a;
+  document.querySelectorAll('#modalRoot .avatar-option').forEach(el =>
+    el.classList.toggle('selected', el.dataset.av === a)
+  );
+}
+
+function saveAskName(pendingText){
+  const name = document.getElementById('askNameInput').value.trim();
+  if(!name){ toast('Введи имя', 'error'); return; }
+  myName = name.slice(0, 20);
+  myAvatar = askAvatar.slice(0, 4);
+  localStorage.setItem('smotrim_my_name', myName);
+  localStorage.setItem('smotrim_my_avatar', myAvatar);
+  closeSheet();
+  if(pendingText){
+    const inp = document.getElementById('chatInput');
+    if(inp) inp.value = pendingText;
+    sendMessage();
+  }
+}
+
+/* ============================================================
+   23. УВЕДОМЛЕНИЯ О НОВЫХ СООБЩЕНИЯХ
+   ============================================================ */
+let unreadTotal = 0;
+
+function notifyNewMessage(m){
+  const isActive = !document.hidden && document.hasFocus();
+
+  if(!isActive){
+    if(notificationsEnabled && Notification.permission === 'granted'){
+      try {
+        const n = new Notification((m.name || 'Сообщение') + ' в «' + currentRoom.name + '»', {
+          body: m.text.length > 120 ? m.text.slice(0, 117) + '…' : m.text,
+          tag: 'chat-' + m.id,
+          icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="75" font-size="75">💬</text></svg>'
+        });
+        n.onclick = () => { window.focus(); n.close(); };
+      } catch(e){}
+    }
+    playBeep();
+    unreadTotal++;
+    updateTitleBadge();
+  }
+}
+
+function updateTitleBadge(){
+  if(unreadTotal > 0) document.title = '(' + unreadTotal + ') Смотрим вместе';
+  else document.title = 'Смотрим вместе';
+}
+
+window.addEventListener('focus', () => { unreadTotal = 0; updateTitleBadge(); });
+document.addEventListener('visibilitychange', () => {
+  if(!document.hidden){ unreadTotal = 0; updateTitleBadge(); }
+});
+
+let audioCtx = null;
+function playBeep(){
+  try {
+    if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.connect(g); g.connect(audioCtx.destination);
+    o.type = 'sine';
+    o.frequency.setValueAtTime(880, audioCtx.currentTime);
+    o.frequency.exponentialRampToValueAtTime(1320, audioCtx.currentTime + 0.12);
+    g.gain.setValueAtTime(0.001, audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.18, audioCtx.currentTime + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.28);
+    o.start(); o.stop(audioCtx.currentTime + 0.3);
+  } catch(e){}
+}
 
 /* ============================================================
    17. СПРАВКА
