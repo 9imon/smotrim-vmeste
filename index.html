@@ -2,7 +2,7 @@
 <html lang="ru" data-theme="dark">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
 <meta name="theme-color" content="#101018">
 <title>Смотрим вместе</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -76,7 +76,7 @@ img{max-width:100%;display:block}
 
 /* КОМНАТА (Портрет) */
 body.in-room #screen-room{
-  position:fixed; inset:0; display:flex; flex-direction:column; overflow:hidden;
+  position:absolute; inset:0; display:flex; flex-direction:column; overflow:hidden;
   padding: 8px 12px calc(var(--dock-h) + 12px + var(--safe-bottom)); z-index:10;
   max-width:100%; height:100%; background:var(--bg);
 }
@@ -94,8 +94,8 @@ body.in-room #screen-room{
 .dm-notif { display:none; color:var(--danger); font-size:11px; font-weight:700; margin-left:4px; white-space:nowrap; }
 
 .room-layout{display:flex;flex-direction:column;flex:1;min-height:0;gap:12px}
-.room-left{display:flex;flex-direction:column;gap:12px;flex-shrink:0}
-.video-box{position:relative;background:#000;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center; animation: fadeIn 0.4s ease-out;}
+.room-left{display:flex;flex-direction:column;gap:12px;flex-shrink:1;min-height:0}
+.video-box{position:relative;background:#000;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;aspect-ratio:auto;width:100%;height:100%;display:flex;align-items:center;justify-content:center; animation: fadeIn 0.4s ease-out;}
 .video-box iframe,.video-box video{width:100%;height:100%;border:none;display:block}
 @keyframes fadeIn { from { opacity: 0; filter: blur(4px); } to { opacity: 1; filter: blur(0); } }
 
@@ -104,7 +104,16 @@ body.in-room #screen-room{
 .chat-input-row{display:flex;gap:6px;flex-shrink:0;margin-bottom:8px}
 .chat-input-row .input{flex:1;margin-bottom:0;min-width:0}
 .chat-input-row .btn-send{width:auto;padding:0 16px;margin:0;min-height:46px;flex-shrink:0;background:var(--accent);color:#fff;border-radius:var(--radius);font-size:18px}
-.chat-messages{flex:1 1 0;height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding-right:2px;display:flex;flex-direction:column}
+.chat-messages{
+  flex:1 1 0;
+  height:0;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+  padding-right:4px;
+  display:flex;
+  flex-direction:column;
+}
 .chat-msg{padding:8px 0;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:flex-start}
 .chat-msg:last-child{border-bottom:none}
 .chat-msg-avatar{width:32px;height:32px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;background:var(--surface-2)}
@@ -123,9 +132,9 @@ body.in-room #screen-room{
   min-height:var(--dock-h);
 }
 .dock-inner{
-  display:flex; gap:4px; width: 100%; max-width: 600px; justify-content:center; padding: 0 4px;
+  display:flex; gap:3px; width: 100%; max-width: 600px; justify-content:center; padding: 0 2px;
 }
-.dock-inner .tile-btn { flex: 1; height: auto; min-height: 42px; padding: 6px 2px; font-size: 10px; line-height: 1.2; white-space: normal; word-break: break-word; }
+.dock-inner .tile-btn { flex: 1; height: auto; min-height: 42px; padding: 4px 1px; font-size: 10px; line-height: 1.1; white-space: normal; word-break: break-word; }
 .dm-badge { position: absolute; top: -6px; right: -6px; background: var(--danger); color: #fff; font-size: 10px; font-weight: 800; min-width: 18px; height: 18px; border-radius: 9px; align-items: center; justify-content: center; padding: 0 4px; border: 2px solid var(--bg); display: none; }
 @keyframes pulseBadge { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(224, 85, 99, 0.7); } 70% { transform: scale(1.15); box-shadow: 0 0 0 6px rgba(224, 85, 99, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(224, 85, 99, 0); } }
 .dm-badge:not(:empty) { animation: pulseBadge 2s infinite; display: flex !important; }
@@ -141,6 +150,45 @@ body.in-room #screen-room{
 .sheet-item{display:flex;align-items:center;gap:14px;padding:14px 12px;border-radius:12px;cursor:pointer;font-size:15px;font-weight:600}
 .sheet-item:active{background:var(--surface-2)}
 .sheet-item.danger{color:var(--danger)}
+
+/* Кастомное меню для мобилок */
+@media (orientation: portrait) {
+  .sheet-overlay.inline-sheet {
+    position: absolute;
+    inset: auto 12px calc(var(--dock-h) + 12px + var(--safe-bottom)) 12px;
+    height: calc(100% - 250px);
+    background: transparent;
+    padding: 0;
+    align-items: stretch;
+  }
+  .sheet-overlay.inline-sheet .sheet {
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    max-height: 100%;
+    height: 100%;
+    width: 100%;
+    animation: fadeIn 0.2s ease-out;
+    background: var(--surface);
+    display: flex;
+    flex-direction: column;
+  }
+  .sheet-overlay.inline-sheet .sheet::before { display: none; }
+  .menu-item-large {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 8px;
+    font-size: 15px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: background 0.1s;
+  }
+  .menu-item-large:active { background: var(--surface); }
+}
 
 /* Тосты */
 .toast-root{position:fixed;left:0;right:0;bottom:calc(80px + var(--safe-bottom));z-index:300;display:flex;flex-direction:column;align-items:center;pointer-events:none}
@@ -166,16 +214,13 @@ body.in-room #screen-room{
 .hidden-note{font-size:12px;color:var(--text-3);font-style:italic;padding:12px;text-align:center}
 
 /* Скрываем кнопки десктопа в вертикальном режиме */
-.landscape-dock {
-  display: none;
-}
+.landscape-dock { display: none; }
 
 /* ЛАНДШАФТНЫЙ РЕЖИМ (Десктоп) */
 @media (orientation: landscape) and (min-width: 700px){
   .room-dock { display: none !important; }
   body.in-room #screen-room { padding: 8px 16px 16px; max-width: 100%; }
   
-  /* Делаем общую сетку для комнаты */
   #roomContent {
     display: grid;
     grid-template-columns: 1.5fr 1fr; 
@@ -185,40 +230,39 @@ body.in-room #screen-room{
     min-height: 0;
   }
 
-  /* Левая верхняя часть: Шапка */
   .room-top-bar {
     grid-column: 1 / 2;
     grid-row: 1 / 2;
     width: 100%; 
     margin: 0; 
     padding: 6px 16px; 
-    justify-content: flex-start; 
+    justify-content: space-between; 
     border-radius: 12px;
     align-self: center;
+    height: 54px; 
   }
 
-  /* Кнопки навигации (встают над чатом) */
   .landscape-dock { 
     grid-column: 2 / 3;
     grid-row: 1 / 2;
     display: flex; 
     gap: 6px; 
-    flex-shrink: 0; 
-    flex-wrap: wrap; 
+    flex-wrap: nowrap; 
     align-items: center;
-    justify-content: flex-end;
+    justify-content: space-between;
     width: 100%;
+    height: 54px; 
   }
   
   .landscape-dock .tile-btn { 
-    height: 38px; 
-    padding: 0 12px; 
-    font-size: 12px; 
+    height: 100%; 
+    padding: 0 4px; 
+    font-size: 13px; 
     flex: 1; 
-    white-space: nowrap;
+    white-space: nowrap; 
+    min-width: 0; 
   }
   
-  /* Обертка видео */
   .room-left { 
     grid-column: 1 / 2;
     grid-row: 2 / 3;
@@ -230,7 +274,6 @@ body.in-room #screen-room{
   
   .video-box { flex: 1; height: 100%; aspect-ratio: auto; }
   
-  /* Обертка чата */
   .room-right { 
     grid-column: 2 / 3;
     grid-row: 2 / 3;
@@ -240,34 +283,14 @@ body.in-room #screen-room{
     flex-direction: column;
   }
 
-  .chat-block { 
-    height: 100%; 
-    display: flex; 
-    flex-direction: column; 
-  }
+  .chat-block { height: 100%; display: flex; flex-direction: column; }
 
-  /* Настройка шторок справа */
-  .sheet-overlay { 
-    justify-content: flex-end; 
-    align-items: stretch; 
-    padding: 8px 16px 16px;
-  }
-  
+  .sheet-overlay { justify-content: flex-end; align-items: stretch; padding: 8px 16px 16px; }
   .sheet { 
-    width: calc((100% - 16px) / 2.5); 
-    border-radius: 16px; 
-    height: calc(100% - 60px); 
-    margin-top: 60px; 
-    border: 1px solid var(--border); 
-    padding: 20px; 
-    animation: slideLeft 0.25s cubic-bezier(0.2, 0.8, 0.3, 1);
+    width: calc((100% - 16px) / 2.5); border-radius: 16px; height: calc(100% - 60px); margin-top: 60px; 
+    border: 1px solid var(--border); padding: 20px; animation: slideLeft 0.25s cubic-bezier(0.2, 0.8, 0.3, 1);
   }
-  
-  @keyframes slideLeft { 
-    from { transform: translateX(100%); opacity: 0; } 
-    to { transform: translateX(0); opacity: 1; } 
-  }
-  
+  @keyframes slideLeft { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
   .sheet::before { display: none; }
   .dm-box { max-height: 400px; }
 }
@@ -324,7 +347,12 @@ function getDaysLeft(exp){ if(!exp) return null; const d = new Date(exp) - new D
 function generateInviteCode(){ return 'inv_' + Math.random().toString(36).slice(2,12); }
 function getGreeting(){ const h = new Date().getHours(); if(h < 6) return '🌙 Доброй ночи'; if(h < 12) return '☀️ Доброе утро'; if(h < 18) return '🌤 Добрый день'; return '🌆 Добрый вечер'; }
 function toast(msg, type){ const root = document.getElementById('toastRoot'); if(!root) return; const el = document.createElement('div'); el.className = 'toast ' + (type || ''); el.textContent = msg; root.appendChild(el); setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity .3s'; setTimeout(() => el.remove(), 300); }, 3000); }
-function openSheet(html){ document.getElementById('modalRoot').innerHTML = '<div class="sheet-overlay" onclick="if(event.target===this)closeSheet()"><div class="sheet">' + html + '</div></div>'; }
+
+function openSheet(html, isMenu = false){ 
+  const isPortrait = window.matchMedia("(orientation: portrait)").matches;
+  const overlayClass = (isPortrait && isMenu) ? 'sheet-overlay inline-sheet' : 'sheet-overlay';
+  document.getElementById('modalRoot').innerHTML = '<div class="' + overlayClass + '" onclick="if(event.target===this)closeSheet()"><div class="sheet">' + html + '</div></div>'; 
+}
 function closeSheet(){ document.getElementById('modalRoot').innerHTML = ''; }
 
 async function initAuth(){ try { const { data: { user } } = await sb.auth.getUser(); if(user){ myId = user.id; return; } const { data, error } = await sb.auth.signInAnonymously(); if(error) throw error; myId = data.user.id; } catch(e){ toast('Ошибка авторизации', 'error'); } }
@@ -356,7 +384,7 @@ function startPolling(){
   pollTimer = setInterval(async () => {
     if(!currentRoom || currentRoom.id !== roomId) return;
     
-    // Общий чат (сортировка по убыванию, новые сверху)
+    // Общий чат (новые сверху)
     try { 
       const { data } = await sb.from('room_messages').select('*').eq('room_id', roomId).eq('hidden', false).gt('id', lastMsgId).order('id', { ascending: false }); 
       if(data && data.length){ 
@@ -368,7 +396,7 @@ function startPolling(){
       } 
     } catch(e){}
 
-    // ЛС (сортировка по возрастанию, новые снизу)
+    // ЛС (новые снизу)
     try { 
       const { data: dms } = await sb.from('direct_messages').select('*').eq('room_id', roomId).eq('to_user_id', myId).gt('id', lastDmId).order('id', { ascending: true }); 
       if(dms && dms.length){ 
@@ -395,9 +423,31 @@ function startPolling(){
 function stopPolling(){ if(pollTimer){ clearInterval(pollTimer); pollTimer = null; } }
 
 async function loadRoomMessages(roomId){ try { const { data } = await sb.from('room_messages').select('*').eq('room_id', roomId).eq('hidden', false).order('created_at', { ascending: false }).limit(200); currentRoomMessages = data || []; renderMessages(); } catch(e){} }
-function renderMessages(){ const box = document.getElementById('chatMessages'); if(!box) return; if(currentRoomMessages.length === 0){ box.innerHTML = '<div class="hidden-note">Пока тихо. Напиши первым 👋</div>'; return; } box.innerHTML = currentRoomMessages.map(messageHtml).join(''); box.scrollTop = 0; }
+
+function renderMessages(){ 
+  const box = document.getElementById('chatMessages'); 
+  if(!box) return; 
+  if(currentRoomMessages.length === 0){ 
+    box.innerHTML = '<div class="hidden-note">Пока тихо. Напиши первым 👋</div>'; 
+    return; 
+  } 
+  box.innerHTML = currentRoomMessages.map(messageHtml).join(''); 
+  box.scrollTop = 0; 
+}
+
 function messageHtml(m){ const time = new Date(m.created_at).toLocaleTimeString('ru-RU', { hour:'2-digit', minute:'2-digit' }); const isMine = m.user_id === myId; const actions = isMine ? '' : '<div style="display:flex;align-items:center;flex-shrink:0;margin-left:8px;"><button onclick="openDM(\'' + esc(m.user_id) + '\',\'' + esc(m.name) + '\')" style="background:var(--surface-2);border:1px solid var(--border);color:var(--text);border-radius:8px;font-size:11px;font-weight:700;padding:4px 8px;cursor:pointer;">Написать</button></div>'; return '<div class="chat-msg"><div class="chat-msg-avatar">' + (m.avatar || '👤') + '</div><div class="chat-msg-body"><div class="chat-msg-name">' + esc(m.name) + '</div><div class="chat-msg-text">' + esc(m.text) + '</div><div class="chat-msg-time">' + time + '</div></div>' + actions + '</div>'; }
-function appendMessage(m){ if(currentRoomMessages.some(x => x.id === m.id)) return; currentRoomMessages.unshift(m); const box = document.getElementById('chatMessages'); if(!box) return; const wasAtTop = box.scrollTop < 100; if(currentRoomMessages.length === 1) box.innerHTML = ''; box.insertAdjacentHTML('afterbegin', messageHtml(m)); if(wasAtTop) setTimeout(() => { box.scrollTop = 0; }, 50); }
+
+function appendMessage(m){ 
+  if(currentRoomMessages.some(x => x.id === m.id)) return; 
+  currentRoomMessages.unshift(m); 
+  const box = document.getElementById('chatMessages'); 
+  if(!box) return; 
+  const wasAtTop = box.scrollTop < 50; 
+  if(currentRoomMessages.length === 1) box.innerHTML = ''; 
+  box.insertAdjacentHTML('afterbegin', messageHtml(m)); 
+  if(wasAtTop) setTimeout(() => { box.scrollTop = 0; }, 50); 
+}
+
 function bindChatInput(){ const i = document.getElementById('chatInput'); if(i && !i.dataset.bound){ i.dataset.bound = '1'; i.addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); sendMessage(); } }); } }
 async function sendMessage(){ const inp = document.getElementById('chatInput'); if(!inp) return; const text = inp.value.trim(); if(!text) return; if(!myName){ askName(text); return; } inp.value = ''; await sb.from('room_messages').insert({ room_id: currentRoom.id, name: myName, avatar: myAvatar, text: text, user_id: myId, hidden: false }); }
 
@@ -427,7 +477,15 @@ async function openDM(userId, userName){
   }, 100); 
   updateDMBadge(); 
 }
-async function sendDM(userId, userName){ const inp = document.getElementById('dmInput'); if(!inp) return; const text = inp.value.trim(); if(!text) return; inp.value = ''; await sb.from('direct_messages').insert({ room_id: currentRoom.id, from_user_id: myId, to_user_id: userId, from_name: myName || 'Гость', to_name: userName, text }); openDM(userId, userName); }
+async function sendDM(userId, userName){ const inp = document.getElementById('dmInput'); if(!inp) return; const text = inp.value.trim(); if(!text) return; inp.value = ''; await sb.from('direct_messages').insert({ room_id: currentRoom.id, from_user_id: myId, to_user_id: userId, from_name: myName || 'Гость', to_name: userName, text }); 
+  const box = document.getElementById('dmMessages');
+  if(box) {
+    if(box.querySelector('.hidden-note')) box.innerHTML = ''; 
+    box.insertAdjacentHTML('beforeend', '<div class="dm-msg mine">' + esc(text) + '</div>');
+    box.scrollTop = box.scrollHeight; 
+  }
+}
+
 async function updateDMBadge(){ 
   if(!currentRoom) return; 
   const { data } = await sb.from('direct_messages').select('from_user_id, created_at').eq('room_id', currentRoom.id).eq('to_user_id', myId); 
@@ -562,11 +620,15 @@ function saveAskName(pendingText){ const name = document.getElementById('askName
 
 function openHostSettings(){
   if(!isHost) return;
-  openSheet('<h2>⚙️ Настройки комнаты</h2><div class="sheet-list">' +
-    '<div class="sheet-item" onclick="closeSheet();renameRoom()"><span class="ic">✏️</span> Изменить название</div>' +
-    '<div class="sheet-item" onclick="closeSheet();openVideoSheet()"><span class="ic">🎬</span> Сменить видео</div>' +
-    '<div class="sheet-item danger" onclick="closeSheet();deleteRoom()"><span class="ic">🗑️</span> Удалить комнату</div>' +
-    '</div>');
+  openSheet(
+    '<h2 style="margin-bottom:16px;">Настройки и меню</h2>' +
+    '<div class="menu-item-large" onclick="closeSheet();openVideoSheet()"><span>🎬</span> Сменить видео</div>' +
+    '<div class="menu-item-large" onclick="closeSheet();renameRoom()"><span>✏️</span> Изменить название</div>' +
+    '<div class="menu-item-large danger" onclick="closeSheet();deleteRoom()"><span>🗑️</span> Удалить комнату</div>' +
+    '<div style="flex:1"></div>' +
+    '<button class="btn-block ghost" onclick="closeSheet()">Закрыть</button>',
+    true
+  );
 }
 async function renameRoom(){ const newName = prompt('Введите новое название комнаты:', currentRoom.name); if(!newName || newName === currentRoom.name) return; await sb.from('rooms').update({ name: newName }).eq('id', currentRoom.id); currentRoom.name = newName; renderRoomShell(); toast('Название изменено', 'success'); }
 async function deleteRoom(){ if(!currentRoom || !isHost) return; if(!confirm('Удалить комнату навсегда?')) return; await sb.from('rooms').delete().eq('id', currentRoom.id); toast('Комната удалена', 'success'); leaveRoom(); }
@@ -582,9 +644,6 @@ function renderRoomShell(){
   const onlineCount = currentPresence.filter(p => Date.now() - new Date(p.updated_at || 0).getTime() < 120000).length + 1;
   const metaExtra = (r.password_hash ? ' 🔒' : '') + (r.is_hidden ? ' 👁' : '');
   
-  const settingsBtn = isHost ? '<div class="settings-btn" onclick="openHostSettings()">Меню</div>' : '';
-  
-  // Кнопки для горизонтального вида
   const landscapeBtns = '<div class="landscape-dock">' +
     '<button class="tile-btn" onclick="goHome()">Главная</button>' +
     '<button class="tile-btn" onclick="location.reload()">Обновить</button>' +
@@ -594,11 +653,10 @@ function renderRoomShell(){
     '<button class="tile-btn primary" onclick="inviteFriend()">Пригласить</button>' +
   '</div>';
 
-  const header = '<div class="room-top-bar"><div class="room-top-left"><div>' + esc(r.name) + '</div><div class="meta">' + (days !== null ? days + 'дн · ' : '') + '🟢 ' + onlineCount + metaExtra + '</div><span class="dm-notif" id="dmNotif">Вам сообщение</span></div>' + settingsBtn + '</div>';
+  const header = '<div class="room-top-bar"><div class="room-top-left"><div>' + esc(r.name) + '</div><div class="meta">' + (days !== null ? days + 'дн · ' : '') + '🟢 ' + onlineCount + metaExtra + '</div><span class="dm-notif" id="dmNotif">Вам сообщение</span></div></div>';
   
   const chatBlock = '<div class="chat-block"><div class="chat-input-row"><input id="chatInput" class="input" placeholder="Сообщение..." maxlength="500"><button class="btn-send" onclick="sendMessage()">➤</button></div><div class="chat-messages" id="chatMessages"></div></div>';
   
-  // room-layout нужен для вертикального режима
   const layout = header + '<div class="room-layout"><div class="room-left">' + videoSectionHtml() + '</div><div class="room-right">' + chatBlock + '</div></div>' + landscapeBtns;
 
   document.getElementById('roomContent').innerHTML = layout;
@@ -610,12 +668,13 @@ function renderRoomShell(){
 function renderDock(){
   const dock = document.getElementById('dockInner'); if(!dock) return;
   dock.innerHTML = 
-    '<button class="tile-btn" onclick="goHome()">Главная</button>' +
-    '<button class="tile-btn" onclick="location.reload()">Обновить</button>' +
+    '<button class="tile-btn primary" onclick="goHome()">Главная</button>' +
     '<button class="tile-btn" onclick="' + (isHost ? 'openVideoSheet()' : 'switchToHostVideo()') + '">Общее</button>' +
     '<button class="tile-btn" onclick="openPersonalVideoSheet()">Своё</button>' +
     '<button class="tile-btn" onclick="openPeopleSheet()" style="position:relative">Люди<span id="dmBadge" class="dm-badge"></span></button>' +
-    '<button class="tile-btn primary" onclick="inviteFriend()">Пригласить</button>';
+    '<button class="tile-btn" onclick="inviteFriend()">Пригласить</button>' +
+    (isHost ? '<button class="tile-btn" onclick="openHostSettings()">Меню</button>' : '') +
+    '<button class="tile-btn" onclick="location.reload()">Обновить</button>';
 }
 
 function renderRoomHeaderMeta(){
@@ -636,6 +695,24 @@ function startHeartbeat(){ if(heartbeatTimer) clearInterval(heartbeatTimer); hea
   const params = new URLSearchParams(location.search); const roomParam = params.get('room');
   if(roomParam) enterRoom(roomParam); else restoreLastRoom();
 })();
+
+// Фикс клавиатуры на мобильных устройствах
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', () => {
+    document.documentElement.style.setProperty('--vh', `${window.visualViewport.height * 0.01}px`);
+    const box = document.getElementById('chatMessages');
+    if (box) setTimeout(() => box.scrollTop = box.scrollHeight, 100);
+  });
+}
+
+// Фикс скролла для мобилок
+document.addEventListener('DOMContentLoaded', () => {
+  document.body.addEventListener('touchmove', (e) => {
+    if (e.target.closest('.chat-messages') || e.target.closest('.sheet')) {
+      e.stopPropagation();
+    }
+  }, { passive: true });
+});
 </script>
 </body>
 </html>
