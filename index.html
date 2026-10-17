@@ -14,12 +14,12 @@
   --accent:#6f52e8; --accent-2:#8b72f0; --accent-soft:rgba(111,82,232,.18);
   --danger:#e05563; --success:#4a9e6e;
   --radius:12px; --radius-lg:16px; --safe-bottom:env(safe-area-inset-bottom, 0px);
-  --dock-h: 15px;
+  --dock-h: 64px;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;width:100%}
-body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.5;overflow-x:hidden;min-height:100dvh}
-body.in-room{overflow:hidden;height:100dvh}
+html,body{height:100%;width:100%;overflow:hidden}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.5;overflow:hidden;min-height:100dvh}
+body.in-room{overflow:hidden;height:100dvh;position:fixed;inset:0;width:100%}
 body.in-room .app-header{display:none}
 button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
 input,textarea,select{font-family:inherit;font-size:16px}
@@ -43,6 +43,7 @@ img{max-width:100%;display:block}
 .btn-block.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
 .btn-block.ghost { background: transparent; }
 .btn-block.danger { background: var(--danger); color: #fff; border-color: var(--danger); }
+.btn-block.small { display: inline-flex; width: auto; padding: 6px 12px; font-size: 12px; margin-top: 0; min-height: 32px; border-radius: 8px; flex-shrink: 0; }
 
 .input{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:12px 14px;border-radius:var(--radius);font-size:16px;margin-bottom:8px}
 .input:focus{outline:none;border-color:var(--accent)}
@@ -77,10 +78,10 @@ img{max-width:100%;display:block}
 body.in-room #screen-room{
   position:fixed; inset:0; display:flex; flex-direction:column; overflow:hidden;
   padding: 8px 12px calc(var(--dock-h) + 12px + var(--safe-bottom)); z-index:10;
-  max-width:100%; background:var(--bg);
+  max-width:100%; height:100%; background:var(--bg);
 }
 
-/* Верхняя плашка */
+/* Верхняя плашка (65%) */
 .room-top-bar{
   display:flex; align-items:center; justify-content:space-between; gap:8px;
   width:65%; margin:0 auto 8px auto; flex-shrink:0;
@@ -100,11 +101,11 @@ body.in-room #screen-room{
 
 /* Чат (скроллится) */
 .room-right{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;margin-bottom:0}
-.chat-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:10px;display:flex;flex-direction:column;height:100%;overflow:hidden}
+.chat-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:10px;display:flex;flex-direction:column;flex:1 1 auto;min-height:0;overflow:hidden}
 .chat-input-row{display:flex;gap:6px;flex-shrink:0;margin-bottom:8px}
 .chat-input-row .input{flex:1;margin-bottom:0;min-width:0}
 .chat-input-row .btn-send{width:auto;padding:0 16px;margin:0;min-height:46px;flex-shrink:0;background:var(--accent);color:#fff;border-radius:var(--radius);font-size:18px}
-.chat-messages{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding-right:2px}
+.chat-messages{flex:1 1 0;height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding-right:2px}
 .chat-msg{padding:8px 0;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:flex-start}
 .chat-msg:last-child{border-bottom:none}
 .chat-msg-avatar{width:32px;height:32px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;background:var(--surface-2)}
@@ -116,18 +117,20 @@ body.in-room #screen-room{
 /* НИЖНЯЯ ПАНЕЛЬ (45%) */
 .room-dock{
   position:fixed; bottom:0; left:0; right:0; z-index:60;
-  padding: 8px 12px calc(8px + var(--safe-bottom));
+  padding: 8px 4px calc(8px + var(--safe-bottom));
   background:rgba(16,16,24,.95); backdrop-filter:blur(20px);
   border-top:1px solid var(--border);
   display:flex; align-items:center; justify-content:center;
   min-height:var(--dock-h);
 }
 .dock-inner{
-  display:flex; gap:4px; width:18%; min-width:140px; justify-content:center;
+  display:flex; gap:4px; width:45%; min-width:280px; justify-content:center;
 }
 .dock-inner .tile-btn { 
-  flex: 1; height: 40px; font-size: 10px; padding: 4px 2px; 
+  flex: 1; height: 46px; padding: 0 2px; font-size: 10px; 
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
 }
+
 @media (orientation: landscape) and (min-width: 700px){
   body.in-room #screen-room{padding: 8px 12px calc(var(--dock-h) + 12px + var(--safe-bottom))}
   .room-layout{display:grid;grid-template-columns:1.4fr 1fr;gap:12px;flex:1;min-height:0;height:100%}
@@ -177,7 +180,7 @@ body.in-room #screen-room{
 .people-row{display:flex;align-items:center;gap:12px;padding:12px;border-bottom:1px solid var(--border)}
 .people-row:last-child{border-bottom:none}
 .people-row-avatar{width:40px;height:40px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:20px}
-.people-row-name{flex:1;font-size:14px;font-weight:700}
+.people-row-name{flex:1;font-size:14px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .people-row-status{font-size:11px;color:var(--text-3)}
 .hidden-note{font-size:12px;color:var(--text-3);font-style:italic;padding:12px;text-align:center}
 </style>
@@ -264,29 +267,167 @@ function startPolling(){
   let lastMsgId = currentRoomMessages.length ? Math.max(...currentRoomMessages.map(m => Number(m.id) || 0)) : 0; let lastDmId = 0;
   pollTimer = setInterval(async () => {
     if(!currentRoom || currentRoom.id !== roomId) return;
-    try { const { data } = await sb.from('room_messages').select('*').eq('room_id', roomId).eq('hidden', false).gt('id', lastMsgId).order('id', { ascending: true }); if(data && data.length){ data.forEach(m => { if(currentRoomMessages.some(x => x.id === m.id)) return; lastMsgId = Math.max(lastMsgId, Number(m.id)); appendMessage(m); }); } } catch(e){}
-    try { const { data: dms } = await sb.from('direct_messages').select('*').eq('room_id', roomId).eq('to_user_id', myId).gt('id', lastDmId).order('id', { ascending: true }); if(dms && dms.length){ dms.forEach(dm => { lastDmId = Math.max(lastDmId, Number(dm.id)); if(dm.from_user_id === myId) return; const peerEl = document.getElementById('dmPeerId'); if(peerEl && peerEl.value === dm.from_user_id){ const box = document.getElementById('dmMessages'); if(box){ box.insertAdjacentHTML('beforeend', '<div class="dm-msg their">' + esc(dm.text) + '</div>'); box.scrollTop = box.scrollHeight; } } }); updateDMBadge(); } } catch(e){}
+    
+    // Чат
+    try { 
+      const { data } = await sb.from('room_messages').select('*').eq('room_id', roomId).eq('hidden', false).gt('id', lastMsgId).order('id', { ascending: false }); 
+      if(data && data.length){ 
+        data.forEach(m => { 
+          if(currentRoomMessages.some(x => x.id === m.id)) return; 
+          lastMsgId = Math.max(lastMsgId, Number(m.id)); 
+          appendMessage(m); 
+        }); 
+      } 
+    } catch(e){}
+
+    // ЛС
+    try { 
+      const { data: dms } = await sb.from('direct_messages').select('*').eq('room_id', roomId).eq('to_user_id', myId).gt('id', lastDmId).order('id', { ascending: true }); 
+      if(dms && dms.length){ 
+        dms.forEach(dm => { 
+          lastDmId = Math.max(lastDmId, Number(dm.id)); 
+          if(dm.from_user_id === myId) return; 
+          const peerEl = document.getElementById('dmPeerId'); 
+          if(peerEl && peerEl.value === dm.from_user_id){ 
+            const box = document.getElementById('dmMessages'); 
+            if(box){ 
+              box.insertAdjacentHTML('beforeend', '<div class="dm-msg their">' + esc(dm.text) + '</div>'); 
+              setTimeout(() => { box.scrollTop = box.scrollHeight; }, 50); 
+            } 
+          } 
+        }); 
+        updateDMBadge(); 
+      } 
+    } catch(e){}
+
     try { await loadPresence(); renderRoomHeaderMeta(); } catch(e){}
     try { const { data: roomData } = await sb.from('rooms').select('*').eq('id', roomId).limit(1); if(roomData && roomData[0]){ const oldVideo = currentRoom.video_url; currentRoom = roomData[0]; if(oldVideo !== currentRoom.video_url && currentVideoTab === 'host'){ renderVideoOnly(); } } } catch(e){}
   }, 3000);
 }
 function stopPolling(){ if(pollTimer){ clearInterval(pollTimer); pollTimer = null; } }
 
-async function loadRoomMessages(roomId){ try { const { data } = await sb.from('room_messages').select('*').eq('room_id', roomId).eq('hidden', false).order('created_at', { ascending: true }).limit(200); currentRoomMessages = data || []; renderMessages(); } catch(e){} }
-function renderMessages(){ const box = document.getElementById('chatMessages'); if(!box) return; if(currentRoomMessages.length === 0){ box.innerHTML = '<div class="hidden-note">Пока тихо. Напиши первым 👋</div>'; return; } box.innerHTML = currentRoomMessages.map(messageHtml).join(''); box.scrollTop = box.scrollHeight; }
-function messageHtml(m){ const time = new Date(m.created_at).toLocaleTimeString('ru-RU', { hour:'2-digit', minute:'2-digit' }); const isMine = m.user_id === myId; const actions = isMine ? '' : '<div style="display:flex;flex-direction:column;gap:2px;flex-shrink:0"><button onclick="openDM(\'' + esc(m.user_id) + '\',\'' + esc(m.name) + '\')" title="ЛС" style="background:none;border:none;color:var(--text-3);font-size:14px;padding:3px;cursor:pointer">💬</button></div>'; return '<div class="chat-msg"><div class="chat-msg-avatar">' + (m.avatar || '👤') + '</div><div class="chat-msg-body"><div class="chat-msg-name">' + esc(m.name) + '</div><div class="chat-msg-text">' + esc(m.text) + '</div><div class="chat-msg-time">' + time + '</div></div>' + actions + '</div>'; }
-function appendMessage(m){ if(currentRoomMessages.some(x => x.id === m.id)) return; currentRoomMessages.push(m); const box = document.getElementById('chatMessages'); if(!box) return; const wasAtBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 100; if(currentRoomMessages.length === 1) box.innerHTML = ''; box.insertAdjacentHTML('beforeend', messageHtml(m)); if(wasAtBottom) setTimeout(() => { box.scrollTop = box.scrollHeight; }, 50); }
+async function loadRoomMessages(roomId){ 
+  try { 
+    const { data } = await sb.from('room_messages').select('*').eq('room_id', roomId).eq('hidden', false).order('created_at', { ascending: false }).limit(200); 
+    currentRoomMessages = data || []; 
+    renderMessages(); 
+  } catch(e){} 
+}
+function renderMessages(){ 
+  const box = document.getElementById('chatMessages'); 
+  if(!box) return; 
+  if(currentRoomMessages.length === 0){ 
+    box.innerHTML = '<div class="hidden-note">Пока тихо. Напиши первым 👋</div>'; 
+    return; 
+  } 
+  box.innerHTML = currentRoomMessages.map(messageHtml).join(''); 
+  box.scrollTop = 0; 
+}
+function messageHtml(m){ 
+  const time = new Date(m.created_at).toLocaleTimeString('ru-RU', { hour:'2-digit', minute:'2-digit' }); 
+  const isMine = m.user_id === myId; 
+  
+  const actions = isMine ? '' : 
+    '<div style="display:flex;align-items:center;flex-shrink:0;margin-left:8px;">' +
+      '<button onclick="openDM(\'' + esc(m.user_id) + '\',\'' + esc(m.name) + '\')" style="background:var(--surface-2);border:1px solid var(--border);color:var(--text);border-radius:8px;font-size:11px;font-weight:700;padding:4px 8px;cursor:pointer;">Написать</button>' +
+    '</div>'; 
+    
+  return '<div class="chat-msg">' +
+    '<div class="chat-msg-avatar">' + (m.avatar || '👤') + '</div>' +
+    '<div class="chat-msg-body">' +
+      '<div class="chat-msg-name">' + esc(m.name) + '</div>' +
+      '<div class="chat-msg-text">' + esc(m.text) + '</div>' +
+      '<div class="chat-msg-time">' + time + '</div>' +
+    '</div>' + 
+    actions + 
+  '</div>'; 
+}
+function appendMessage(m){ 
+  if(currentRoomMessages.some(x => x.id === m.id)) return; 
+  currentRoomMessages.unshift(m); 
+  const box = document.getElementById('chatMessages'); 
+  if(!box) return; 
+  const wasAtTop = box.scrollTop < 100; 
+  if(currentRoomMessages.length === 1) box.innerHTML = ''; 
+  box.insertAdjacentHTML('afterbegin', messageHtml(m)); 
+  if(wasAtTop) setTimeout(() => { box.scrollTop = 0; }, 50); 
+}
 function bindChatInput(){ const i = document.getElementById('chatInput'); if(i && !i.dataset.bound){ i.dataset.bound = '1'; i.addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); sendMessage(); } }); } }
 async function sendMessage(){ const inp = document.getElementById('chatInput'); if(!inp) return; const text = inp.value.trim(); if(!text) return; if(!myName){ askName(text); return; } inp.value = ''; await sb.from('room_messages').insert({ room_id: currentRoom.id, name: myName, avatar: myAvatar, text: text, user_id: myId, hidden: false }); }
 
-async function openDM(userId, userName){ if(userId === myId) return toast('Это ты'); await sb.from('dm_reads').upsert({ room_id: currentRoom.id, user_id: myId, peer_id: userId, last_read_at: new Date().toISOString() }); const { data } = await sb.from('direct_messages').select('*').eq('room_id', currentRoom.id).or('and(from_user_id.eq.' + myId + ',to_user_id.eq.' + userId + '),and(from_user_id.eq.' + userId + ',to_user_id.eq.' + myId + ')').order('created_at', { ascending: true }); const html = (data || []).map(m => { const mine = m.from_user_id === myId; return '<div class="dm-msg ' + (mine ? 'mine' : 'their') + '">' + esc(m.text) + '</div>'; }).join(''); openSheet('<h2>💬 ' + esc(userName) + '</h2><input type="hidden" id="dmPeerId" value="' + esc(userId) + '"><div style="height:50vh;overflow-y:auto;padding:10px;background:var(--bg);border-radius:12px;margin-bottom:10px" id="dmMessages">' + (html || '<div class="hidden-note">Начни переписку</div>') + '</div><div class="chat-input-row"><input id="dmInput" class="input" placeholder="Сообщение..."><button class="btn-send" onclick="sendDM(\'' + esc(userId) + '\',\'' + esc(userName) + '\')">➤</button></div><button class="btn-block ghost" onclick="closeSheet()">Закрыть</button>'); setTimeout(() => { const box = document.getElementById('dmMessages'); if(box) box.scrollTop = box.scrollHeight; const inp = document.getElementById('dmInput'); if(inp) inp.addEventListener('keydown', e => { if(e.key === 'Enter') sendDM(userId, userName); }); }, 100); updateDMBadge(); }
+async function openDM(userId, userName){ 
+  if(userId === myId) return toast('Это ты'); 
+  await sb.from('dm_reads').upsert({ room_id: currentRoom.id, user_id: myId, peer_id: userId, last_read_at: new Date().toISOString() }); 
+  const { data } = await sb.from('direct_messages').select('*').eq('room_id', currentRoom.id).or('and(from_user_id.eq.' + myId + ',to_user_id.eq.' + userId + '),and(from_user_id.eq.' + userId + ',to_user_id.eq.' + myId + ')').order('created_at', { ascending: true }); 
+  const html = (data || []).map(m => { 
+    const mine = m.from_user_id === myId; 
+    return '<div class="dm-msg ' + (mine ? 'mine' : 'their') + '">' + esc(m.text) + '</div>'; 
+  }).join(''); 
+  openSheet('<h2>💬 ' + esc(userName) + '</h2><input type="hidden" id="dmPeerId" value="' + esc(userId) + '"><div style="height:40vh;overflow-y:auto;padding:10px;background:var(--bg);border-radius:12px;margin-bottom:10px" id="dmMessages">' + (html || '<div class="hidden-note">Начни переписку</div>') + '</div><div class="chat-input-row"><input id="dmInput" class="input" placeholder="Сообщение..."><button class="btn-send" onclick="sendDM(\'' + esc(userId) + '\',\'' + esc(userName) + '\')">➤</button></div><button class="btn-block ghost" onclick="closeSheet()">Закрыть</button>'); 
+  setTimeout(() => { 
+    const box = document.getElementById('dmMessages'); 
+    if(box) box.scrollTop = box.scrollHeight; 
+    const inp = document.getElementById('dmInput'); 
+    if(inp) inp.addEventListener('keydown', e => { if(e.key === 'Enter') sendDM(userId, userName); }); 
+  }, 100); 
+  updateDMBadge(); 
+}
 async function sendDM(userId, userName){ const inp = document.getElementById('dmInput'); if(!inp) return; const text = inp.value.trim(); if(!text) return; inp.value = ''; await sb.from('direct_messages').insert({ room_id: currentRoom.id, from_user_id: myId, to_user_id: userId, from_name: myName || 'Гость', to_name: userName, text }); openDM(userId, userName); }
 async function updateDMBadge(){ if(!currentRoom) return; const { data } = await sb.from('direct_messages').select('from_user_id, created_at').eq('room_id', currentRoom.id).eq('to_user_id', myId); if(!data || data.length === 0){ setDMBadge(0); return; } const { data: reads } = await sb.from('dm_reads').select('*').eq('room_id', currentRoom.id).eq('user_id', myId); const readMap = {}; (reads || []).forEach(r => { readMap[r.peer_id] = new Date(r.last_read_at).getTime(); }); let unread = 0; data.forEach(m => { const last = readMap[m.from_user_id] || 0; if(new Date(m.created_at).getTime() > last) unread++; }); setDMBadge(unread); }
-function setDMBadge(n){ const b = document.getElementById('dmBadge'); if(!b) return; b.textContent = n > 0 ? String(n) : ''; b.className = n > 0 ? 'badge' : ''; }
+function setDMBadge(n){ 
+  const b = document.getElementById('dmBadge'); 
+  if(b) { 
+    b.textContent = n > 0 ? String(n) : ''; 
+    b.className = n > 0 ? 'badge' : ''; 
+  } 
+  const notif = document.getElementById('dmNotif');
+  if(notif) {
+    if(n > 0) notif.style.display = 'inline'; 
+    else notif.style.display = 'none'; 
+  }
+}
 
 async function loadPresence(){ if(!currentRoom) return; try { const { data } = await sb.from('room_presence').select('*').eq('room_id', currentRoom.id); currentPresence = data || []; } catch(e){} }
 async function upsertPresence(){ if(!currentRoom) return; try { await sb.from('room_presence').upsert({ room_id: currentRoom.id, user_id: myId, name: myName || 'Гость', status: 'active', updated_at: new Date().toISOString() }); } catch(e){} }
-function openPeopleSheet(){ if(!currentRoom) return; const now = Date.now(); const online = currentPresence.filter(p => now - new Date(p.updated_at || 0).getTime() < 120000); const offline = currentPresence.filter(p => now - new Date(p.updated_at || 0).getTime() >= 120000); const render = (p, isOnline) => '<div class="people-row"><div class="people-row-avatar">' + (p.user_id === myId ? '🧑' : '👤') + '</div><div style="flex:1;min-width:0"><div class="people-row-name">' + (p.user_id === currentRoom.host_id ? '👑 ' : '') + esc(p.name || 'Гость') + (p.user_id === myId ? ' (ты)' : '') + '</div><div class="people-row-status">' + (isOnline ? '🟢 в сети' : '⚪ отошёл') + '</div></div>' + (p.user_id !== myId ? '<button class="btn-block small" onclick="closeSheet();openDM(\'' + esc(p.user_id) + '\',\'' + esc(p.name || 'Гость') + '\')">Написать</button>' : '') + '</div>'; openSheet('<h2>👥 В комнате (' + online.length + ')</h2><div style="max-height:60vh;overflow-y:auto;margin:12px -16px">' + online.map(p => render(p, true)).join('') + (offline.length ? '<div class="hidden-note">Отошли</div>' + offline.map(p => render(p, false)).join('') : '') + (currentPresence.length === 0 ? '<div class="hidden-note">Пока никого</div>' : '') + '</div><button class="btn-block ghost" onclick="closeSheet()">Закрыть</button>'); }
+
+function openPeopleSheet(){ 
+  if(!currentRoom) return; 
+  const now = Date.now(); 
+  const online = currentPresence.filter(p => now - new Date(p.updated_at || 0).getTime() < 120000); 
+  const offline = currentPresence.filter(p => now - new Date(p.updated_at || 0).getTime() >= 120000); 
+  const chatters = new Set(currentRoomMessages.map(m => m.user_id));
+  const sortPeople = (a, b) => (chatters.has(b.user_id) ? 1 : 0) - (chatters.has(a.user_id) ? 1 : 0);
+  online.sort(sortPeople); 
+  offline.sort(sortPeople);
+
+  const render = (p, isOnline) => {
+    const isMe = p.user_id === myId;
+    const isHost = p.user_id === currentRoom.host_id;
+    const wrote = chatters.has(p.user_id);
+    let btnText = 'Написать';
+    if (isMe) btnText = '';
+    else if (wrote) btnText = 'Ответить';
+
+    return '<div class="people-row">' +
+      '<div class="people-row-avatar">' + (isMe ? '🧑' : '👤') + '</div>' +
+      '<div style="flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;">' +
+        '<div class="people-row-name">' + (isHost ? '👑 ' : '') + esc(p.name || 'Гость') + (isMe ? ' (ты)' : '') + '</div>' +
+        '<div class="people-row-status">' + (isOnline ? '🟢 в сети' : '⚪ отошёл') + '</div>' +
+      '</div>' +
+      (!isMe ? '<button class="btn-block small" onclick="closeSheet();openDM(\'' + esc(p.user_id) + '\',\'' + esc(p.name || 'Гость') + '\')">' + btnText + '</button>' : '') + 
+    '</div>';
+  };
+
+  openSheet(
+    '<h2>👥 В комнате (' + online.length + ')</h2>' +
+    '<div style="max-height:60vh;overflow-y:auto;margin:12px -16px">' + 
+      online.map(p => render(p, true)).join('') + 
+      (offline.length ? '<div class="hidden-note" style="margin:8px 0 4px 16px;text-align:left;font-size:11px">Отошли</div>' + offline.map(p => render(p, false)).join('') : '') + 
+      (currentPresence.length === 0 ? '<div class="hidden-note">Пока никого</div>' : '') + 
+    '</div>' +
+    '<button class="btn-block ghost" onclick="closeSheet()">Закрыть</button>'
+  );
+}
 
 function personalVideoKey(){ return currentRoom ? 'smotrim_personal_video_' + currentRoom.id : null; }
 function getPersonalVideo(){ const k = personalVideoKey(); return k ? localStorage.getItem(k) : null; }
@@ -357,7 +498,14 @@ function renderRoomShell(){
   
   const settingsBtn = isHost ? '<div class="settings-btn" onclick="openHostSettings()">⚙️</div>' : '';
 
-  const header = '<div class="room-top-bar"><div class="room-top-left"><div>' + esc(r.name) + '</div><div class="meta">' + (days !== null ? days + 'дн · ' : '') + '🟢 ' + onlineCount + metaExtra + '</div></div>' + settingsBtn + '</div>';
+  const header = '<div class="room-top-bar">' +
+    '<div class="room-top-left">' +
+      '<div>' + esc(r.name) + '</div>' +
+      '<div class="meta">' + (days !== null ? days + 'дн · ' : '') + '🟢 ' + onlineCount + metaExtra + '</div>' +
+      '<span id="dmNotif" style="display:none; color:var(--danger); font-size:11px; font-weight:700; margin-left:4px; white-space:nowrap;">Вам сообщение</span>' +
+    '</div>' + 
+    settingsBtn + 
+  '</div>';
   
   const chatBlock = '<div class="chat-block"><div class="chat-input-row"><input id="chatInput" class="input" placeholder="Сообщение..." maxlength="500"><button class="btn-send" onclick="sendMessage()">➤</button></div><div class="chat-messages" id="chatMessages"></div></div>';
   const layout = header + '<div class="room-layout"><div class="room-left">' + videoSectionHtml() + '</div><div class="room-right">' + chatBlock + '</div></div>';
