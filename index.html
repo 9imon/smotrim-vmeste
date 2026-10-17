@@ -3,37 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Стриминговая платформа</title>
+    <title>Стриминг (Финальный без дублей)</title>
     <style>
         /* =========================================
-           БАЗОВЫЕ СТИЛИ И СБРОС
+           БАЗА
            ========================================= */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+        body { background-color: #14141c; color: #fff; height: 100vh; overflow: hidden; }
 
-        body {
-            background-color: #14141c;
-            color: #ffffff;
+        /* =========================================
+           СЕТКА (ПК)
+           ========================================= */
+        .app-layout {
+            display: grid;
+            grid-template-columns: 32% 1fr; /* Левая колонка 32%, правая 68% */
+            grid-template-rows: 60px 1fr;   /* Верхняя панель 60px, остальное внизу */
+            grid-template-areas: 
+                "sidebar header" /* ВНИМАНИЕ: На ПК чат и кнопки в одной левой колонке */
+                "sidebar main";
             height: 100vh;
-            overflow: hidden; /* Запрещаем скролл всего body */
-            display: flex;
-            flex-direction: column;
+            padding: 15px;
+            gap: 15px;
         }
 
         /* =========================================
-           ВЕРХНЯЯ ПАНЕЛЬ (Профиль)
+           ВЕРХНЯЯ ПАНЕЛЬ (ПРОФИЛЬ + КНОПКИ)
            ========================================= */
+        /* На ПК это правая колонка (над чатом) */
         .top-bar {
+            grid-area: header;
             display: flex;
-            padding: 10px 20px;
-            height: 60px;
             align-items: center;
+            gap: 15px;
+            width: 100%;
         }
 
+        /* Плашка Профиля (Слева) */
         .pro-profile {
             background-color: #1e1e28;
             border: 1px solid #333;
@@ -42,127 +47,57 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            /* Ширина симметрична правой панели (примерно 30-35%) */
-            width: 32%;
-            max-width: 400px;
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            background-color: #4ade80;
-            border-radius: 50%;
-            margin-left: auto;
-            margin-right: 10px;
-        }
-
-        .settings-btn {
-            background: none;
-            border: none;
-            color: #888;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        /* =========================================
-           ОСНОВНАЯ РАБОЧАЯ ОБЛАСТЬ
-           ========================================= */
-        .main-content {
-            display: flex;
-            flex: 1;
-            padding: 0 20px 20px 20px;
-            gap: 20px;
-            min-height: 0; /* Важно для работы скролла внутри чата */
-        }
-
-        /* --- ЛЕВАЯ ЧАСТЬ: Плеер --- */
-        .video-section {
-            flex: 1; /* Растягивается на всё свободное место */
-            background-color: #000000;
-            border: 1px solid #333;
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-        }
-
-        .video-placeholder {
-            text-align: center;
-            color: #666;
-        }
-
-        .video-placeholder .icon {
-            font-size: 48px;
-            margin-bottom: 15px;
-        }
-
-        .video-placeholder h2 {
-            color: #ccc;
-            font-size: 18px;
-            margin-bottom: 5px;
-        }
-
-        .video-placeholder p {
+            width: 32%; /* Симметрично правому чату, но так как это grid - можно оставить auto */
+            min-width: 150px;
             font-size: 14px;
         }
+        .status-dot { width: 8px; height: 8px; background-color: #4ade80; border-radius: 50%; margin-left: auto; }
 
-        /* --- ПРАВАЯ ЧАСТЬ: Кнопки и Чат --- */
-        .sidebar-section {
-            /* Ширина симметрична верхней панели */
-            width: 32%;
-            max-width: 400px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            min-height: 0;
-        }
-
-        /* --- Кнопки меню (Над чатом) --- */
+        /* Контейнер кнопок */
         .nav-buttons {
             display: flex;
             gap: 8px;
-            justify-content: space-between;
+            flex: 1;
         }
 
         .nav-btn {
-            flex: 1;
             background-color: #1e1e28;
             color: #aaa;
             border: 1px solid #333;
             border-radius: 10px;
-            padding: 10px 5px;
-            font-size: 12px;
+            padding: 10px 12px;
+            font-size: 13px;
             cursor: pointer;
-            transition: 0.2s;
-            text-align: center;
             white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            flex: 1;
+            transition: 0.2s;
+        }
+        .nav-btn.active { background-color: #7c3aed; color: #fff; border-color: #7c3aed; }
+        #menu-btn { font-weight: bold; background-color: #2a2a35; }
+
+        /* =========================================
+           ПЛЕЕР (ПРАВАЯ ЧАСТЬ)
+           ========================================= */
+        .video-section {
+            grid-area: main;
+            background-color: #000;
+            border: 1px solid #333;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
-        .nav-btn:hover {
-            background-color: #2a2a35;
-            color: #fff;
+        /* =========================================
+           ЧАТ (ЛЕВАЯ ЧАСТЬ)
+           ========================================= */
+        .chat-section {
+            grid-area: sidebar; /* Занимает левую колонку на ПК */
+            display: flex;
+            flex-direction: column;
+            min-height: 0; /* Важно для скролла */
         }
 
-        .nav-btn.active {
-            background-color: #7c3aed; /* Фиолетовый */
-            color: #fff;
-            border-color: #7c3aed;
-        }
-
-        /* Специальный стиль для кнопки "Меню" */
-        #menu-btn {
-            flex: 0.8; /* Чуть уже остальных */
-            font-weight: bold;
-            background-color: #2a2a35;
-        }
-
-        /* --- Окно контента (Чат или Меню) --- */
         .content-window {
             flex: 1;
             background-color: #1e1e28;
@@ -171,214 +106,131 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            position: relative;
         }
 
-        /* Стили для чата */
-        .chat-view {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
+        .chat-messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+        .message { display: flex; gap: 10px; font-size: 14px; }
+        .avatar { width: 32px; height: 32px; background: #3b82f6; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; }
+        
+        .chat-input-area { display: flex; padding: 10px; gap: 10px; border-top: 1px solid #333; }
+        .chat-input-area input { flex: 1; background: #14141c; border: 1px solid #333; border-radius: 20px; padding: 10px; color: #fff; outline: none; }
+        .send-btn { background: #7c3aed; border: none; border-radius: 50%; width: 40px; height: 40px; color: white; cursor: pointer; }
 
-        .chat-messages {
-            flex: 1;
-            padding: 15px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .message {
-            display: flex;
-            gap: 10px;
-            font-size: 14px;
-        }
-
-        .avatar {
-            width: 32px;
-            height: 32px;
-            background-color: #3b82f6;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            flex-shrink: 0;
-        }
-
-        .msg-content {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .msg-author {
-            color: #fff;
-            font-weight: bold;
-            margin-bottom: 2px;
-        }
-
-        .msg-text {
-            color: #ccc;
-        }
-
-        .msg-time {
-            font-size: 10px;
-            color: #666;
-            margin-top: 3px;
-        }
-
-        .chat-input-area {
-            display: flex;
-            padding: 10px;
-            gap: 10px;
-            border-top: 1px solid #333;
-            background-color: #1e1e28;
-        }
-
-        .chat-input-area input {
-            flex: 1;
-            background-color: #14141c;
-            border: 1px solid #333;
-            border-radius: 20px;
-            padding: 10px 15px;
-            color: #fff;
-            outline: none;
-        }
-
-        .chat-input-area input:focus {
-            border-color: #7c3aed;
-        }
-
-        .send-btn {
-            background-color: #7c3aed;
-            border: none;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            color: white;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-        }
-
-        /* Стили для вида "Меню" (скрытый по умолчанию) */
-        .menu-view {
-            display: none;
-            padding: 20px;
-            flex-direction: column;
-            gap: 15px;
-            height: 100%;
-            overflow-y: auto;
-        }
-
-        .menu-view h3 {
-            margin-bottom: 10px;
-            color: #fff;
-        }
-
-        .menu-item {
-            padding: 15px;
-            background-color: #2a2a35;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .menu-item:hover {
-            background-color: #3b3b4a;
-        }
+        /* Меню (Вместо чата) */
+        .menu-view { display: none; padding: 20px; flex-direction: column; gap: 10px; height: 100%; }
+        .menu-item { padding: 15px; background: #2a2a35; border-radius: 8px; cursor: pointer; }
 
         /* =========================================
-           АДАПТИВНОСТЬ (Для телефонов)
+           МОБИЛЬНАЯ ВЕРСИЯ (ПЕРЕСТРОЙКА)
            ========================================= */
-        @media (max-width: 768px) {
-            body {
-                overflow-y: auto; /* Разрешаем скролл на мобильных */
+        @media (max-width: 900px) {
+            body { overflow-y: auto; }
+            
+            /* Сетка на телефоне: 
+               1. Плеер (сверху)
+               2. Чат (по центру)
+               3. Кнопки (внизу)
+            */
+            .app-layout {
+                display: flex;
+                flex-direction: column;
+                height: 100vh;
+                padding: 10px;
+                gap: 10px;
             }
-            .main-content {
-                flex-direction: column; /* Плеер сверху, чат снизу */
-                height: auto;
-            }
-            .top-bar {
-                width: 100%;
-            }
-            .pro-profile, .sidebar-section {
-                width: 100%;
-                max-width: none;
-            }
+
+            /* Прячем плашку Профиля на телефоне, чтобы не мешала */
+            .pro-profile { display: none; }
+
+            /* ПЛЕЕР: Первый элемент */
             .video-section {
-                min-height: 250px; /* Фиксированная высота плеера на мобилках */
+                order: 1; 
+                min-height: 200px;
+                flex-shrink: 0;
             }
-            .content-window {
-                min-height: 400px;
+
+            /* ЧАТ: Второй элемент */
+            .chat-section {
+                order: 2;
+                flex: 1; /* Занимает всё оставшееся место */
+                min-height: 300px;
+                margin-bottom: 70px; /* Отступ под кнопки, чтобы не перекрывали ввод */
+            }
+
+            /* КНОПКИ: Третий элемент (Внизу) */
+            /* Мы берем шапку и делаем из нее нижнюю панель */
+            .top-bar {
+                order: 3;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                background: #14141c;
+                padding: 10px;
+                border-top: 1px solid #333;
+                z-index: 100;
+                margin: 0;
+            }
+
+            .nav-buttons {
+                width: 100%;
+                justify-content: space-between;
+                gap: 4px;
+            }
+
+            .nav-btn {
+                font-size: 11px;
+                padding: 8px 4px;
+                flex: 1;
             }
         }
     </style>
 </head>
 <body>
 
-    <!-- ВЕРХНЯЯ ПАНЕЛЬ -->
-    <header class="top-bar">
-        <div class="pro-profile">
-            <span>Про</span>
-            <span style="color: #888; font-size: 12px;">10дн</span>
-            <div class="status-dot"></div>
-            <span>2</span>
-            <button class="settings-btn">⚙️</button>
-        </div>
-    </header>
-
-    <!-- ОСНОВНАЯ ОБЛАСТЬ -->
-    <main class="main-content">
+    <!-- ЕДИНЫЙ КОНТЕЙНЕР -->
+    <div class="app-layout">
         
-        <!-- ЛЕВАЯ ЧАСТЬ: ПЛЕЕР -->
-        <section class="video-section">
-            <div class="video-placeholder">
-                <div class="icon">📺</div>
-                <h2>Тут будет видео</h2>
-                <p>Хост ещё не выбрал</p>
+        <!-- ШАПКА (На ПК это правая колонка с кнопками) -->
+        <header class="top-bar">
+            <div class="pro-profile">
+                <span>Про</span>
+                <span style="color: #888; font-size: 12px;">10дн</span>
+                <div class="status-dot"></div>
+                <span>2</span>
+                <button style="background:none; border:none; color:#888; cursor:pointer;">⚙️</button>
             </div>
-        </section>
 
-        <!-- ПРАВАЯ ЧАСТЬ: КНОПКИ И ЧАТ -->
-        <aside class="sidebar-section">
-            
-            <!-- Кнопки меню (строго над окном контента) -->
+            <!-- Единственный экземпляр кнопок -->
             <div class="nav-buttons">
                 <button class="nav-btn active" onclick="switchTab('home', this)">Главная</button>
                 <button class="nav-btn" onclick="switchTab('general', this)">Общее</button>
                 <button class="nav-btn" onclick="switchTab('custom', this)">Своё</button>
                 <button class="nav-btn" onclick="switchTab('people', this)">Люди</button>
                 <button class="nav-btn" onclick="switchTab('invite', this)">Пригласить</button>
-                <!-- ИЗМЕНЕНО: Иконка заменена на текст "Меню" -->
                 <button class="nav-btn" id="menu-btn" onclick="toggleMenu(this)">Меню</button>
             </div>
+        </header>
 
-            <!-- Окно контента -->
+        <!-- ПЛЕЕР (Единственный экземпляр) -->
+        <section class="video-section">
+            <div style="text-align: center; color: #666;">
+                <div style="font-size: 48px; margin-bottom: 10px;">📺</div>
+                <h2 style="color: #ccc; font-size: 18px;">Тут будет видео</h2>
+                <p style="font-size: 14px;">Хост ещё не выбрал</p>
+            </div>
+        </section>
+
+        <!-- ЧАТ (Единственный экземпляр) -->
+        <aside class="chat-section">
             <div class="content-window">
-                
-                <!-- ВКЛАДКА: ЧАТ (Показывается по умолчанию) -->
-                <div class="chat-view" id="chat-view">
+                <div class="chat-view" id="chat-view" style="display: flex; flex-direction: column; height: 100%;">
                     <div class="chat-messages">
                         <div class="message">
                             <div class="avatar">АК</div>
-                            <div class="msg-content">
-                                <span class="msg-author">ак</span>
-                                <span class="msg-text">Просто</span>
-                                <span class="msg-time">20:29</span>
-                            </div>
-                        </div>
-                        <!-- Пример сообщения -->
-                        <div class="message">
-                            <div class="avatar" style="background:#e11d48">Ив</div>
-                            <div class="msg-content">
-                                <span class="msg-author">Иван</span>
-                                <span class="msg-text">Привет всем! Когда стрим?</span>
-                                <span class="msg-time">20:31</span>
+                            <div>
+                                <div style="font-weight: bold; margin-bottom: 2px;">ак</div>
+                                <div style="color: #ccc;">Просто</div>
                             </div>
                         </div>
                     </div>
@@ -388,52 +240,31 @@
                     </div>
                 </div>
 
-                <!-- ВКЛАДКА: МЕНЮ (Скрыта по умолчанию) -->
                 <div class="menu-view" id="menu-view">
-                    <h3>Настройки и меню</h3>
-                    <div class="menu-item">⚙️ Настройки профиля</div>
+                    <h3>Меню</h3>
+                    <div class="menu-item">⚙️ Настройки</div>
                     <div class="menu-item">🔔 Уведомления</div>
-                    <div class="menu-item">🎨 Оформление</div>
-                    <div class="menu-item">❓ Помощь</div>
                 </div>
-
             </div>
         </aside>
-    </main>
+    </div>
 
-    <!-- СКРИПТ ДЛЯ ПЕРЕКЛЮЧЕНИЯ ВКЛАДОК -->
     <script>
-        // Получаем элементы
+        // Логика переключения (без дублей DOM)
         const chatView = document.getElementById('chat-view');
         const menuView = document.getElementById('menu-view');
-        const menuBtn = document.getElementById('menu-btn');
         const navButtons = document.querySelectorAll('.nav-btn');
 
-        // Функция переключения на чат (и другие вкладки)
         function switchTab(tabName, btnElement) {
-            // 1. Убираем класс active у всех кнопок
             navButtons.forEach(btn => btn.classList.remove('active'));
-            
-            // 2. Добавляем класс active нажатой кнопке
             btnElement.classList.add('active');
-
-            // 3. Показываем чат (в реальном приложении тут будет загрузка контента для 'general', 'people' и т.д.)
             chatView.style.display = 'flex';
             menuView.style.display = 'none';
-            
-            // Опционально: можно менять заголовок чата или загружать разные данные
-            console.log(`Переключено на вкладку: ${tabName}`);
         }
 
-        // Функция переключения на "Меню"
         function toggleMenu(btnElement) {
-            // 1. Снимаем active со всех кнопок
             navButtons.forEach(btn => btn.classList.remove('active'));
-            
-            // 2. Активируем кнопку "Меню"
             btnElement.classList.add('active');
-
-            // 3. Скрываем чат, показываем меню
             chatView.style.display = 'none';
             menuView.style.display = 'flex';
         }
