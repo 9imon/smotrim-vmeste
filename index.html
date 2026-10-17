@@ -165,27 +165,110 @@ body.in-room #screen-room{
 .people-row-status{font-size:11px;color:var(--text-3)}
 .hidden-note{font-size:12px;color:var(--text-3);font-style:italic;padding:12px;text-align:center}
 
+/* Скрываем кнопки десктопа в вертикальном режиме */
+.landscape-dock {
+  display: none;
+}
+
 /* ЛАНДШАФТНЫЙ РЕЖИМ (Десктоп) */
 @media (orientation: landscape) and (min-width: 700px){
   .room-dock { display: none !important; }
   body.in-room #screen-room { padding: 8px 16px 16px; max-width: 100%; }
   
-  .room-top-bar {
-    width: 100%; margin: 0 0 12px 0; padding: 6px 16px; justify-content: space-between; border-radius: 12px;
+  /* Делаем общую сетку для комнаты */
+  #roomContent {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr; 
+    grid-template-rows: auto 1fr; 
+    gap: 12px 16px; 
+    height: 100%;
+    min-height: 0;
   }
-  .landscape-dock { display: flex; gap: 6px; flex-shrink: 0; }
-  .landscape-dock .tile-btn { height: 38px; padding: 0 16px; font-size: 13px; }
+
+  /* Левая верхняя часть: Шапка */
+  .room-top-bar {
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+    width: 100%; 
+    margin: 0; 
+    padding: 6px 16px; 
+    justify-content: flex-start; 
+    border-radius: 12px;
+    align-self: center;
+  }
+
+  /* Кнопки навигации (встают над чатом) */
+  .landscape-dock { 
+    grid-column: 2 / 3;
+    grid-row: 1 / 2;
+    display: flex; 
+    gap: 6px; 
+    flex-shrink: 0; 
+    flex-wrap: wrap; 
+    align-items: center;
+    justify-content: flex-end;
+    width: 100%;
+  }
   
-  .room-layout { display: grid; grid-template-columns: 1.5fr 1fr; gap: 16px; flex: 1; min-height: 0; height: 100%; }
-  .room-left { height: 100%; min-height: 0; }
+  .landscape-dock .tile-btn { 
+    height: 38px; 
+    padding: 0 12px; 
+    font-size: 12px; 
+    flex: 1; 
+    white-space: nowrap;
+  }
+  
+  /* Обертка видео */
+  .room-left { 
+    grid-column: 1 / 2;
+    grid-row: 2 / 3;
+    height: 100%; 
+    min-height: 0; 
+    display: flex;
+    flex-direction: column;
+  }
+  
   .video-box { flex: 1; height: 100%; aspect-ratio: auto; }
   
-  /* Шторки справа */
-  .sheet-overlay { justify-content: flex-end; align-items: stretch; }
-  .sheet { width: 450px; max-width: 100%; border-radius: 16px 0 0 16px; height: 100%; max-height: 100%; border-top: none; border-left: 1px solid var(--border); padding: 20px; }
-  .sheet::before { display: none; }
+  /* Обертка чата */
+  .room-right { 
+    grid-column: 2 / 3;
+    grid-row: 2 / 3;
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .chat-block { 
+    height: 100%; 
+    display: flex; 
+    flex-direction: column; 
+  }
+
+  /* Настройка шторок справа */
+  .sheet-overlay { 
+    justify-content: flex-end; 
+    align-items: stretch; 
+    padding: 8px 16px 16px;
+  }
   
-  /* Личные сообщения (окно) */
+  .sheet { 
+    width: calc((100% - 16px) / 2.5); 
+    border-radius: 16px; 
+    height: calc(100% - 60px); 
+    margin-top: 60px; 
+    border: 1px solid var(--border); 
+    padding: 20px; 
+    animation: slideLeft 0.25s cubic-bezier(0.2, 0.8, 0.3, 1);
+  }
+  
+  @keyframes slideLeft { 
+    from { transform: translateX(100%); opacity: 0; } 
+    to { transform: translateX(0); opacity: 1; } 
+  }
+  
+  .sheet::before { display: none; }
   .dm-box { max-height: 400px; }
 }
 </style>
@@ -501,6 +584,7 @@ function renderRoomShell(){
   
   const settingsBtn = isHost ? '<div class="settings-btn" onclick="openHostSettings()">Меню</div>' : '';
   
+  // Кнопки для горизонтального вида
   const landscapeBtns = '<div class="landscape-dock">' +
     '<button class="tile-btn" onclick="goHome()">Главная</button>' +
     '<button class="tile-btn" onclick="location.reload()">Обновить</button>' +
@@ -510,12 +594,15 @@ function renderRoomShell(){
     '<button class="tile-btn primary" onclick="inviteFriend()">Пригласить</button>' +
   '</div>';
 
-  const header = '<div class="room-top-bar"><div class="room-top-left"><div>' + esc(r.name) + '</div><div class="meta">' + (days !== null ? days + 'дн · ' : '') + '🟢 ' + onlineCount + metaExtra + '</div><span class="dm-notif" id="dmNotif">Вам сообщение</span></div>' + settingsBtn + landscapeBtns + '</div>';
+  const header = '<div class="room-top-bar"><div class="room-top-left"><div>' + esc(r.name) + '</div><div class="meta">' + (days !== null ? days + 'дн · ' : '') + '🟢 ' + onlineCount + metaExtra + '</div><span class="dm-notif" id="dmNotif">Вам сообщение</span></div>' + settingsBtn + '</div>';
   
   const chatBlock = '<div class="chat-block"><div class="chat-input-row"><input id="chatInput" class="input" placeholder="Сообщение..." maxlength="500"><button class="btn-send" onclick="sendMessage()">➤</button></div><div class="chat-messages" id="chatMessages"></div></div>';
-  const layout = header + '<div class="room-layout"><div class="room-left">' + videoSectionHtml() + '</div><div class="room-right">' + chatBlock + '</div></div>';
+  
+  // room-layout нужен для вертикального режима
+  const layout = header + '<div class="room-layout"><div class="room-left">' + videoSectionHtml() + '</div><div class="room-right">' + chatBlock + '</div></div>' + landscapeBtns;
 
   document.getElementById('roomContent').innerHTML = layout;
+  
   renderDock();
   renderVideoOnly(); renderMessages(); bindChatInput();
 }
