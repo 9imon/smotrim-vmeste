@@ -1,3 +1,15 @@
+Вот полный, финальный код со всеми вашими правками.
+
+Что учтено в этой версии:
+
+1. Вертикальный режим: Чат упирается прямо в верхнюю границу нижних кнопок. Меню открывается на месте чата (строго под видео).
+2. Горизонтальный режим: Кнопки в один ряд над чатом. Чат растягивается до самого низа экрана.
+3. Кнопки внизу: Прозрачный фон, текст в одну строку (без переноса), под текстом тонкая линия. При нажатии от места касания в разные стороны расходится вспышка (эффект пульсации) по линии.
+4. Сообщения: В общем чате новые сверху, в личных — снизу.
+
+Скопируйте весь код ниже и полностью замените им ваш index.html:
+
+```html
 <!DOCTYPE html>
 <html lang="ru" data-theme="dark">
 <head>
@@ -93,17 +105,67 @@ body.in-room #screen-room{
 .settings-btn:active { background: var(--surface-2); }
 .dm-notif { display:none; color:var(--danger); font-size:11px; font-weight:700; margin-left:4px; white-space:nowrap; }
 
-.room-layout{display:flex;flex-direction:column;flex:1;min-height:0;gap:12px}
-.room-left{display:flex;flex-direction:column;gap:12px;flex-shrink:1;min-height:0}
-.video-box{position:relative;background:#000;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;aspect-ratio:auto;width:100%;height:100%;display:flex;align-items:center;justify-content:center; animation: fadeIn 0.4s ease-out;}
+.room-layout {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  gap: 12px;
+  margin-bottom: 0;
+}
+
+.room-left {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex-shrink: 1;
+  min-height: 0;
+}
+
+.video-box {
+  position: relative;
+  background: #000;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  aspect-ratio: auto;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.4s ease-out;
+}
 .video-box iframe,.video-box video{width:100%;height:100%;border:none;display:block}
 @keyframes fadeIn { from { opacity: 0; filter: blur(4px); } to { opacity: 1; filter: blur(0); } }
 
-.room-right{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;margin-bottom:0}
-.chat-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:10px;display:flex;flex-direction:column;flex:1 1 auto;min-height:0;overflow:hidden}
+.room-right {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.chat-block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  margin-bottom: 0;
+}
+
 .chat-input-row{display:flex;gap:6px;flex-shrink:0;margin-bottom:8px}
 .chat-input-row .input{flex:1;margin-bottom:0;min-width:0}
 .chat-input-row .btn-send{width:auto;padding:0 16px;margin:0;min-height:46px;flex-shrink:0;background:var(--accent);color:#fff;border-radius:var(--radius);font-size:18px}
+
 .chat-messages{
   flex:1 1 0;
   height:0;
@@ -114,6 +176,7 @@ body.in-room #screen-room{
   display:flex;
   flex-direction:column;
 }
+
 .chat-msg{padding:8px 0;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:flex-start}
 .chat-msg:last-child{border-bottom:none}
 .chat-msg-avatar{width:32px;height:32px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;background:var(--surface-2)}
@@ -134,7 +197,65 @@ body.in-room #screen-room{
 .dock-inner{
   display:flex; gap:3px; width: 100%; max-width: 600px; justify-content:center; padding: 0 2px;
 }
-.dock-inner .tile-btn { flex: 1; height: auto; min-height: 42px; padding: 4px 1px; font-size: 10px; line-height: 1.1; white-space: normal; word-break: break-word; }
+
+/* Новые стили для кнопок в доке */
+.dock-inner .tile-btn { 
+  flex: 1; 
+  height: auto; 
+  min-height: 42px; 
+  padding: 8px 2px 6px 2px; 
+  font-size: 10px; 
+  line-height: 1.1; 
+  white-space: nowrap; /* Запрещаем перенос текста */
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Текст кнопки */
+.dock-inner .tile-btn .btn-text {
+  position: relative;
+  z-index: 2;
+}
+
+/* Линия под текстом */
+.dock-inner .tile-btn::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: var(--border);
+  transition: background 0.2s;
+}
+
+/* Эффект вспышки при нажатии */
+.dock-inner .tile-btn:active::after {
+  background: var(--accent);
+  animation: lineFlash 0.4s ease-out forwards;
+}
+
+@keyframes lineFlash {
+  0% { 
+    box-shadow: 0 0 0 0 rgba(111,82,232,0.8);
+    transform: scaleX(0.5);
+    opacity: 1;
+  }
+  100% { 
+    box-shadow: 0 0 0 8px rgba(111,82,232,0);
+    transform: scaleX(1);
+    opacity: 0.8;
+  }
+}
+
 .dm-badge { position: absolute; top: -6px; right: -6px; background: var(--danger); color: #fff; font-size: 10px; font-weight: 800; min-width: 18px; height: 18px; border-radius: 9px; align-items: center; justify-content: center; padding: 0 4px; border: 2px solid var(--bg); display: none; }
 @keyframes pulseBadge { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(224, 85, 99, 0.7); } 70% { transform: scale(1.15); box-shadow: 0 0 0 6px rgba(224, 85, 99, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(224, 85, 99, 0); } }
 .dm-badge:not(:empty) { animation: pulseBadge 2s infinite; display: flex !important; }
@@ -151,44 +272,35 @@ body.in-room #screen-room{
 .sheet-item:active{background:var(--surface-2)}
 .sheet-item.danger{color:var(--danger)}
 
-/* Кастомное меню для мобилок */
-@media (orientation: portrait) {
-  .sheet-overlay.inline-sheet {
-    position: absolute;
-    inset: auto 12px calc(var(--dock-h) + 12px + var(--safe-bottom)) 12px;
-    height: calc(100% - 250px);
-    background: transparent;
-    padding: 0;
-    align-items: stretch;
-  }
-  .sheet-overlay.inline-sheet .sheet {
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-    max-height: 100%;
-    height: 100%;
-    width: 100%;
-    animation: fadeIn 0.2s ease-out;
-    background: var(--surface);
-    display: flex;
-    flex-direction: column;
-  }
-  .sheet-overlay.inline-sheet .sheet::before { display: none; }
-  .menu-item-large {
-    background: var(--surface-2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 16px;
-    margin-bottom: 8px;
-    font-size: 15px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    cursor: pointer;
-    transition: background 0.1s;
-  }
-  .menu-item-large:active { background: var(--surface); }
+/* Меню внутри чата */
+.chat-block .inline-menu {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: 100%;
+  overflow-y: auto;
 }
+.chat-block .inline-menu h2 {
+  font-size: 16px;
+  margin-bottom: 12px;
+  flex-shrink: 0;
+}
+.chat-block .inline-menu .menu-item-large {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.chat-block .inline-menu .menu-item-large:active { background: var(--surface); }
+.chat-block .inline-menu .menu-item-large.danger { color: var(--danger); }
 
 /* Тосты */
 .toast-root{position:fixed;left:0;right:0;bottom:calc(80px + var(--safe-bottom));z-index:300;display:flex;flex-direction:column;align-items:center;pointer-events:none}
@@ -219,7 +331,10 @@ body.in-room #screen-room{
 /* ЛАНДШАФТНЫЙ РЕЖИМ (Десктоп) */
 @media (orientation: landscape) and (min-width: 700px){
   .room-dock { display: none !important; }
-  body.in-room #screen-room { padding: 8px 16px 16px; max-width: 100%; }
+  body.in-room #screen-room { 
+    padding: 8px 16px 0 16px; 
+    max-width: 100%; 
+  }
   
   #roomContent {
     display: grid;
@@ -249,18 +364,19 @@ body.in-room #screen-room{
     gap: 6px; 
     flex-wrap: nowrap; 
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     width: 100%;
     height: 54px; 
   }
   
   .landscape-dock .tile-btn { 
     height: 100%; 
-    padding: 0 4px; 
+    padding: 0 12px; 
     font-size: 13px; 
-    flex: 1; 
+    flex: 0 0 auto; 
     white-space: nowrap; 
     min-width: 0; 
+    flex-direction: row;
   }
   
   .room-left { 
@@ -281,15 +397,64 @@ body.in-room #screen-room{
     min-height: 0;
     display: flex;
     flex-direction: column;
+    padding-bottom: 0;
   }
 
-  .chat-block { height: 100%; display: flex; flex-direction: column; }
+  .chat-block { 
+    height: 100%; 
+    display: flex; 
+    flex-direction: column; 
+    margin-bottom: 0;
+  }
 
-  .sheet-overlay { justify-content: flex-end; align-items: stretch; padding: 8px 16px 16px; }
+  .sheet-overlay { 
+    justify-content: flex-end; 
+    align-items: stretch; 
+    padding: 8px 16px 16px;
+    background: rgba(0,0,0,.4); 
+  }
+  
   .sheet { 
-    width: calc((100% - 16px) / 2.5); border-radius: 16px; height: calc(100% - 60px); margin-top: 60px; 
-    border: 1px solid var(--border); padding: 20px; animation: slideLeft 0.25s cubic-bezier(0.2, 0.8, 0.3, 1);
+    width: calc((100% - 16px) / 2.5); 
+    border-radius: 16px; 
+    height: calc(100% - 60px);
+    margin-top: 60px; 
+    border: 1px solid var(--border); 
+    padding: 16px; 
+    animation: slideLeft 0.25s cubic-bezier(0.2, 0.8, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; 
   }
+
+  .sheet-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+    overflow-y: auto; 
+  }
+
+  .sheet h2 { font-size: 15px; margin-bottom: 4px; flex-shrink: 0; }
+  .sheet p { font-size: 12px; margin-bottom: 8px; flex-shrink: 0; }
+  
+  .sheet .input, 
+  .sheet .btn-block, 
+  .sheet select {
+    padding: 10px 12px;
+    font-size: 14px;
+    min-height: 38px;
+    margin-bottom: 4px;
+    flex-shrink: 0;
+  }
+  
+  .sheet .avatar-picker, 
+  .sheet .color-picker {
+    max-height: 80px; 
+    overflow-y: auto;
+    flex-shrink: 0;
+  }
+
   @keyframes slideLeft { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
   .sheet::before { display: none; }
   .dm-box { max-height: 400px; }
@@ -351,7 +516,12 @@ function toast(msg, type){ const root = document.getElementById('toastRoot'); if
 function openSheet(html, isMenu = false){ 
   const isPortrait = window.matchMedia("(orientation: portrait)").matches;
   const overlayClass = (isPortrait && isMenu) ? 'sheet-overlay inline-sheet' : 'sheet-overlay';
-  document.getElementById('modalRoot').innerHTML = '<div class="' + overlayClass + '" onclick="if(event.target===this)closeSheet()"><div class="sheet">' + html + '</div></div>'; 
+  document.getElementById('modalRoot').innerHTML = 
+    '<div class="' + overlayClass + '" onclick="if(event.target===this)closeSheet()">' + 
+      '<div class="sheet">' +
+        '<div class="sheet-content">' + html + '</div>' + 
+      '</div>' + 
+    '</div>'; 
 }
 function closeSheet(){ document.getElementById('modalRoot').innerHTML = ''; }
 
@@ -477,6 +647,7 @@ async function openDM(userId, userName){
   }, 100); 
   updateDMBadge(); 
 }
+
 async function sendDM(userId, userName){ const inp = document.getElementById('dmInput'); if(!inp) return; const text = inp.value.trim(); if(!text) return; inp.value = ''; await sb.from('direct_messages').insert({ room_id: currentRoom.id, from_user_id: myId, to_user_id: userId, from_name: myName || 'Гость', to_name: userName, text }); 
   const box = document.getElementById('dmMessages');
   if(box) {
@@ -620,6 +791,28 @@ function saveAskName(pendingText){ const name = document.getElementById('askName
 
 function openHostSettings(){
   if(!isHost) return;
+  
+  const isPortrait = window.matchMedia("(orientation: portrait)").matches;
+  
+  if (isPortrait) {
+    const chatBlock = document.querySelector('.chat-block');
+    if (!chatBlock) return;
+    
+    const originalHTML = chatBlock.innerHTML;
+    
+    chatBlock.innerHTML = `
+      <div class="inline-menu">
+        <h2>Настройки и меню</h2>
+        <div class="menu-item-large" onclick="restoreChat('${btoa(encodeURIComponent(originalHTML))}'); openVideoSheet()"><span>🎬</span> Сменить видео</div>
+        <div class="menu-item-large" onclick="restoreChat('${btoa(encodeURIComponent(originalHTML))}'); renameRoom()"><span>✏️</span> Изменить название</div>
+        <div class="menu-item-large danger" onclick="restoreChat('${btoa(encodeURIComponent(originalHTML))}'); deleteRoom()"><span>🗑️</span> Удалить комнату</div>
+        <div style="flex:1"></div> 
+        <button class="btn-block ghost" onclick="restoreChat('${btoa(encodeURIComponent(originalHTML))}')">Закрыть</button>
+      </div>
+    `;
+    return; 
+  }
+
   openSheet(
     '<h2 style="margin-bottom:16px;">Настройки и меню</h2>' +
     '<div class="menu-item-large" onclick="closeSheet();openVideoSheet()"><span>🎬</span> Сменить видео</div>' +
@@ -630,6 +823,16 @@ function openHostSettings(){
     true
   );
 }
+
+function restoreChat(base64Html) {
+  const chatBlock = document.querySelector('.chat-block');
+  if (chatBlock) {
+    chatBlock.innerHTML = decodeURIComponent(atob(base64Html));
+    renderMessages();
+    bindChatInput();
+  }
+}
+
 async function renameRoom(){ const newName = prompt('Введите новое название комнаты:', currentRoom.name); if(!newName || newName === currentRoom.name) return; await sb.from('rooms').update({ name: newName }).eq('id', currentRoom.id); currentRoom.name = newName; renderRoomShell(); toast('Название изменено', 'success'); }
 async function deleteRoom(){ if(!currentRoom || !isHost) return; if(!confirm('Удалить комнату навсегда?')) return; await sb.from('rooms').delete().eq('id', currentRoom.id); toast('Комната удалена', 'success'); leaveRoom(); }
 
@@ -645,12 +848,12 @@ function renderRoomShell(){
   const metaExtra = (r.password_hash ? ' 🔒' : '') + (r.is_hidden ? ' 👁' : '');
   
   const landscapeBtns = '<div class="landscape-dock">' +
-    '<button class="tile-btn" onclick="goHome()">Главная</button>' +
-    '<button class="tile-btn" onclick="location.reload()">Обновить</button>' +
-    '<button class="tile-btn" onclick="' + (isHost ? 'openVideoSheet()' : 'switchToHostVideo()') + '">Общее</button>' +
-    '<button class="tile-btn" onclick="openPersonalVideoSheet()">Своё</button>' +
-    '<button class="tile-btn" onclick="openPeopleSheet()" style="position:relative">Люди<span id="dmBadge" class="dm-badge"></span></button>' +
-    '<button class="tile-btn primary" onclick="inviteFriend()">Пригласить</button>' +
+    '<button class="tile-btn" onclick="goHome()"><span class="btn-text">Главная</span></button>' +
+    '<button class="tile-btn" onclick="location.reload()"><span class="btn-text">Обновить</span></button>' +
+    '<button class="tile-btn" onclick="' + (isHost ? 'openVideoSheet()' : 'switchToHostVideo()') + '"><span class="btn-text">Общее</span></button>' +
+    '<button class="tile-btn" onclick="openPersonalVideoSheet()"><span class="btn-text">Своё</span></button>' +
+    '<button class="tile-btn" onclick="openPeopleSheet()" style="position:relative"><span class="btn-text">Люди</span><span id="dmBadge" class="dm-badge"></span></button>' +
+    '<button class="tile-btn primary" onclick="inviteFriend()"><span class="btn-text">Пригласить</span></button>' +
   '</div>';
 
   const header = '<div class="room-top-bar"><div class="room-top-left"><div>' + esc(r.name) + '</div><div class="meta">' + (days !== null ? days + 'дн · ' : '') + '🟢 ' + onlineCount + metaExtra + '</div><span class="dm-notif" id="dmNotif">Вам сообщение</span></div></div>';
@@ -668,13 +871,13 @@ function renderRoomShell(){
 function renderDock(){
   const dock = document.getElementById('dockInner'); if(!dock) return;
   dock.innerHTML = 
-    '<button class="tile-btn primary" onclick="goHome()">Главная</button>' +
-    '<button class="tile-btn" onclick="' + (isHost ? 'openVideoSheet()' : 'switchToHostVideo()') + '">Общее</button>' +
-    '<button class="tile-btn" onclick="openPersonalVideoSheet()">Своё</button>' +
-    '<button class="tile-btn" onclick="openPeopleSheet()" style="position:relative">Люди<span id="dmBadge" class="dm-badge"></span></button>' +
-    '<button class="tile-btn" onclick="inviteFriend()">Пригласить</button>' +
-    (isHost ? '<button class="tile-btn" onclick="openHostSettings()">Меню</button>' : '') +
-    '<button class="tile-btn" onclick="location.reload()">Обновить</button>';
+    '<button class="tile-btn primary" onclick="goHome()"><span class="btn-text">Главная</span></button>' +
+    '<button class="tile-btn" onclick="' + (isHost ? 'openVideoSheet()' : 'switchToHostVideo()') + '"><span class="btn-text">Общее</span></button>' +
+    '<button class="tile-btn" onclick="openPersonalVideoSheet()"><span class="btn-text">Своё</span></button>' +
+    '<button class="tile-btn" onclick="openPeopleSheet()" style="position:relative"><span class="btn-text">Люди</span><span id="dmBadge" class="dm-badge"></span></button>' +
+    '<button class="tile-btn" onclick="inviteFriend()"><span class="btn-text">Пригласить</span></button>' +
+    (isHost ? '<button class="tile-btn" onclick="openHostSettings()"><span class="btn-text">Меню</span></button>' : '') +
+    '<button class="tile-btn" onclick="location.reload()"><span class="btn-text">Обновить</span></button>';
 }
 
 function renderRoomHeaderMeta(){
@@ -696,7 +899,6 @@ function startHeartbeat(){ if(heartbeatTimer) clearInterval(heartbeatTimer); hea
   if(roomParam) enterRoom(roomParam); else restoreLastRoom();
 })();
 
-// Фикс клавиатуры на мобильных устройствах
 if (window.visualViewport) {
   window.visualViewport.addEventListener('resize', () => {
     document.documentElement.style.setProperty('--vh', `${window.visualViewport.height * 0.01}px`);
@@ -705,7 +907,6 @@ if (window.visualViewport) {
   });
 }
 
-// Фикс скролла для мобилок
 document.addEventListener('DOMContentLoaded', () => {
   document.body.addEventListener('touchmove', (e) => {
     if (e.target.closest('.chat-messages') || e.target.closest('.sheet')) {
@@ -716,3 +917,4 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 </body>
 </html>
+```
