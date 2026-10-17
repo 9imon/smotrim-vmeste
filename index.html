@@ -3,42 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Стриминг (Финальный без дублей)</title>
+    <title>Адаптивная стриминговая платформа</title>
     <style>
         /* =========================================
-           БАЗА
+           БАЗОВЫЕ СТИЛИ
            ========================================= */
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
-        body { background-color: #14141c; color: #fff; height: 100vh; overflow: hidden; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-        /* =========================================
-           СЕТКА (ПК)
-           ========================================= */
-        .app-layout {
-            display: grid;
-            grid-template-columns: 32% 1fr; /* Левая колонка 32%, правая 68% */
-            grid-template-rows: 60px 1fr;   /* Верхняя панель 60px, остальное внизу */
-            grid-template-areas: 
-                "sidebar header" /* ВНИМАНИЕ: На ПК чат и кнопки в одной левой колонке */
-                "sidebar main";
+        body {
+            background-color: #14141c;
+            color: #ffffff;
             height: 100vh;
-            padding: 15px;
-            gap: 15px;
+            overflow: hidden; 
+            display: flex;
+            flex-direction: column;
         }
 
         /* =========================================
-           ВЕРХНЯЯ ПАНЕЛЬ (ПРОФИЛЬ + КНОПКИ)
+           СЕТКА САЙТА (GRID)
            ========================================= */
-        /* На ПК это правая колонка (над чатом) */
+        .app-layout {
+            display: grid;
+            grid-template-columns: 32% 1fr; /* Профиль/Чат (32%) и Плеер (остальное) */
+            grid-template-rows: 60px 1fr;   /* Верхняя панель и Основная часть */
+            grid-template-areas: 
+                "header header"
+                "sidebar main";
+            height: 100vh;
+            padding: 10px 20px 20px 20px;
+            gap: 20px;
+        }
+
+        /* =========================================
+           ВЕРХНЯЯ ПАНЕЛЬ (Навигация)
+           ========================================= */
         .top-bar {
             grid-area: header;
             display: flex;
             align-items: center;
-            gap: 15px;
-            width: 100%;
+            gap: 20px;
         }
 
-        /* Плашка Профиля (Слева) */
+        /* Плашка Профиля */
         .pro-profile {
             background-color: #1e1e28;
             border: 1px solid #333;
@@ -47,17 +58,25 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            width: 32%; /* Симметрично правому чату, но так как это grid - можно оставить auto */
-            min-width: 150px;
+            width: 100%; /* Заполняет свою колонку сетки */
             font-size: 14px;
+            font-weight: 500;
         }
-        .status-dot { width: 8px; height: 8px; background-color: #4ade80; border-radius: 50%; margin-left: auto; }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #4ade80;
+            border-radius: 50%;
+            margin-left: auto;
+            margin-right: 10px;
+        }
 
         /* Контейнер кнопок */
-        .nav-buttons {
+        .top-nav-buttons {
             display: flex;
             gap: 8px;
-            flex: 1;
+            flex: 1; 
         }
 
         .nav-btn {
@@ -68,34 +87,41 @@
             padding: 10px 12px;
             font-size: 13px;
             cursor: pointer;
-            white-space: nowrap;
-            flex: 1;
             transition: 0.2s;
+            text-align: center;
+            white-space: nowrap;
+            flex: 1; /* Кнопки растягиваются равномерно */
         }
+
+        .nav-btn:hover { background-color: #2a2a35; color: #fff; }
         .nav-btn.active { background-color: #7c3aed; color: #fff; border-color: #7c3aed; }
         #menu-btn { font-weight: bold; background-color: #2a2a35; }
 
         /* =========================================
-           ПЛЕЕР (ПРАВАЯ ЧАСТЬ)
+           ОСНОВНЫЕ БЛОКИ
            ========================================= */
+        /* Плеер (Слева на ПК) */
         .video-section {
             grid-area: main;
             background-color: #000;
             border: 1px solid #333;
             border-radius: 12px;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
         }
 
-        /* =========================================
-           ЧАТ (ЛЕВАЯ ЧАСТЬ)
-           ========================================= */
-        .chat-section {
-            grid-area: sidebar; /* Занимает левую колонку на ПК */
+        .video-placeholder { text-align: center; color: #666; }
+        .video-placeholder .icon { font-size: 48px; margin-bottom: 15px; }
+        .video-placeholder h2 { color: #ccc; font-size: 18px; margin-bottom: 5px; }
+
+        /* Правая колонка (Чат) */
+        .sidebar-section {
+            grid-area: sidebar;
             display: flex;
             flex-direction: column;
-            min-height: 0; /* Важно для скролла */
+            min-height: 0;
         }
 
         .content-window {
@@ -108,90 +134,100 @@
             overflow: hidden;
         }
 
+        /* --- ЧАТ --- */
+        .chat-view { display: flex; flex-direction: column; height: 100%; }
         .chat-messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
         .message { display: flex; gap: 10px; font-size: 14px; }
-        .avatar { width: 32px; height: 32px; background: #3b82f6; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; }
-        
-        .chat-input-area { display: flex; padding: 10px; gap: 10px; border-top: 1px solid #333; }
-        .chat-input-area input { flex: 1; background: #14141c; border: 1px solid #333; border-radius: 20px; padding: 10px; color: #fff; outline: none; }
-        .send-btn { background: #7c3aed; border: none; border-radius: 50%; width: 40px; height: 40px; color: white; cursor: pointer; }
+        .avatar { width: 32px; height: 32px; background-color: #3b82f6; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; }
+        .msg-author { color: #fff; font-weight: bold; margin-bottom: 2px; }
+        .msg-text { color: #ccc; }
+        .msg-time { font-size: 10px; color: #666; margin-top: 3px; }
 
-        /* Меню (Вместо чата) */
-        .menu-view { display: none; padding: 20px; flex-direction: column; gap: 10px; height: 100%; }
-        .menu-item { padding: 15px; background: #2a2a35; border-radius: 8px; cursor: pointer; }
+        .chat-input-area { display: flex; padding: 10px; gap: 10px; border-top: 1px solid #333; background-color: #1e1e28; }
+        .chat-input-area input { flex: 1; background-color: #14141c; border: 1px solid #333; border-radius: 20px; padding: 10px 15px; color: #fff; outline: none; }
+        .send-btn { background-color: #7c3aed; border: none; border-radius: 50%; width: 40px; height: 40px; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+        /* --- МЕНЮ --- */
+        .menu-view { display: none; padding: 20px; flex-direction: column; gap: 15px; height: 100%; overflow-y: auto; }
+        .menu-item { padding: 15px; background-color: #2a2a35; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+        .menu-item:hover { background-color: #3b3b4a; }
+
 
         /* =========================================
-           МОБИЛЬНАЯ ВЕРСИЯ (ПЕРЕСТРОЙКА)
+           МОБИЛЬНАЯ ВЕРСИЯ (Вертикальный вид)
            ========================================= */
         @media (max-width: 900px) {
-            body { overflow-y: auto; }
-            
-            /* Сетка на телефоне: 
-               1. Плеер (сверху)
-               2. Чат (по центру)
-               3. Кнопки (внизу)
-            */
+            body {
+                overflow-y: auto; /* Разрешаем скролл страницы на телефоне */
+            }
+
+            /* Перестраиваем сетку для телефона */
             .app-layout {
-                display: flex;
-                flex-direction: column;
+                grid-template-columns: 1fr; /* Одна колонка */
+                grid-template-rows: auto auto 1fr auto; /* Авто-высота для плеера и чата, 1fr для заполнения, auto для кнопок */
+                grid-template-areas: 
+                    "header"  /* 1. Профиль */
+                    "main"    /* 2. Плеер */
+                    "sidebar" /* 3. Чат */
+                    "header"; /* 4. КНОПКИ ВНИЗУ! */
                 height: 100vh;
                 padding: 10px;
-                gap: 10px;
+                gap: 15px;
             }
 
-            /* Прячем плашку Профиля на телефоне, чтобы не мешала */
-            .pro-profile { display: none; }
-
-            /* ПЛЕЕР: Первый элемент */
-            .video-section {
-                order: 1; 
-                min-height: 200px;
-                flex-shrink: 0;
-            }
-
-            /* ЧАТ: Второй элемент */
-            .chat-section {
-                order: 2;
-                flex: 1; /* Занимает всё оставшееся место */
-                min-height: 300px;
-                margin-bottom: 70px; /* Отступ под кнопки, чтобы не перекрывали ввод */
-            }
-
-            /* КНОПКИ: Третий элемент (Внизу) */
-            /* Мы берем шапку и делаем из нее нижнюю панель */
             .top-bar {
-                order: 3;
-                position: fixed;
+                flex-direction: column; /* Профиль сверху, кнопки снизу */
+                align-items: stretch;
+                height: 100%;
+            }
+
+            /* Прячем профиль в мобильной версии, чтобы не мешал (опционально) */
+            .pro-profile {
+                display: none; 
+            }
+
+            /* Кнопки уходят в самый низ */
+            .top-nav-buttons {
+                /* Фиксируем кнопки внизу экрана */
+                position: fixed; 
                 bottom: 0;
                 left: 0;
                 width: 100%;
-                background: #14141c;
+                background-color: #14141c; /* Фон под кнопками */
                 padding: 10px;
                 border-top: 1px solid #333;
                 z-index: 100;
-                margin: 0;
-            }
-
-            .nav-buttons {
-                width: 100%;
-                justify-content: space-between;
                 gap: 4px;
+                box-sizing: border-box;
             }
 
             .nav-btn {
-                font-size: 11px;
                 padding: 8px 4px;
-                flex: 1;
+                font-size: 11px;
+                border-radius: 8px;
+            }
+
+            /* Плеер на телефоне */
+            .video-section {
+                min-height: 220px;
+                order: 1; /* Плеер идет первым */
+            }
+
+            /* Чат на телефоне (должен занимать оставшееся место) */
+            .sidebar-section {
+                order: 2; /* Чат идет после плеера */
+                min-height: 350px; 
+                margin-bottom: 70px; /* Отступ, чтобы нижняя панель не перекрывала ввод сообщения */
             }
         }
     </style>
 </head>
 <body>
 
-    <!-- ЕДИНЫЙ КОНТЕЙНЕР -->
+    <!-- Общая сетка -->
     <div class="app-layout">
         
-        <!-- ШАПКА (На ПК это правая колонка с кнопками) -->
+        <!-- Шапка (На ПК: Профиль + Кнопки) -->
         <header class="top-bar">
             <div class="pro-profile">
                 <span>Про</span>
@@ -201,8 +237,8 @@
                 <button style="background:none; border:none; color:#888; cursor:pointer;">⚙️</button>
             </div>
 
-            <!-- Единственный экземпляр кнопок -->
-            <div class="nav-buttons">
+            <!-- Кнопки. На ПК они здесь, на телефоне CSS перенесет их вниз -->
+            <div class="top-nav-buttons">
                 <button class="nav-btn active" onclick="switchTab('home', this)">Главная</button>
                 <button class="nav-btn" onclick="switchTab('general', this)">Общее</button>
                 <button class="nav-btn" onclick="switchTab('custom', this)">Своё</button>
@@ -212,25 +248,36 @@
             </div>
         </header>
 
-        <!-- ПЛЕЕР (Единственный экземпляр) -->
+        <!-- Плеер (Слева на ПК, Сверху на телефоне) -->
         <section class="video-section">
-            <div style="text-align: center; color: #666;">
-                <div style="font-size: 48px; margin-bottom: 10px;">📺</div>
-                <h2 style="color: #ccc; font-size: 18px;">Тут будет видео</h2>
-                <p style="font-size: 14px;">Хост ещё не выбрал</p>
+            <div class="video-placeholder">
+                <div class="icon">📺</div>
+                <h2>Тут будет видео</h2>
+                <p>Хост ещё не выбрал</p>
             </div>
         </section>
 
-        <!-- ЧАТ (Единственный экземпляр) -->
-        <aside class="chat-section">
+        <!-- Правая панель (Чат) -->
+        <aside class="sidebar-section">
             <div class="content-window">
-                <div class="chat-view" id="chat-view" style="display: flex; flex-direction: column; height: 100%;">
+                
+                <!-- Чат -->
+                <div class="chat-view" id="chat-view">
                     <div class="chat-messages">
                         <div class="message">
                             <div class="avatar">АК</div>
-                            <div>
-                                <div style="font-weight: bold; margin-bottom: 2px;">ак</div>
-                                <div style="color: #ccc;">Просто</div>
+                            <div class="msg-content">
+                                <span class="msg-author">ак</span>
+                                <span class="msg-text">Просто</span>
+                                <span class="msg-time">20:29</span>
+                            </div>
+                        </div>
+                        <div class="message">
+                            <div class="avatar" style="background:#e11d48">Ив</div>
+                            <div class="msg-content">
+                                <span class="msg-author">Иван</span>
+                                <span class="msg-text">Привет всем! Когда стрим?</span>
+                                <span class="msg-time">20:31</span>
                             </div>
                         </div>
                     </div>
@@ -240,17 +287,19 @@
                     </div>
                 </div>
 
+                <!-- Меню (Скрыто) -->
                 <div class="menu-view" id="menu-view">
-                    <h3>Меню</h3>
-                    <div class="menu-item">⚙️ Настройки</div>
+                    <h3>Настройки и меню</h3>
+                    <div class="menu-item">⚙️ Настройки профиля</div>
                     <div class="menu-item">🔔 Уведомления</div>
+                    <div class="menu-item">🎨 Оформление</div>
                 </div>
+
             </div>
         </aside>
     </div>
 
     <script>
-        // Логика переключения (без дублей DOM)
         const chatView = document.getElementById('chat-view');
         const menuView = document.getElementById('menu-view');
         const navButtons = document.querySelectorAll('.nav-btn');
