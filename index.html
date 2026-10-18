@@ -108,10 +108,12 @@ body.in-room #screen-room{
 
 /* Контейнер комнаты */
 .room-layout{
-  display: flex; flex-direction: column; flex: 1; min-height: 0; gap: 10px;
-  /* Убрали padding-bottom, он мешает */
+  display: flex; flex-direction: column; 
+  flex: 1 1 0; /* <--- ИСПРАВЛЕНО: было flex: 1 */
+  min-height: 0; 
+  gap: 10px;
+  /* padding-bottom НЕ НУЖЕН, так как мы уже отступили в #screen-room */
 }
-
 .room-left{ flex-shrink: 0; width: 100%; }
 .video-box{
   position:relative; background:#000; border:1px solid var(--border); border-radius:var(--radius);
