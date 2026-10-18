@@ -459,8 +459,23 @@ function renderMessages(){ const box = document.getElementById('chatMessages'); 
 function messageHtml(m){ const time = new Date(m.created_at).toLocaleTimeString('ru-RU', { hour:'2-digit', minute:'2-digit' }); const isMine = m.user_id === myId; const actions = isMine ? '' : '<div style="display:flex;align-items:center;flex-shrink:0;margin-left:8px;"><button onclick="openDM(\'' + esc(m.user_id) + '\',\'' + esc(m.name) + '\')" style="background:var(--surface-2);border:1px solid var(--border);color:var(--text);border-radius:8px;font-size:11px;font-weight:700;padding:4px 8px;cursor:pointer;">Написать</button></div>'; return '<div class="chat-msg"><div class="chat-msg-avatar">' + (m.avatar || '👤') + '</div><div class="chat-msg-body"><div class="chat-msg-name">' + esc(m.name) + '</div><div class="chat-msg-text">' + esc(m.text) + '</div><div class="chat-msg-time">' + time + '</div></div>' + actions + '</div>'; }
 function appendMessage(m){ if(currentRoomMessages.some(x => x.id === m.id)) return; currentRoomMessages.unshift(m); const box = document.getElementById('chatMessages'); if(!box) return; const wasAtTop = box.scrollTop < 100; if(currentRoomMessages.length === 1) box.innerHTML = ''; box.insertAdjacentHTML('afterbegin', messageHtml(m)); if(wasAtTop) setTimeout(() => { box.scrollTop = 0; }, 50); }
 function bindChatInput(){ const i = document.getElementById('chatInput'); if(i && !i.dataset.bound){ i.dataset.bound = '1'; i.addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); sendMessage(); } }); } }
-async function sendMessage(){ const inp = document.getElementById('chatInput'); if(!inp) return; const text = inp.value.trim(); if(!text) return; if(!myName){ askName(text); return; } inp.value = ''; await sb.from('room_messages').insert({ room_id: currentRoom.id, name: myName, avatar: myAvatar, text: text, user_id: myId, hidden: false }); }
-
+async function sendMessage(){ 
+  const inp = document.getElementById('chatInput'); 
+  if(!inp) return; 
+  const text = inp.value.trim(); 
+  if(!text) return; 
+  if(!myName){ askName(text); return; } 
+  inp.value = ''; // Очищаем поле ввода
+  
+  await sb.from('room_messages').insert({ 
+    room_id: currentRoom.id, 
+    name: myName, 
+    avatar: myAvatar, 
+    text: text, 
+    user_id: myId, 
+    hidden: false 
+  }); 
+}
 async function openDM(userId, userName){ 
   if(userId === myId) return toast('Это ты'); 
   await sb.from('dm_reads').upsert({ room_id: currentRoom.id, user_id: myId, peer_id: userId, last_read_at: new Date().toISOString() }); 
