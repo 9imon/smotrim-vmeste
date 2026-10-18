@@ -92,13 +92,16 @@ img{max-width:100%;display:block}
 .empty-state .big-icon{font-size:64px;margin-bottom:12px;opacity:.55}
 
 /* КОМНАТА (ПОРТРЕТНЫЙ РЕЖИМ) */
-/* КОМНАТА (ПОРТРЕТНЫЙ РЕЖИМ) */
 body.in-room #screen-room{
   position:fixed; inset:0; display:flex; flex-direction:column; 
   overflow:hidden;
   padding: 8px 12px; 
   padding-bottom: calc(var(--dock-h) + var(--safe-bottom) + 8px); 
-  z-index:10; max-width:100%; height:100%; background:var(--bg);
+  z-index:10; max-width:100%; 
+  height:100%; 
+  height:100dvh;
+  min-height:0;
+  background:var(--bg);
 }
 
 /* Верхняя плашка */
@@ -116,7 +119,7 @@ body.in-room #screen-room{
 .room-layout{
   display: flex; 
   flex-direction: column; 
-  flex: 1 1 0; /* Растягиваем на весь экран */
+  flex: 1 1 0;
   min-height: 0;
   gap: 10px;
 }
@@ -128,14 +131,14 @@ body.in-room #screen-room{
 }
 .video-box{
   position:relative; background:#000; border:1px solid var(--border); border-radius:var(--radius);
-  overflow:hidden; width: 100%; aspect-ratio: 16/9; /* Жесткие пропорции видео */
+  overflow:hidden; width: 100%; aspect-ratio: 16/9;
   display:flex; align-items:center; justify-content:center;
 }
 .video-box iframe,.video-box video{width:100%;height:100%;border:none;display:block}
 
 /* Правая часть (Чат) */
 .room-right{
-  flex: 1 1 auto; /* Занимает всё оставшееся место до кнопок */
+  flex: 1 1 0;
   min-height: 0; 
   display: flex; 
   flex-direction: column; 
@@ -144,7 +147,7 @@ body.in-room #screen-room{
 .chat-block{
   background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
   padding:10px; display:flex; flex-direction:column; 
-  flex: 1; /* Растягивается внутри room-right */
+  flex: 1 1 0;
   min-height: 0; 
 }
 .chat-input-row{display:flex;gap:6px;flex-shrink:0;margin-bottom:8px;align-items: center;}
@@ -154,7 +157,8 @@ body.in-room #screen-room{
 /* Блок с сообщениями */
 .chat-messages{
   flex: 1 1 0; 
-  height: 0; /* ВАЖНО: заставляет контейнер скроллиться, а не растягиваться */
+  height: auto;
+  min-height: 0;
   overflow-y: auto; 
   -webkit-overflow-scrolling: touch;
   display: flex; 
@@ -168,7 +172,8 @@ body.in-room #screen-room{
 .chat-msg-name{font-size:12px;font-weight:700;margin-bottom:2px}
 .chat-msg-text{font-size:14px;word-wrap:break-word;white-space:pre-wrap}
 .chat-msg-time{font-size:10px;color:var(--text-3);margin-top:3px}
-/* 5. Кнопки (Фиксированный подвал) */
+
+/* Кнопки (Фиксированный подвал) */
 .room-dock{
   position:fixed; bottom:0; left:0; right:0; z-index:60;
   padding: 4px 4px calc(4px + var(--safe-bottom)); 
@@ -232,7 +237,8 @@ body.in-room #screen-room{
   
   body.in-room #screen-room { 
     padding: 8px 12px 8px; 
-    height: 100%; 
+    height: 100dvh; 
+    min-height: 0;
     display: flex; 
     flex-direction: column; 
   }
