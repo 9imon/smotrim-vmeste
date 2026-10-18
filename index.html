@@ -25,33 +25,18 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 input,textarea,select{font-family:inherit;font-size:16px}
 img{max-width:100%;display:block}
 
-/* ЕДИНЫЙ СТИЛЬ КНОПОК (Только текст) */
+/* ЕДИНЫЙ СТИЛЬ КНОПОК */
 .tile-btn {
   display: inline-flex; align-items: center; justify-content: center;
-  background: transparent !important; 
-  border: none !important; 
-  outline: none !important; 
-  box-shadow: none !important; 
-  color: var(--text-2); 
-  font-size: 12px; 
-  font-weight: 700; 
-  text-align: center;
+  background: transparent !important; border: none !important; outline: none !important; box-shadow: none !important; 
+  color: var(--text-2); font-size: 12px; font-weight: 700; text-align: center;
   transition: transform 0.15s cubic-bezier(0.2, 0.8, 0.3, 1), color 0.2s, text-shadow 0.2s;
-  cursor: pointer; 
-  padding: 8px 4px;
-  white-space: nowrap; 
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
-  -webkit-appearance: none;
-  appearance: none;
+  cursor: pointer; padding: 8px 4px; white-space: nowrap; user-select: none;
+  -webkit-tap-highlight-color: transparent; -webkit-appearance: none; appearance: none;
 }
 .tile-btn:focus { outline: none; }
 .tile-btn:hover { color: var(--text); }
-.tile-btn:active { 
-  transform: scale(0.85); 
-  color: var(--accent-2) !important; 
-  text-shadow: 0 0 10px rgba(139, 114, 240, 0.8); 
-}
+.tile-btn:active { transform: scale(0.85); color: var(--accent-2) !important; text-shadow: 0 0 10px rgba(139, 114, 240, 0.8); }
 .tile-btn.primary { color: var(--accent) !important; font-weight: 800; }
 .tile-btn.primary:active { color: #fff !important; text-shadow: 0 0 12px rgba(139, 114, 240, 1); }
 
@@ -91,20 +76,14 @@ img{max-width:100%;display:block}
 .empty-state{text-align:center;padding:60px 24px;color:var(--text-2)}
 .empty-state .big-icon{font-size:64px;margin-bottom:12px;opacity:.55}
 
-/* КОМНАТА (ПОРТРЕТНЫЙ РЕЖИМ) */
+/* ============ КОМНАТА (ПОРТРЕТНЫЙ РЕЖИМ) ============ */
 body.in-room #screen-room{
   position:fixed; inset:0; display:flex; flex-direction:column; 
   overflow:hidden;
   padding: 8px 12px; 
-  padding-bottom: calc(var(--dock-h) + var(--safe-bottom) + 8px); 
-  z-index:10; max-width:100%; 
-  height:100%; 
-  height:100dvh;
-  min-height:0;
-  background:var(--bg);
+  z-index:10; max-width:100%; height:100dvh; background:var(--bg);
 }
 
-/* Верхняя плашка */
 .room-top-bar{
   display:flex; align-items:center; justify-content:center; gap:8px;
   width:100%; margin:0 auto 8px auto; flex-shrink:0;
@@ -117,53 +96,32 @@ body.in-room #screen-room{
 
 /* Контейнер комнаты */
 .room-layout{
-  display: flex; 
-  flex-direction: column; 
-  flex: 1 1 0;
-  min-height: 0;
-  gap: 10px;
+  display: flex; flex-direction: column; flex: 1 1 0; min-height: 0; gap: 10px;
+  padding-bottom: calc(var(--dock-h) + var(--safe-bottom) + 8px); 
 }
 
-/* Левая часть (Плеер) */
-.room-left{ 
-  flex-shrink: 0; 
-  width: 100%;
-}
+.room-left{ flex-shrink: 0; width: 100%; }
 .video-box{
   position:relative; background:#000; border:1px solid var(--border); border-radius:var(--radius);
-  overflow:hidden; width: 100%; aspect-ratio: 16/9;
-  display:flex; align-items:center; justify-content:center;
+  overflow:hidden; width: 100%; aspect-ratio: 16/9; display:flex; align-items:center; justify-content:center;
 }
 .video-box iframe,.video-box video{width:100%;height:100%;border:none;display:block}
 
-/* Правая часть (Чат) */
+/* Чат */
 .room-right{
-  flex: 1 1 0;
-  min-height: 0; 
-  display: flex; 
-  flex-direction: column; 
-  overflow: hidden;
+  flex: 1 1 0; min-height: 150px; display: flex; flex-direction: column; overflow: hidden;
 }
 .chat-block{
   background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
-  padding:10px; display:flex; flex-direction:column; 
-  flex: 1 1 0;
-  min-height: 0; 
+  padding:10px; display:flex; flex-direction:column; flex: 1 1 0; min-height: 0; 
 }
 .chat-input-row{display:flex;gap:6px;flex-shrink:0;margin-bottom:8px;align-items: center;}
 .chat-input-row .input{flex:1;margin-bottom:0;min-width:0;height: 46px;}
 .chat-input-row .btn-send{width:46px;height:46px;padding:0;margin:0;flex-shrink:0;background:var(--accent);color:#fff;border-radius:var(--radius);font-size:18px;display:flex;align-items:center;justify-content:center;}
 
-/* Блок с сообщениями */
 .chat-messages{
-  flex: 1 1 0; 
-  height: auto;
-  min-height: 0;
-  overflow-y: auto; 
-  -webkit-overflow-scrolling: touch;
-  display: flex; 
-  flex-direction: column;
-  padding-right: 4px;
+  flex: 1 1 0; height: auto; min-height: 50px; overflow-y: auto; -webkit-overflow-scrolling: touch;
+  display: flex; flex-direction: column; padding-right: 4px;
 }
 .chat-msg{padding:8px 0;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:flex-start}
 .chat-msg:last-child{border-bottom:none}
@@ -176,28 +134,13 @@ body.in-room #screen-room{
 /* Кнопки (Фиксированный подвал) */
 .room-dock{
   position:fixed; bottom:0; left:0; right:0; z-index:60;
-  padding: 4px 4px calc(4px + var(--safe-bottom)); 
-  background: transparent; 
-  display:flex; align-items:center; justify-content:center;
-  height: var(--dock-h); 
+  padding: 4px 4px calc(4px + var(--safe-bottom)); background: transparent; 
+  display:flex; align-items:center; justify-content:center; height: var(--dock-h); 
 }
 .dock-inner{
-  display:flex; 
-  gap: 2px; 
-  width: 100%; 
-  max-width: 100%; 
-  justify-content: space-between; 
-  align-items: center;
-  padding: 0 4px;
+  display:flex; gap: 2px; width: 100%; max-width: 100%; justify-content: space-between; align-items: center; padding: 0 4px;
 }
-.dock-inner .tile-btn { 
-  flex: 1 1 auto; 
-  padding: 4px 1px; 
-  font-size: 10px; 
-  letter-spacing: -0.5px; 
-  text-align: center;
-  white-space: nowrap; 
-}
+.dock-inner .tile-btn { flex: 1 1 auto; padding: 4px 1px; font-size: 10px; letter-spacing: -0.5px; text-align: center; white-space: nowrap; }
 
 /* ШТОРКИ */
 .sheet-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:200;display:flex;align-items:flex-end;justify-content:center; animation: fadeInOverlay 0.2s ease-out; }
@@ -235,106 +178,29 @@ body.in-room #screen-room{
 @media (orientation: landscape) and (min-width: 700px){
   .room-dock { display: none !important; }
   
-  body.in-room #screen-room { 
-    padding: 8px 12px 8px; 
-    height: 100dvh; 
-    min-height: 0;
-    display: flex; 
-    flex-direction: column; 
-  }
+  body.in-room #screen-room { padding: 8px 12px; height: 100dvh; min-height: 0; display: flex; flex-direction: column; }
   
   .room-top-bar {
-    width: 100%; 
-    margin: 0 0 8px 0; 
-    padding: 4px 12px; 
-    justify-content: space-between; 
-    border-radius: 12px;
-    display: flex; 
-    flex-wrap: nowrap; 
-    align-items: center; 
-    gap: 8px;
-    flex-shrink: 0;
+    width: 100%; margin: 0 0 8px 0; padding: 4px 12px; justify-content: space-between; border-radius: 12px;
+    display: flex; flex-wrap: nowrap; align-items: center; gap: 8px; flex-shrink: 0;
   }
-  .room-top-left { 
-    justify-content: flex-start; 
-    flex: 1 1 auto; 
-    min-width: 0; 
-    overflow: hidden; 
-  }
-  .room-top-left > div:first-child { 
-    white-space: nowrap; 
-    overflow: hidden; 
-    text-overflow: ellipsis; 
-    font-size: 15px; 
-  }
+  .room-top-left { justify-content: flex-start; flex: 1 1 auto; min-width: 0; overflow: hidden; }
+  .room-top-left > div:first-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 15px; }
   
-  .landscape-dock { 
-    display: flex !important; 
-    gap: 4px; 
-    flex-shrink: 0; 
-    flex-wrap: nowrap; 
-    align-items: center; 
-  }
-  .landscape-dock .tile-btn { 
-    height: 32px; 
-    padding: 0 6px; 
-    font-size: 11px; 
-    flex-shrink: 0; 
-    white-space: nowrap; 
-    width: auto; 
-    border-radius: 6px; 
-  }
+  .landscape-dock { display: flex !important; gap: 4px; flex-shrink: 0; flex-wrap: nowrap; align-items: center; }
+  .landscape-dock .tile-btn { height: 32px; padding: 0 6px; font-size: 11px; flex-shrink: 0; white-space: nowrap; width: auto; border-radius: 6px; }
   
-  .room-layout { 
-    display: grid; 
-    grid-template-columns: 1.2fr 1fr; 
-    gap: 12px; 
-    flex: 1 1 0; 
-    min-height: 0; 
-    height: 100%;
-  }
+  .room-layout { display: grid; grid-template-columns: 1.2fr 1fr; gap: 12px; flex: 1 1 0; min-height: 0; height: 100%; padding-bottom: 0; }
   
-  .room-left { 
-    height: 100%; 
-    min-height: 0; 
-    display: flex; 
-    flex-direction: column;
-  }
-  .video-box { 
-    flex: 1; 
-    width: 100%;
-    height: 100%; 
-    aspect-ratio: auto; 
-    max-height: 100%; 
-    border-radius: var(--radius);
-  }
+  .room-left { height: 100%; min-height: 0; display: flex; flex-direction: column; }
+  .video-box { flex: 1; width: 100%; height: 100%; aspect-ratio: auto; max-height: 100%; border-radius: var(--radius); }
   
-  .room-right { 
-    display: flex; 
-    flex-direction: column; 
-    height: 100%; 
-    min-height: 0; 
-  }
-  .chat-block {
-    display: flex;
-    flex-direction: column;
-    height: 100%; 
-    min-height: 0;
-    padding: 8px;
-  }
+  .room-right { display: flex; flex-direction: column; height: 100%; min-height: 0; }
+  .chat-block { display: flex; flex-direction: column; height: 100%; min-height: 0; padding: 8px; }
+  .chat-messages { min-height: 0; }
   
   .sheet-overlay { justify-content: flex-end; align-items: stretch; }
-  .sheet { 
-    width: 30vw; 
-    min-width: 300px; 
-    border-radius: 16px 0 0 16px; 
-    height: 100%; 
-    max-height: 100%; 
-    border-top: none; 
-    border-left: 1px solid var(--border); 
-    padding: 20px; 
-    margin-left: auto; 
-  }
+  .sheet { width: 30vw; min-width: 300px; border-radius: 16px 0 0 16px; height: 100%; max-height: 100%; border-top: none; border-left: 1px solid var(--border); padding: 20px; margin-left: auto; }
   .sheet::before { display: none; }
 }
 </style>
@@ -422,7 +288,6 @@ function startPolling(){
   pollTimer = setInterval(async () => {
     if(!currentRoom || currentRoom.id !== roomId) return;
     
-    // Общий чат
     try { 
       const { data } = await sb.from('room_messages').select('*').eq('room_id', roomId).eq('hidden', false).gt('id', lastMsgId).order('id', { ascending: false }); 
       if(data && data.length){ 
@@ -434,7 +299,6 @@ function startPolling(){
       } 
     } catch(e){}
 
-    // ЛС
     try { 
       const { data: dms } = await sb.from('direct_messages').select('*').eq('room_id', roomId).eq('to_user_id', myId).gt('id', lastDmId).order('id', { ascending: true }); 
       if(dms && dms.length){ 
@@ -471,7 +335,7 @@ async function sendMessage(){
   const text = inp.value.trim(); 
   if(!text) return; 
   if(!myName){ askName(text); return; } 
-  inp.value = ''; // Очищаем поле ввода
+  inp.value = ''; 
   
   await sb.from('room_messages').insert({ 
     room_id: currentRoom.id, 
@@ -663,24 +527,14 @@ function renderRoomShell(){
   const onlineCount = currentPresence.filter(p => Date.now() - new Date(p.updated_at || 0).getTime() < 120000).length + 1;
   const metaExtra = (r.password_hash ? ' 🔒' : '') + (r.is_hidden ? ' 👁' : '');
   
-  // Кнопки для горизонтального режима
   let landscapeBtns = '<div class="landscape-dock">';
   landscapeBtns += '<button class="tile-btn" onclick="goHome()">Главная</button>';
-  
-  if (isHost) {
-    landscapeBtns += '<button class="tile-btn" onclick="openVideoSheet()">Общее</button>';
-  } else {
-    landscapeBtns += '<button class="tile-btn" onclick="switchToHostVideo()">Общее</button>';
-  }
-  
+  if (isHost) { landscapeBtns += '<button class="tile-btn" onclick="openVideoSheet()">Общее</button>'; } 
+  else { landscapeBtns += '<button class="tile-btn" onclick="switchToHostVideo()">Общее</button>'; }
   landscapeBtns += '<button class="tile-btn" onclick="openPersonalVideoSheet()">Своё</button>';
   landscapeBtns += '<button class="tile-btn" onclick="openPeopleSheet()" style="position:relative">Люди<span id="dmBadge" class="dm-badge"></span></button>';
   landscapeBtns += '<button class="tile-btn primary" onclick="inviteFriend()">Пригласить</button>';
-  
-  if (isHost) {
-    landscapeBtns += '<button class="tile-btn" onclick="openHostSettings()">Меню</button>';
-  }
-  
+  if (isHost) { landscapeBtns += '<button class="tile-btn" onclick="openHostSettings()">Меню</button>'; }
   landscapeBtns += '<button class="tile-btn" onclick="location.reload()">Обновить</button>';
   landscapeBtns += '</div>';
 
@@ -694,39 +548,17 @@ function renderRoomShell(){
   renderVideoOnly(); renderMessages(); bindChatInput();
 }
 
-// Рендер нижней панели для портретного режима
 function renderDock(){
   const dock = document.getElementById('dockInner'); if(!dock) return;
-  
   let buttons = '';
-  
-  // 1. Главная (для всех)
   buttons += '<button class="tile-btn primary" onclick="goHome()">Главная</button>';
-  
-  // 2. Общее
-  if (isHost) {
-    buttons += '<button class="tile-btn" onclick="openVideoSheet()">Общее</button>';
-  } else {
-    buttons += '<button class="tile-btn" onclick="switchToHostVideo()">Общее</button>';
-  }
-
-  // 3. Своё
+  if (isHost) { buttons += '<button class="tile-btn" onclick="openVideoSheet()">Общее</button>'; } 
+  else { buttons += '<button class="tile-btn" onclick="switchToHostVideo()">Общее</button>'; }
   buttons += '<button class="tile-btn" onclick="openPersonalVideoSheet()">Своё</button>';
-  
-  // 4. Люди
   buttons += '<button class="tile-btn" onclick="openPeopleSheet()" style="position:relative">Люди<span id="dmBadge" class="dm-badge"></span></button>';
-  
-  // 5. Пригласить
   buttons += '<button class="tile-btn primary" onclick="inviteFriend()">Пригласить</button>';
-
-  // 6. Меню (ТОЛЬКО ХОСТ)
-  if (isHost) {
-    buttons += '<button class="tile-btn" onclick="openHostSettings()">Меню</button>';
-  }
-
-  // 7. Обновить
+  if (isHost) { buttons += '<button class="tile-btn" onclick="openHostSettings()">Меню</button>'; }
   buttons += '<button class="tile-btn" onclick="location.reload()">Обновить</button>';
-
   dock.innerHTML = buttons;
 }
 
