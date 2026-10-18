@@ -25,13 +25,15 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 input,textarea,select{font-family:inherit;font-size:16px}
 img{max-width:100%;display:block}
 
-/* ЕДИНЫЙ СТИЛЬ КНОПОК (ТЕКСТОВЫЕ) */
+/* ЕДИНЫЙ СТИЛЬ КНОПОК */
 .tile-btn {
   display: flex; align-items: center; justify-content: center;
   background: var(--surface-2); border: 1px solid var(--border); color: var(--text);
   border-radius: var(--radius); font-size: 12px; font-weight: 700; text-align: center;
-  transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s;
+  transition: transform 0.15s, background 0.2s;
   cursor: pointer; padding: 8px 4px;
+  white-space: normal; /* Разрешаем перенос текста, как на фото 3 */
+  word-break: break-word;
 }
 .tile-btn:active { background: var(--surface); transform: scale(0.92); }
 .tile-btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
@@ -67,20 +69,21 @@ img{max-width:100%;display:block}
 .room-tile-badges{position:absolute;top:8px;right:8px;left:8px;display:flex;justify-content:space-between;z-index:3;pointer-events:none}
 .room-tile-badge{background:rgba(0,0,0,.55);font-size:10px;font-weight:800;border-radius:8px;padding:3px 7px;color:#fff}
 
-/* FAB (Круглая) */
+/* FAB */
 .fab { position: fixed; bottom: calc(20px + var(--safe-bottom)); left: 50%; transform: translateX(-50%); width: 64px; height: 64px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 28px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(111,82,232,.45); z-index: 60; transition: transform 0.15s; }
 .fab:active { transform: translateX(-50%) scale(0.9); }
 .fab.hidden{display:none}
 .empty-state{text-align:center;padding:60px 24px;color:var(--text-2)}
 .empty-state .big-icon{font-size:64px;margin-bottom:12px;opacity:.55}
 
-/* КОМНАТА (Портрет) */
+/* КОМНАТА (Вертикальный режим - фото 3) */
 body.in-room #screen-room{
   position:fixed; inset:0; display:flex; flex-direction:column; overflow:hidden;
   padding: 8px 12px calc(var(--dock-h) + var(--safe-bottom)); z-index:10;
   max-width:100%; height:100%; background:var(--bg);
 }
 
+/* Верхняя плашка (Скрываем кнопки в портрете) */
 .room-top-bar{
   display:flex; align-items:center; justify-content:space-between; gap:8px;
   width:65%; margin:0 auto 8px auto; flex-shrink:0;
@@ -92,6 +95,9 @@ body.in-room #screen-room{
 .settings-btn { font-size: 12px; font-weight:700; padding: 4px 8px; border: 1px solid var(--border); border-radius: 8px; cursor:pointer; flex-shrink: 0; color: var(--text); }
 .settings-btn:active { background: var(--surface-2); }
 .dm-notif { display:none; color:var(--danger); font-size:11px; font-weight:700; margin-left:4px; white-space:nowrap; }
+
+/* Кнопки наверху скрыты в портретном режиме (они внизу) */
+.landscape-dock { display: none !important; }
 
 .room-layout{display:flex;flex-direction:column;flex:1 1 0;min-height:0;gap:12px}
 .room-left{display:flex;flex-direction:column;gap:12px;flex-shrink:0}
@@ -113,7 +119,7 @@ body.in-room #screen-room{
 .chat-msg-text{font-size:14px;word-wrap:break-word;white-space:pre-wrap}
 .chat-msg-time{font-size:10px;color:var(--text-3);margin-top:3px}
 
-/* НИЖНЯЯ ПАНЕЛЬ (Портрет) */
+/* НИЖНЯЯ ПАНЕЛЬ (Фото 3) */
 .room-dock{
   position:fixed; bottom:0; left:0; right:0; z-index:60;
   padding: 8px 12px calc(8px + var(--safe-bottom));
@@ -123,9 +129,18 @@ body.in-room #screen-room{
   min-height:var(--dock-h);
 }
 .dock-inner{
-  display:flex; gap:4px; width: 100%; max-width: 600px; justify-content:center; padding: 0 4px;
+  display:flex; gap:6px; width: 100%; max-width: 600px; justify-content:center; 
 }
-.dock-inner .tile-btn { flex: 1; height: auto; min-height: 42px; padding: 6px 2px; font-size: 10px; line-height: 1.2; white-space: normal; word-break: break-word; }
+.dock-inner .tile-btn { 
+  flex: 1; 
+  height: auto; 
+  min-height: 46px; 
+  padding: 6px 2px; 
+  font-size: 10px; 
+  line-height: 1.2; 
+  white-space: normal; /* Разрешаем перенос текста */
+  word-break: break-word;
+}
 .dm-badge { position: absolute; top: -6px; right: -6px; background: var(--danger); color: #fff; font-size: 10px; font-weight: 800; min-width: 18px; height: 18px; border-radius: 9px; align-items: center; justify-content: center; padding: 0 4px; border: 2px solid var(--bg); display: none; }
 @keyframes pulseBadge { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(224, 85, 99, 0.7); } 70% { transform: scale(1.15); box-shadow: 0 0 0 6px rgba(224, 85, 99, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(224, 85, 99, 0); } }
 .dm-badge:not(:empty) { animation: pulseBadge 2s infinite; display: flex !important; }
@@ -165,8 +180,9 @@ body.in-room #screen-room{
 .people-row-status{font-size:11px;color:var(--text-3)}
 .hidden-note{font-size:12px;color:var(--text-3);font-style:italic;padding:12px;text-align:center}
 
-/* ЛАНДШАФТНЫЙ РЕЖИМ */
+/* ЛАНДШАФТНЫЙ РЕЖИМ (Фото 1) */
 @media (orientation: landscape) and (min-width: 700px){
+  /* В горизонтальном режиме скрываем нижнюю панель */
   .room-dock { display: none !important; }
   
   body.in-room #screen-room { 
@@ -177,17 +193,37 @@ body.in-room #screen-room{
     flex-direction: column;
   }
   
+  /* Верхняя панель (на всю ширину) */
   .room-top-bar {
     width: 100%; 
     margin: 0 0 12px 0; 
     padding: 6px 16px; 
     justify-content: space-between; 
     border-radius: 12px;
+    display: flex; /* Гарантируем flex */
+    flex-wrap: nowrap; /* Запрещаем перенос элементов */
+    align-items: center;
   }
   
-  .landscape-dock { display: flex; gap: 6px; flex-shrink: 0; }
-  .landscape-dock .tile-btn { height: 38px; padding: 0 16px; font-size: 13px; }
+  /* Контейнер с кнопками внутри шапки */
+  .landscape-dock { 
+    display: flex; 
+    gap: 6px; 
+    flex-shrink: 0; 
+    flex-wrap: nowrap; /* Строго в одну линию, как на фото 1 */
+    align-items: center;
+  }
   
+  .landscape-dock .tile-btn { 
+    height: 38px; 
+    padding: 0 12px; 
+    font-size: 13px; 
+    flex-shrink: 0; /* Кнопки не сжимаются */
+    white-space: nowrap; /* Текст не переносится */
+    width: auto;
+  }
+  
+  /* Сетка: видео слева, чат справа */
   .room-layout { 
     display: grid; 
     grid-template-columns: 1.5fr 1fr; 
@@ -209,7 +245,7 @@ body.in-room #screen-room{
     margin-bottom: 0; 
   }
   
-  /* Шторки справа (30% ширины) */
+  /* Шторки справа */
   .sheet-overlay { justify-content: flex-end; align-items: stretch; }
   .sheet { 
     width: 30vw; 
@@ -225,7 +261,6 @@ body.in-room #screen-room{
   }
   .sheet::before { display: none; }
   
-  /* Личные сообщения (окно) */
   .dm-box { max-height: 400px; }
 }
 </style>
@@ -541,6 +576,7 @@ function renderRoomShell(){
   
   const settingsBtn = isHost ? '<div class="settings-btn" onclick="openHostSettings()">Меню</div>' : '';
   
+  // Кнопки для горизонтального режима (внутри шапки)
   const landscapeBtns = '<div class="landscape-dock">' +
     '<button class="tile-btn" onclick="goHome()">Главная</button>' +
     '<button class="tile-btn" onclick="location.reload()">Обновить</button>' +
@@ -560,6 +596,7 @@ function renderRoomShell(){
   renderVideoOnly(); renderMessages(); bindChatInput();
 }
 
+// Рендер нижней панели для портретного режима
 function renderDock(){
   const dock = document.getElementById('dockInner'); if(!dock) return;
   dock.innerHTML = 
