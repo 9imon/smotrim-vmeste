@@ -108,7 +108,7 @@ body.in-room #screen-room{
 /* Контейнер комнаты */
 .room-layout{
   display: flex; flex-direction: column; flex: 1; min-height: 0; gap: 10px;
-  padding-bottom: calc(var(--dock-h) + var(--safe-bottom) + 8px); 
+  /* Убрали padding-bottom, он мешает */
 }
 
 .room-left{ flex-shrink: 0; width: 100%; }
@@ -146,8 +146,11 @@ body.in-room #screen-room{
 /* Кнопки (Фиксированный подвал) */
 .room-dock{
   position:fixed; bottom:0; left:0; right:0; z-index:60;
-  padding: 4px 4px calc(4px + var(--safe-bottom)); background: transparent; 
-  display:flex; align-items:center; justify-content:center; height: var(--dock-h); 
+  padding: 4px 4px calc(4px + var(--safe-bottom)); 
+  background: var(--bg); /* ДОБАВЛЕН ФОН, чтобы текст не просвечивал */
+  border-top: 1px solid var(--border); /* Визуальный разделитель */
+  display:flex; align-items:center; justify-content:center; 
+  height: calc(var(--dock-h) + var(--safe-bottom)); /* Учли безопасную зону */
 }
 .dock-inner{
   display:flex; gap: 2px; width: 100%; max-width: 100%; justify-content: space-between; align-items: center; padding: 0 4px;
