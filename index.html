@@ -95,32 +95,43 @@ body.in-room #screen-room{
 .landscape-dock { display: none !important; }
 
 /* Контейнер комнаты */
+/* Контейнер комнаты */
 .room-layout{
-  display: flex; flex-direction: column; flex: 1 1 0; min-height: 0; gap: 10px;
+  display: flex; 
+  flex-direction: column; 
+  flex: 1 1 0; 
+  min-height: 0; 
+  gap: 10px;
+  /* Отступ снизу, чтобы чат не залезал под кнопки */
   padding-bottom: calc(var(--dock-h) + var(--safe-bottom) + 8px); 
 }
 
-.room-left{ flex-shrink: 0; width: 100%; }
-.video-box{
-  position:relative; background:#000; border:1px solid var(--border); border-radius:var(--radius);
-  overflow:hidden; width: 100%; aspect-ratio: 16/9; display:flex; align-items:center; justify-content:center;
-}
-.video-box iframe,.video-box video{width:100%;height:100%;border:none;display:block}
-
-/* Чат */
+/* Обертка чата */
 .room-right{
-  flex: 1 1 0; min-height: 150px; display: flex; flex-direction: column; overflow: hidden;
+  flex: 1 1 0; /* Растягиваем на всё доступное место */
+  min-height: 0; /* Убираем минимальную высоту 150px */
+  display: flex; 
+  flex-direction: column; 
+  overflow: hidden;
 }
+
+/* Сам блок чата */
 .chat-block{
-  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
-  padding:10px; display:flex; flex-direction:column; flex: 1 1 0; min-height: 0; 
+  background:var(--surface); 
+  border:1px solid var(--border); 
+  border-radius:var(--radius);
+  padding:10px; 
+  display:flex; 
+  flex-direction:column; 
+  flex: 1 1 0; /* Заставляет блок занимать 100% высоты room-right */
+  min-height: 0; 
 }
 .chat-input-row{display:flex;gap:6px;flex-shrink:0;margin-bottom:8px;align-items: center;}
 .chat-input-row .input{flex:1;margin-bottom:0;min-width:0;height: 46px;}
 .chat-input-row .btn-send{width:46px;height:46px;padding:0;margin:0;flex-shrink:0;background:var(--accent);color:#fff;border-radius:var(--radius);font-size:18px;display:flex;align-items:center;justify-content:center;}
 
 .chat-messages{
-  flex: 1 1 0; height: auto; min-height: 50px; overflow-y: auto; -webkit-overflow-scrolling: touch;
+  flex: 1 1 0; height: auto; min-height: 0px; overflow-y: auto; -webkit-overflow-scrolling: touch;
   display: flex; flex-direction: column; padding-right: 4px;
 }
 .chat-msg{padding:8px 0;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:flex-start}
