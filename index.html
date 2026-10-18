@@ -90,9 +90,9 @@ img{max-width:100%;display:block}
 body.in-room #screen-room{
   position:fixed; inset:0; display:flex; flex-direction:column; 
   overflow:hidden;
-  /* Резервируем место под кнопки СРАЗУ здесь: */
+  /* Убрали height: 100dvh, оставили inset:0 (он сам займет весь экран) */
   padding: 8px 12px calc(var(--dock-h) + var(--safe-bottom) + 8px) 12px; 
-  z-index:10; max-width:100%; height:100dvh; background:var(--bg);
+  z-index:10; max-width:100%; background:var(--bg);
   box-sizing: border-box;
 }
 
@@ -132,11 +132,13 @@ body.in-room #screen-room{
 .chat-input-row .btn-send{width:46px;height:46px;padding:0;margin:0;flex-shrink:0;background:var(--accent);color:#fff;border-radius:var(--radius);font-size:18px;display:flex;align-items:center;justify-content:center;}
 
 .chat-messages{
-  flex: 1 1 0; /* Жёстко заставляем занимать свободное место */
-  height: 0; /* Хитрость для мобильных браузеров, чтобы скролл работал */
+  flex: 1 1 0; 
+  height: auto; /* <--- ИСПРАВЛЕНО: было height: 0, из-за этого ломался скролл */
+  min-height: 0; /* <--- ИСПРАВЛЕНО: добавлено для правильного сжатия */
   overflow-y: auto; 
   -webkit-overflow-scrolling: touch;
-  display: flex; flex-direction: column; padding-right: 4px;
+  display: flex; flex-direction: column; 
+  padding-right: 4px;
   justify-content: flex-end;
 }
 .chat-msg{padding:8px 0;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:flex-start}
