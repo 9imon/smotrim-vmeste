@@ -192,26 +192,75 @@ body.in-room #screen-room{ position:fixed; inset:0; display:flex; flex-direction
 @media (orientation: landscape) and (min-width: 700px){
   .room-dock { display: none !important; }
   body.in-room #screen-room { padding: 8px 12px; height: 100dvh; min-height: 0; display: flex; flex-direction: column; }
-  
-  .room-top-bar {
-    width: 100%; margin: 0 0 8px 0; padding: 4px 12px; justify-content: space-between; border-radius: 12px;
-    display: flex; flex-wrap: nowrap; align-items: center; gap: 8px; flex-shrink: 0;
+
+  /* #roomContent — колонка: сначала layout (видео+чат), потом панель снизу */
+  #roomContent {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 0;
+    min-height: 0;
   }
-  .room-top-left { justify-content: flex-start; flex: 1 1 auto; min-width: 0; overflow: hidden; }
-  .room-top-left > div:first-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 15px; }
-  
-  .landscape-dock { display: flex !important; gap: 4px; flex-shrink: 0; flex-wrap: nowrap; align-items: center; }
-  .landscape-dock .tile-btn { height: 32px; padding: 0 6px; font-size: 11px; flex-shrink: 0; white-space: nowrap; width: auto; border-radius: 6px; }
-  
-  .room-layout { display: grid; grid-template-columns: 1.2fr 1fr; gap: 12px; flex: 1 1 0; min-height: 0; height: 100%; padding-bottom: 0; }
-  
+
+  .room-top-bar {
+    order: 2;                 /* панель уходит вниз */
+    width: 100%;
+    margin: 8px 0 0 0;
+    padding: 6px 10px;
+    border-radius: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .room-layout {
+    order: 1;                 /* видео+чат сверху */
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 12px;
+    flex: 1 1 0;
+    min-height: 0;
+    padding-bottom: 0;
+  }
+
+  .room-top-left {
+    justify-content: flex-start;
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+  }
+  .room-top-left > div:first-child {
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 15px;
+  }
+
+  .landscape-dock {
+    display: flex !important;
+    gap: 4px;
+    flex-shrink: 1;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    min-width: 0;
+  }
+  .landscape-dock .tile-btn {
+    height: 28px;
+    padding: 0 6px;
+    font-size: 10px;
+    flex-shrink: 0;
+    white-space: nowrap;
+    width: auto;
+    border-radius: 6px;
+  }
+
   .room-left { height: 100%; min-height: 0; display: flex; flex-direction: column; }
   .video-box { flex: 1; width: 100%; height: 100%; aspect-ratio: auto; max-height: 100%; border-radius: var(--radius); }
-  
+
   .room-right { display: flex; flex-direction: column; height: 100%; min-height: 0; }
   .chat-block { display: flex; flex-direction: column; height: 100%; min-height: 0; padding: 8px; }
   .chat-messages { min-height: 0; }
-  
+
   .sheet-overlay { justify-content: flex-end; align-items: stretch; }
   .sheet { width: 30vw; min-width: 300px; border-radius: 16px 0 0 16px; height: 100%; max-height: 100%; border-top: none; border-left: 1px solid var(--border); padding: 20px; margin-left: auto; }
   .sheet::before { display: none; }
@@ -842,7 +891,7 @@ function renderRoomShell(){
   '</div>';
   
   const layout = header + '<div class="room-layout"><div class="room-left">' + videoSectionHtml() + '</div><div class="room-right">' + chatBlock + '</div></div>';
-
+  
   document.getElementById('roomContent').innerHTML = layout;
   
   const dock = document.getElementById('dockInner'); 
@@ -873,4 +922,3 @@ function startHeartbeat(){ if(heartbeatTimer) clearInterval(heartbeatTimer); hea
 </script>
 </body>
 </html>
-```
